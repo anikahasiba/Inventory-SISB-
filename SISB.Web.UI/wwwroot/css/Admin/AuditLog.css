@@ -1,0 +1,347 @@
+﻿/* Audit Log page – self-contained. All classes start with "al-" so they never clash with Bootstrap or _PrivateLayout. */
+.al {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .al * {
+        box-sizing: border-box
+    }
+
+    .al :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .al [hidden] {
+        display: none !important
+    }
+
+.al-top {
+    margin-bottom: 18px
+}
+
+    .al-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .al-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.al-lock {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #e3ecfa;
+    color: #25508f;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+    .al-lock::before {
+        content: "🔒";
+        font-size: 14px
+    }
+
+.al-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.al-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .al-stats .al-card {
+        margin: 0
+    }
+
+.al-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.al-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.al-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.al-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: end
+}
+
+    .al-filters .al-dates {
+        grid-column: 1/-1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 2fr;
+        gap: 12px;
+        align-items: end
+    }
+
+.al-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .al-field input, .al-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+.al-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: #fff;
+    color: var(--g);
+    cursor: pointer;
+    justify-self: start
+}
+
+    .al-btn:hover {
+        background: var(--soft)
+    }
+
+.al-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.al-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .al-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .al-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top
+    }
+
+.al-when {
+    white-space: nowrap
+}
+
+    .al-when small, .al-user small {
+        display: block;
+        font-size: 12px;
+        color: var(--muted)
+    }
+
+.al-user {
+    white-space: nowrap
+}
+
+    .al-user b {
+        font-weight: 600
+    }
+
+.al-what b {
+    font-weight: 600
+}
+
+.al-what small {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 2px
+}
+
+.al-what .al-ent {
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid #dfe4ec;
+    border-radius: 5px;
+    padding: 0 6px;
+    margin-right: 6px;
+    font-weight: 400
+}
+
+tr.al-open > td {
+    border-bottom-color: transparent
+}
+
+.al-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+.al-create {
+    background: #e2f7ed;
+    color: #0f7650
+}
+
+.al-update {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.al-delete {
+    background: #ffe5e5;
+    color: #b53030
+}
+
+.al-approve {
+    background: #dcefef;
+    color: #0b6870
+}
+
+.al-more {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    white-space: nowrap
+}
+
+    .al-more:hover {
+        text-decoration: underline
+    }
+
+.al-detail td {
+    background: #fafbfd;
+    padding: 4px 16px 16px
+}
+
+.al-cmp {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 760px
+}
+
+.al-box {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px 14px
+}
+
+    .al-box h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        margin: 0 0 6px
+    }
+
+    .al-box dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 14px;
+        font-size: 13px
+    }
+
+    .al-box dt {
+        color: var(--muted)
+    }
+
+    .al-box dd {
+        margin: 0
+    }
+
+    .al-box .al-chg {
+        font-weight: 700;
+        background: #fff2d9;
+        border-radius: 4px;
+        padding: 0 4px
+    }
+
+    .al-box .al-none {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0
+    }
+
+.al-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 26px 0 8px;
+    font-size: 14px
+}
+
+.al-foot {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+@media (max-width:900px) {
+    .al-stats {
+        grid-template-columns: 1fr
+    }
+
+    .al-filters {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+@media (max-width:640px) {
+    .al-filters, .al-filters .al-dates, .al-cmp {
+        grid-template-columns: 1fr
+    }
+}

@@ -1,0 +1,445 @@
+﻿/* Adjustments & Counts page (Manager) – self-contained. All classes start with "ac-" so they never clash with Bootstrap or the layout. */
+.ac {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .ac * {
+        box-sizing: border-box
+    }
+
+    .ac :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .ac [hidden] {
+        display: none !important
+    }
+
+.ac-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .ac-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .ac-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.ac-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .ac-btn:hover:not(:disabled) {
+        background: var(--g-dark)
+    }
+
+    .ac-btn:disabled {
+        background: #c9d3dd;
+        border-color: #c9d3dd;
+        cursor: not-allowed
+    }
+
+.ac-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .ac-btn-ghost:hover:not(:disabled) {
+        background: var(--soft)
+    }
+
+.ac-btn-bad {
+    background: #fff;
+    color: #b53030;
+    border-color: #e9b5b0
+}
+
+    .ac-btn-bad:hover:not(:disabled) {
+        background: #ffe5e5
+    }
+
+.ac-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.ac-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 12px
+}
+
+.ac-toast {
+    background: #e2f7ed;
+    color: #0f7650;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+.ac-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .ac-stats .ac-card {
+        margin: 0
+    }
+
+.ac-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.ac-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.ac-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.ac-stat.ac-wait {
+    border-left: 4px solid #25508f
+}
+
+.ac-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #dfe4ec;
+    margin-bottom: 16px
+}
+
+.ac-tab {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    padding: 10px 16px;
+    cursor: pointer;
+    margin-bottom: -1px;
+    white-space: nowrap
+}
+
+    .ac-tab:hover {
+        color: #253047
+    }
+
+    .ac-tab[aria-selected="true"] {
+        color: var(--g);
+        border-bottom-color: var(--g)
+    }
+
+    .ac-tab b {
+        font-size: 12px;
+        font-weight: 600;
+        background: #e3ecfa;
+        color: #25508f;
+        border-radius: 20px;
+        padding: 0 7px;
+        margin-left: 6px
+    }
+
+.ac-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.ac-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .ac-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .ac-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .ac-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.ac-num {
+    text-align: right !important
+}
+
+.ac-strong {
+    font-weight: 600
+}
+
+.ac-small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400
+}
+
+.ac-in {
+    color: #0f7650;
+    font-weight: 600
+}
+
+.ac-out {
+    color: #b53030;
+    font-weight: 600
+}
+
+.ac-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 24px 0 8px;
+    font-size: 14px
+}
+
+.ac-foot {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.ac-flag {
+    display: block;
+    font-size: 12px;
+    color: #b53030;
+    font-weight: 600
+}
+
+.ac-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+.ac-ok {
+    background: #e2f7ed;
+    color: #0f7650
+}
+
+.ac-warn {
+    background: #fff2d9;
+    color: #8a5d06
+}
+
+.ac-bad {
+    background: #ffe5e5;
+    color: #b53030
+}
+
+.ac-blue {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.ac-grey {
+    background: #eef1f5;
+    color: #556178
+}
+
+.ac-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.ac-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .ac-link:hover:not(:disabled) {
+        text-decoration: underline
+    }
+
+    .ac-link:disabled {
+        color: #b3bcc9;
+        cursor: not-allowed
+    }
+
+    .ac-link.ac-danger {
+        color: var(--bad)
+    }
+
+/* dialogs */
+.ac-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(560px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .ac-dialog.ac-narrow {
+        width: min(440px,calc(100% - 28px))
+    }
+
+    .ac-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .ac-dialog form {
+        padding: 22px 24px
+    }
+
+    .ac-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.ac-fgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    margin: 16px 0 8px
+}
+
+.ac-wide {
+    grid-column: 1/-1
+}
+
+.ac-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .ac-field input, .ac-field select, .ac-field textarea {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+    .ac-field textarea {
+        resize: vertical;
+        min-height: 70px
+    }
+
+.ac-preview {
+    background: #f7f9fb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    display: grid;
+    gap: 4px
+}
+
+    .ac-preview div {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px
+    }
+
+.ac-note {
+    font-size: 13px;
+    margin: 8px 0 0;
+    border-radius: 8px;
+    padding: 7px 10px
+}
+
+    .ac-note.ac-n-ok {
+        background: #e2f7ed;
+        color: #0f7650
+    }
+
+    .ac-note.ac-n-wait {
+        background: #e3ecfa;
+        color: #25508f
+    }
+
+    .ac-note.ac-n-bad {
+        background: #ffe5e5;
+        color: #9c2b2b
+    }
+
+.ac-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px
+}
+
+@media (max-width:900px) {
+    .ac-stats {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .ac-fgrid {
+        grid-template-columns: 1fr
+    }
+}

@@ -1,0 +1,288 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Purchase Orders";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mpurchase.css" asp-append-version="true" />
+
+<div class="mo">
+
+    <header class="mo-top">
+        <div>
+            <h2>Purchase orders</h2>
+            <p id="mo-sub"></p>
+        </div>
+        <button class="mo-btn" type="button" id="mo-new">New purchase order</button>
+    </header>
+
+    <div class="mo-toast" id="mo-toast" role="status" hidden></div>
+
+    <section class="mo-stats" aria-label="Purchase summary">
+        <div class="mo-card mo-stat"><span>Waiting for your approval</span><strong id="st-draft">0</strong><em>Draft orders</em></div>
+        <div class="mo-card mo-stat"><span>Awaiting delivery</span><strong id="st-wait">৳0</strong><em id="st-wait-n"></em></div>
+        <div class="mo-card mo-stat mo-owed"><span>Payable to suppliers</span><strong id="st-pay">৳0</strong><em>On goods already received</em></div>
+    </section>
+
+    <form class="mo-card mo-filters" role="search" aria-label="Filter purchase orders" onsubmit="return false">
+        <label class="mo-field">
+            Search
+            <input type="search" id="f-q" placeholder="PO number or supplier">
+        </label>
+        <label class="mo-field">
+            Status
+            <select id="f-status"><option value="">All statuses</option><option>Draft</option><option>Approved</option><option>Partly received</option><option>Received</option><option>Cancelled</option></select>
+        </label>
+        <label class="mo-field">
+            Supplier
+            <select id="f-supplier"><option value="">All suppliers</option></select>
+        </label>
+    </form>
+
+    <section class="mo-card">
+        <div class="mo-wrap">
+            <table class="mo-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Supplier</th>
+                        <th>Ordered</th>
+                        <th>Delivery</th>
+                        <th class="mo-num">Items</th>
+                        <th class="mo-num">Total</th>
+                        <th class="mo-num">Balance due</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="mo-body"></tbody>
+            </table>
+        </div>
+        <p class="mo-foot" id="mo-none" hidden>No orders match these filters.</p>
+        <p class="mo-foot">Draft orders can be edited and approved by you. Once approved, an order can only be received or cancelled. Receiving goods adds them to stock and updates the average cost.</p>
+    </section>
+
+    <!-- NEW / EDIT ORDER -->
+    <dialog id="mo-dialog" class="mo-dialog" aria-labelledby="mo-title">
+        <form method="dialog">
+            <h3 id="mo-title">New purchase order</h3>
+            <p class="mo-sub">Orders start as a draft. Approve it when you are ready to send it to the supplier.</p>
+            <div class="mo-fgrid">
+                <label class="mo-field">Supplier<select id="o-supplier"></select></label>
+                <label class="mo-field">Expected delivery date<input type="date" id="o-date" min="2026-11-05"></label>
+            </div>
+            <div class="mo-items-head" aria-hidden="true"><span>Product</span><span>Quantity</span><span>Unit cost (৳)</span><span class="mo-line">Line total</span><span></span></div>
+            <div id="o-items"></div>
+            <button class="mo-btn mo-btn-ghost" type="button" id="o-add">Add product</button>
+            <div class="mo-total"><span>Order total</span><strong id="o-sum">৳0</strong></div>
+            <div class="mo-dfoot">
+                <button class="mo-btn mo-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <div>
+                    <button class="mo-btn mo-btn-ghost" type="button" id="o-draft" disabled>Save as draft</button>
+                    <button class="mo-btn" type="button" id="o-approve" disabled>Save and approve</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- RECORD PAYMENT -->
+    <dialog id="mo-pay" class="mo-dialog mo-narrow" aria-labelledby="mo-pay-title">
+        <form method="dialog">
+            <h3 id="mo-pay-title">Record payment</h3>
+            <p class="mo-sub" id="mo-pay-for"></p>
+            <div class="mo-fgrid">
+                <label class="mo-field">Amount (৳)<input type="number" id="p-amount" min="1" step="1"></label>
+                <label class="mo-field">Paid on<input type="date" id="p-date" value="2026-11-05" max="2026-11-05"></label>
+                <label class="mo-field">Method<select id="p-method"><option>Cash</option><option>Bank transfer</option><option>Mobile banking</option></select></label>
+                <label class="mo-field">Reference<input type="text" id="p-ref" placeholder="Optional"></label>
+            </div>
+            <div class="mo-preview"><div><span>Balance now</span><span id="p-now"></span></div><div><span>Balance after this payment</span><span id="p-after"></span></div></div>
+            <p class="mo-err" id="p-err" hidden></p>
+            <div class="mo-dfoot">
+                <button class="mo-btn mo-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="mo-btn" type="button" id="p-save" disabled>Record payment</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- CANCEL -->
+    <dialog id="mo-cancel" class="mo-dialog mo-narrow" aria-labelledby="mo-cancel-title">
+        <form method="dialog">
+            <h3 id="mo-cancel-title">Cancel this order?</h3>
+            <p class="mo-sub" id="mo-cancel-for"></p>
+            <div class="mo-dfoot">
+                <button class="mo-btn mo-btn-ghost" value="cancel" formnovalidate>Keep order</button>
+                <button class="mo-btn mo-btn-bad" type="button" id="c-yes">Cancel order</button>
+            </div>
+        </form>
+    </dialog>
+
+    <template id="o-row">
+        <div class="mo-item">
+            <select aria-label="Product"></select>
+            <input type="number" min="1" value="1" aria-label="Quantity">
+            <input type="number" min="0" step="0.01" value="0" aria-label="Unit cost">
+            <span class="mo-line">৳0</span>
+            <button class="mo-remove" type="button" aria-label="Remove product">×</button>
+        </div>
+    </template>
+
+</div>
+
+<script>
+    (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var TODAY = '2026-11-05', nextId = 149, editing = null, paying = null, cancelling = null;
+
+        var COST = { 'Basmati rice 5kg': 640, 'Soybean oil 5L': 840, 'Sugar 1kg': 118, 'Red lentils 1kg': 125, 'Powdered milk 500g': 410, 'Cream biscuits 200g': 32, 'Notebook A4 200 pages': 70 };
+        var SUPPLIERS = ['Karim Wholesale', 'Meghna Traders', 'Dhaka Dairy Supply', 'Paper Point', 'Rupali Snacks Distribution'];
+
+        var orders = [
+            { id: 'PO-2026-0148', supplier: 'Dhaka Dairy Supply', ordered: '4 Nov', delivery: 'Expected 6 Nov', items: 1, total: 19680, balance: 0, status: 'Approved', late: 0 },
+            { id: 'PO-2026-0147', supplier: 'Meghna Traders', ordered: '3 Nov', delivery: 'Expected 8 Nov', items: 2, total: 67980, balance: 0, status: 'Draft', late: 0, date: '2026-11-08', lines: [['Red lentils 1kg', 60, 125], ['Soybean oil 5L', 72, 840]] },
+            { id: 'PO-2026-0146', supplier: 'Karim Wholesale', ordered: '3 Nov', delivery: 'Expected 7 Nov', items: 2, total: 73780, balance: 0, status: 'Approved', late: 0 },
+            { id: 'PO-2026-0145', supplier: 'Dhaka Dairy Supply', ordered: '2 Nov', delivery: 'Received 4 Nov', items: 3, total: 42300, balance: 42300, status: 'Received', late: 0 },
+            { id: 'PO-2026-0143', supplier: 'Rupali Snacks Distribution', ordered: '28 Oct', delivery: 'Expected 31 Oct', items: 4, total: 27800, balance: 27800, status: 'Partly received', late: 5 },
+            { id: 'PO-2026-0140', supplier: 'Karim Wholesale', ordered: '30 Oct', delivery: 'Received 2 Nov', items: 6, total: 184000, balance: 184000, status: 'Received', late: 0 },
+            { id: 'PO-2026-0139', supplier: 'Meghna Traders', ordered: '28 Oct', delivery: 'Received 30 Oct', items: 5, total: 96500, balance: 96500, status: 'Received', late: 0 },
+            { id: 'PO-2026-0120', supplier: 'Paper Point', ordered: '12 Oct', delivery: 'Received 18 Oct', items: 4, total: 38000, balance: 0, status: 'Received', late: 0 },
+            { id: 'PO-2026-0118', supplier: 'Paper Point', ordered: '2 Oct', delivery: 'Cancelled', items: 2, total: 12000, balance: 0, status: 'Cancelled', late: 0 }
+        ];
+
+        var PILL = { 'Draft': 'mo-draft', 'Approved': 'mo-approved', 'Partly received': 'mo-partial', 'Received': 'mo-received', 'Cancelled': 'mo-cancelled' };
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN'); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function say(t) { $('mo-toast').textContent = t; $('mo-toast').hidden = false; }
+        function find(id) { return orders.filter(function (o) { return o.id === id; })[0]; }
+
+        /* ---------- table ---------- */
+        function actions(o) {
+            var v = '<a class="mo-link" href="/Purchase/Details/' + o.id + '">View</a>';
+            var b = function (a, t, cls) { return '<button class="mo-link ' + (cls || '') + '" type="button" data-a="' + a + '" data-id="' + o.id + '">' + t + '</button>'; };
+            if (o.status === 'Draft') return b('edit', 'Edit') + b('approve', 'Approve') + b('cancel', 'Cancel', 'mo-danger');
+            if (o.status === 'Approved') return v + '<a class="mo-link" href="/Purchase/Receive">Receive goods</a>' + b('cancel', 'Cancel', 'mo-danger');
+            if (o.status === 'Partly received') return v + '<a class="mo-link" href="/Purchase/Receive">Receive remaining</a>' + (o.balance ? b('pay', 'Record payment') : '');
+            if (o.status === 'Received') return v + (o.balance ? b('pay', 'Record payment') : '') + '<a class="mo-link" href="/Purchase/Pdf/' + o.id + '">PDF</a>';
+            return v;
+        }
+
+        function render() {
+            var q = $('f-q').value.toLowerCase().trim(), st = $('f-status').value, sp = $('f-supplier').value, h = '', n = 0;
+            orders.forEach(function (o) {
+                if ((q && (o.id + ' ' + o.supplier).toLowerCase().indexOf(q) < 0) || (st && o.status !== st) || (sp && o.supplier !== sp)) return;
+                n++;
+                h += '<tr' + (o.status === 'Cancelled' ? ' class="mo-cancelled"' : '') + '><td class="mo-po">' + o.id + '</td><td>' + esc(o.supplier) + '</td><td>' + o.ordered + '</td>' +
+                    '<td class="mo-date">' + o.delivery + (o.late ? '<span class="mo-late-note">' + o.late + ' days late</span>' : '') + '</td>' +
+                    '<td class="mo-num">' + o.items + '</td><td class="mo-num">' + money(o.total) + '</td>' +
+                    '<td class="mo-num">' + (o.balance ? '<span class="mo-owed-amt">' + money(o.balance) + '</span>' : '<span class="mo-clear">৳0</span>') + '</td>' +
+                    '<td><span class="mo-pill ' + PILL[o.status] + '">' + o.status + '</span></td>' +
+                    '<td><div class="mo-actions">' + actions(o) + '</div></td></tr>';
+            });
+            $('mo-body').innerHTML = h;
+            $('mo-none').hidden = n > 0;
+
+            var drafts = orders.filter(function (o) { return o.status === 'Draft'; }),
+                appr = orders.filter(function (o) { return o.status === 'Approved'; }),
+                open = orders.filter(function (o) { return ['Draft', 'Approved', 'Partly received'].indexOf(o.status) > -1; });
+            $('st-draft').textContent = drafts.length;
+            $('st-wait').textContent = money(appr.reduce(function (s, o) { return s + o.total; }, 0));
+            $('st-wait-n').textContent = appr.length + ' approved ' + (appr.length === 1 ? 'order' : 'orders');
+            $('st-pay').textContent = money(orders.reduce(function (s, o) { return s + o.balance; }, 0));
+            var late = orders.filter(function (o) { return o.late; }).length;
+            $('mo-sub').textContent = open.length + ' open ' + (open.length === 1 ? 'order' : 'orders') + (late ? ' · ' + late + ' delivery is late' : '');
+        }
+
+        SUPPLIERS.forEach(function (s) { [$('f-supplier'), $('o-supplier')].forEach(function (sel) { var o = document.createElement('option'); o.textContent = s; sel.appendChild(o); }); });
+        ['f-q', 'f-status', 'f-supplier'].forEach(function (id) { $(id).addEventListener('input', render); });
+
+        $('mo-body').addEventListener('click', function (e) {
+            var a = e.target.dataset.a; if (!a) return;
+            var o = find(e.target.dataset.id);
+            if (a === 'approve') { o.status = 'Approved'; say(o.id + ' was approved. It can now only be received or cancelled.'); render(); }
+            if (a === 'edit') openOrder(o);
+            if (a === 'cancel') { cancelling = o; $('mo-cancel-for').textContent = o.id + ' · ' + o.supplier + ' · ' + money(o.total) + '. This can\'t be undone.'; $('mo-cancel').showModal(); }
+            if (a === 'pay') openPay(o);
+        });
+        $('c-yes').addEventListener('click', function () {
+            cancelling.status = 'Cancelled'; cancelling.delivery = 'Cancelled'; cancelling.late = 0;
+            $('mo-cancel').close(); say(cancelling.id + ' was cancelled.'); render();
+        });
+
+        /* ---------- new / edit order ---------- */
+        var rowTpl = $('o-row'), list = $('o-items');
+        function recalc() {
+            var total = 0, ok = false;
+            list.querySelectorAll('.mo-item').forEach(function (r) {
+                var ins = r.querySelectorAll('input'), q = parseFloat(ins[0].value) || 0, c = parseFloat(ins[1].value) || 0, l = q * c;
+                r.querySelector('.mo-line').textContent = money(l); total += l;
+                if (q >= 1 && c > 0) ok = true;
+            });
+            $('o-sum').textContent = money(total);
+            var good = ok && !!$('o-date').value;
+            $('o-draft').disabled = !good; $('o-approve').disabled = !good;
+        }
+        function addRow(name, qty, cost) {
+            var r = rowTpl.content.firstElementChild.cloneNode(true), sel = r.querySelector('select'), ins = r.querySelectorAll('input');
+            Object.keys(COST).forEach(function (p) { var o = document.createElement('option'); o.textContent = p; sel.appendChild(o); });
+            sel.value = name || 'Basmati rice 5kg'; ins[0].value = qty || 1; ins[1].value = cost !== undefined ? cost : COST[sel.value];
+            sel.addEventListener('change', function () { ins[1].value = COST[sel.value]; recalc(); });
+            r.addEventListener('input', recalc);
+            r.querySelector('.mo-remove').addEventListener('click', function () { r.remove(); recalc(); });
+            list.appendChild(r);
+        }
+        function openOrder(o) {
+            editing = o || null;
+            $('mo-title').textContent = o ? 'Edit ' + o.id : 'New purchase order';
+            $('o-supplier').value = o ? o.supplier : SUPPLIERS[0];
+            $('o-date').value = o ? o.date : '';
+            list.innerHTML = '';
+            if (o) o.lines.forEach(function (l) { addRow(l[0], l[1], l[2]); }); else addRow();
+            recalc(); $('mo-dialog').showModal();
+        }
+        $('mo-new').addEventListener('click', function () { openOrder(null); });
+        $('o-add').addEventListener('click', function () { addRow(); recalc(); });
+        $('o-date').addEventListener('input', recalc);
+
+        function saveOrder(approve) {
+            var lines = [], total = 0;
+            list.querySelectorAll('.mo-item').forEach(function (r) {
+                var ins = r.querySelectorAll('input'), q = parseFloat(ins[0].value) || 0, c = parseFloat(ins[1].value) || 0;
+                if (q >= 1 && c > 0) { lines.push([r.querySelector('select').value, q, c]); total += q * c; }
+            });
+            var d = $('o-date').value, dt = new Date(d), label = 'Expected ' + dt.getDate() + ' ' + dt.toLocaleDateString('en-GB', { month: 'short' });
+            var o = editing || { id: 'PO-2026-0' + (nextId++), ordered: '5 Nov', balance: 0, late: 0 };
+            o.supplier = $('o-supplier').value; o.items = lines.length; o.total = total; o.lines = lines; o.date = d; o.delivery = label; o.status = approve ? 'Approved' : 'Draft';
+            if (!editing) orders.unshift(o);
+            $('mo-dialog').close();
+            say(o.id + (approve ? ' was saved and approved.' : ' was saved as a draft.'));
+            render();
+        }
+        $('o-draft').addEventListener('click', function () { saveOrder(false); });
+        $('o-approve').addEventListener('click', function () { saveOrder(true); });
+
+        /* ---------- supplier payment ---------- */
+        function checkPay() {
+            var a = parseFloat($('p-amount').value) || 0, bal = paying.balance, err = $('p-err');
+            $('p-after').textContent = money(Math.max(bal - a, 0));
+            var msg = a < 1 ? '' : a > bal ? 'The payment can\'t be more than the balance of ' + money(bal) + '.' : '';
+            err.hidden = !msg; err.textContent = msg;
+            $('p-save').disabled = a < 1 || a > bal || !$('p-date').value;
+        }
+        function openPay(o) {
+            paying = o;
+            $('mo-pay-for').textContent = o.id + ' · ' + o.supplier;
+            $('p-now').textContent = money(o.balance); $('p-amount').value = o.balance; $('p-amount').max = o.balance; $('p-ref').value = '';
+            checkPay(); $('mo-pay').showModal();
+        }
+        ['p-amount', 'p-date'].forEach(function (id) { $(id).addEventListener('input', checkPay); });
+        $('p-save').addEventListener('click', function () {
+            var a = parseFloat($('p-amount').value);
+            paying.balance -= a;
+            $('mo-pay').close();
+            say('Payment of ' + money(a) + ' was recorded for ' + paying.id + '. The balance is now ' + money(paying.balance) + '.');
+            render();
+        });
+
+        render();
+    })();
+</script>

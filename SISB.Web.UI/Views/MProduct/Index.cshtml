@@ -1,0 +1,339 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Products";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mproduct.css" asp-append-version="true" />
+
+<div class="mp">
+
+    <header class="mp-top">
+        <div>
+            <h2>Products</h2>
+            <p>120 active products · 14 need attention</p>
+        </div>
+        <div class="mp-tools">
+            <button class="mp-btn mp-btn-ghost" type="button" id="mp-open-import">Import CSV or Excel</button>
+            <button class="mp-btn" type="button" id="mp-open-add">Add product</button>
+        </div>
+    </header>
+
+    <form class="mp-card mp-filters" role="search" aria-label="Filter products" onsubmit="return false">
+        <label class="mp-field">
+            Search
+            <input type="search" id="mp-q" placeholder="Name, SKU or barcode">
+        </label>
+        <label class="mp-field">
+            Category
+            <select id="mp-cat"><option value="">All categories</option><option>Rice and grains</option><option>Cooking oil</option><option>Pulses</option><option>Dairy</option><option>Sugar and salt</option><option>Snacks</option><option>Stationery</option></select>
+        </label>
+        <label class="mp-field">
+            Stock status
+            <select id="mp-status"><option value="">All</option><option value="healthy">Healthy</option><option value="low">Low stock</option><option value="out">Out of stock</option></select>
+        </label>
+        <label class="mp-check"><input type="checkbox" id="mp-inactive"> Show inactive</label>
+    </form>
+
+    <section class="mp-card">
+        <div class="mp-wrap">
+            <table class="mp-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Supplier</th>
+                        <th class="mp-num">Buy price</th>
+                        <th class="mp-num">Sell price</th>
+                        <th class="mp-num">In stock</th>
+                        <th class="mp-num">Reorder at</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="mp-body">
+                    <tr data-name="Basmati rice 5kg" data-sku="RC-0012" data-barcode="8901234500123" data-cat="Rice and grains" data-unit="kg" data-buy="640" data-sell="720" data-supplier="Karim Wholesale" data-expiry="no" data-reorder="50" data-src="auto" data-status="low" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">BR</span><div><b>Basmati rice 5kg</b><small>SKU RC-0012 · 8901234500123</small></div></div></td>
+                        <td>Rice and grains</td>
+                        <td>Karim Wholesale</td>
+                        <td class="mp-num">৳640</td>
+                        <td class="mp-num">৳720</td>
+                        <td class="mp-num"><span class="mp-stock mp-warn">25</span> bags</td>
+                        <td class="mp-num">50<span class="mp-src">Automatic</span></td>
+                        <td><span class="mp-pill mp-warn">Low stock</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Soybean oil 5L" data-sku="OL-0004" data-barcode="8901234500246" data-cat="Cooking oil" data-unit="pcs" data-buy="840" data-sell="915" data-supplier="Meghna Traders" data-expiry="no" data-reorder="40" data-src="auto" data-status="low" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">SO</span><div><b>Soybean oil 5L</b><small>SKU OL-0004 · 8901234500246</small></div></div></td>
+                        <td>Cooking oil</td>
+                        <td>Meghna Traders</td>
+                        <td class="mp-num">৳840</td>
+                        <td class="mp-num">৳915</td>
+                        <td class="mp-num"><span class="mp-stock mp-warn">18</span> btl</td>
+                        <td class="mp-num">40<span class="mp-src">Automatic</span></td>
+                        <td><span class="mp-pill mp-warn">Low stock</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Sugar 1kg" data-sku="SG-0001" data-barcode="8901234500369" data-cat="Sugar and salt" data-unit="kg" data-buy="118" data-sell="130" data-supplier="Karim Wholesale" data-expiry="no" data-reorder="90" data-src="auto" data-status="healthy" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">SU</span><div><b>Sugar 1kg</b><small>SKU SG-0001 · 8901234500369</small></div></div></td>
+                        <td>Sugar and salt</td>
+                        <td>Karim Wholesale</td>
+                        <td class="mp-num">৳118</td>
+                        <td class="mp-num">৳130</td>
+                        <td class="mp-num"><span class="mp-stock mp-ok">240</span> kg</td>
+                        <td class="mp-num">90<span class="mp-src">Automatic</span></td>
+                        <td><span class="mp-pill mp-ok">Healthy</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Red lentils 1kg" data-sku="PL-0007" data-barcode="8901234500482" data-cat="Pulses" data-unit="kg" data-buy="125" data-sell="145" data-supplier="Meghna Traders" data-expiry="no" data-reorder="40" data-src="owner" data-status="low" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">RL</span><div><b>Red lentils 1kg</b><small>SKU PL-0007 · 8901234500482</small></div></div></td>
+                        <td>Pulses</td>
+                        <td>Meghna Traders</td>
+                        <td class="mp-num">৳125</td>
+                        <td class="mp-num">৳145</td>
+                        <td class="mp-num"><span class="mp-stock mp-warn">12</span> kg</td>
+                        <td class="mp-num">40<span class="mp-src">Set by Owner</span></td>
+                        <td><span class="mp-pill mp-warn">Low stock</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Powdered milk 500g" data-sku="DR-0003" data-barcode="8901234500595" data-cat="Dairy" data-unit="pcs" data-buy="410" data-sell="460" data-supplier="Dhaka Dairy Supply" data-expiry="yes" data-reorder="30" data-src="owner" data-status="out" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">PM</span><div><b>Powdered milk 500g</b><small>SKU DR-0003 · 8901234500595</small></div></div></td>
+                        <td>Dairy <span class="mp-tag">Expiry tracked</span></td>
+                        <td>Dhaka Dairy Supply</td>
+                        <td class="mp-num">৳410</td>
+                        <td class="mp-num">৳460</td>
+                        <td class="mp-num"><span class="mp-stock mp-bad">0</span> pkt</td>
+                        <td class="mp-num">30<span class="mp-src">Set by Owner</span></td>
+                        <td><span class="mp-pill mp-bad">Out of stock</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-batches" type="button">Batches</button><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Cream biscuits 200g" data-sku="SN-0021" data-barcode="8901234500601" data-cat="Snacks" data-unit="pcs" data-buy="32" data-sell="40" data-supplier="Dhaka Dairy Supply" data-expiry="yes" data-reorder="60" data-src="auto" data-status="healthy" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">CB</span><div><b>Cream biscuits 200g</b><small>SKU SN-0021 · 8901234500601</small></div></div></td>
+                        <td>Snacks <span class="mp-tag">Expiry tracked</span></td>
+                        <td>Dhaka Dairy Supply</td>
+                        <td class="mp-num">৳32</td>
+                        <td class="mp-num">৳40</td>
+                        <td class="mp-num"><span class="mp-stock mp-ok">180</span> pkt</td>
+                        <td class="mp-num">60<span class="mp-src">Automatic</span></td>
+                        <td><span class="mp-pill mp-ok">Healthy</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-batches" type="button">Batches</button><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr data-name="Notebook A4 200 pages" data-sku="ST-0010" data-barcode="8901234500718" data-cat="Stationery" data-unit="pcs" data-buy="70" data-sell="95" data-supplier="Paper Point" data-expiry="no" data-reorder="15" data-src="auto" data-status="healthy" data-active="yes">
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">NB</span><div><b>Notebook A4 200 pages</b><small>SKU ST-0010 · 8901234500718</small></div></div></td>
+                        <td>Stationery</td>
+                        <td>Paper Point</td>
+                        <td class="mp-num">৳70</td>
+                        <td class="mp-num">৳95</td>
+                        <td class="mp-num"><span class="mp-stock mp-ok">48</span> pcs</td>
+                        <td class="mp-num">15<span class="mp-src">Automatic</span></td>
+                        <td><span class="mp-pill mp-ok">Healthy</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link mp-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="mp-off" data-name="Gel pen blue (box of 12)" data-sku="ST-0004" data-barcode="8901234500824" data-cat="Stationery" data-unit="box" data-buy="110" data-sell="150" data-supplier="Paper Point" data-expiry="no" data-reorder="10" data-src="owner" data-status="healthy" data-active="no" hidden>
+                        <td><div class="mp-prod"><span class="mp-thumb" aria-hidden="true">GP</span><div><b>Gel pen blue (box of 12)</b><small>SKU ST-0004 · 8901234500824</small></div></div></td>
+                        <td>Stationery</td>
+                        <td>Paper Point</td>
+                        <td class="mp-num">৳110</td>
+                        <td class="mp-num">৳150</td>
+                        <td class="mp-num">3 box</td>
+                        <td class="mp-num">10<span class="mp-src">Set by Owner</span></td>
+                        <td><span class="mp-pill mp-grey">Inactive</span></td>
+                        <td><div class="mp-actions"><button class="mp-link mp-edit" type="button">Edit</button><button class="mp-link" type="button">Reactivate</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="mp-empty" id="mp-none" hidden>No products match these filters.</p>
+        <p class="mp-foot" id="mp-count"></p>
+        <p class="mp-foot">Products with stock history can be deactivated but not deleted. The reorder level is worked out automatically from sales. Only the Owner can set it by hand.</p>
+    </section>
+
+    <!-- ADD / EDIT (FR-PRD-01, FR-PRD-02, BR-13) -->
+    <dialog id="mp-dialog" class="mp-dialog" aria-labelledby="mp-title">
+        <form method="dialog" id="mp-form">
+            <h3 id="mp-title">Add product</h3>
+            <p class="mp-sub">Leave the SKU empty and SmartStock will create one.</p>
+            <div class="mp-fgrid">
+                <label class="mp-field mp-wide">Product name<input type="text" id="f-name" required></label>
+                <label class="mp-field">SKU<input type="text" id="f-sku" placeholder="Created automatically"><span class="mp-err" id="f-sku-err" hidden></span></label>
+                <label class="mp-field">Barcode<input type="text" id="f-barcode" inputmode="numeric"></label>
+                <label class="mp-field">
+                    Category
+                    <select id="f-cat">
+                        <option>Rice and grains</option>
+                        <option>Rice and grains › Basmati rice</option>
+                        <option>Rice and grains › Miniket rice</option>
+                        <option>Rice and grains › Flour and atta</option>
+                        <option>Cooking oil</option>
+                        <option>Pulses</option>
+                        <option>Dairy</option>
+                        <option>Sugar and salt</option>
+                        <option>Snacks</option>
+                        <option>Snacks › Biscuits</option>
+                        <option>Snacks › Chips</option>
+                        <option>Snacks › Chocolate</option>
+                        <option>Stationery</option>
+                        <option>Stationery › Notebooks</option>
+                        <option>Stationery › Pens</option>
+                    </select>
+                </label>
+                <label class="mp-field">
+                    Unit
+                    <select id="f-unit"><option>pcs</option><option>kg</option><option>box</option></select>
+                </label>
+                <label class="mp-field">Purchase price (৳)<input type="number" id="f-buy" min="0" step="0.01" required></label>
+                <label class="mp-field">Selling price (৳)<input type="number" id="f-sell" min="0" step="0.01" required></label>
+                <div class="mp-wide mp-warnbox" id="f-below" role="status" hidden>The selling price is below the purchase price. Every sale at this price will need a Manager's approval.</div>
+                <label class="mp-field">
+                    Preferred supplier
+                    <select id="f-supplier"><option>Karim Wholesale</option><option>Meghna Traders</option><option>Dhaka Dairy Supply</option><option>Paper Point</option><option>Rupali Snacks Distribution</option></select>
+                </label>
+                <div class="mp-field">
+                    Reorder level
+                    <div class="mp-readonly" id="f-reorder">Calculated automatically once there is enough sales history.<small>Only the Owner can set it by hand.</small></div>
+                </div>
+                <label class="mp-field mp-wide">Product image<input type="file" accept="image/*"></label>
+                <label class="mp-check mp-wide"><input type="checkbox" id="f-expiry"> Track expiry dates (stock is held in batches)</label>
+            </div>
+            <div class="mp-dfoot">
+                <button class="mp-btn mp-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="mp-btn" value="save">Save product</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- BATCHES (FR-PRD-07, BR-05, BR-15) -->
+    <dialog id="mp-batch-dialog" class="mp-dialog mp-narrow" aria-labelledby="mp-batch-title">
+        <div class="mp-inner">
+            <h3 id="mp-batch-title">Batches</h3>
+            <p class="mp-sub">Stock is sold from the batch that expires first.</p>
+            <div id="mp-batch-body"></div>
+            <p class="mp-hint" style="margin-top:10px">Expired batches can't be sold. Write them off from Adjustments &amp; Counts.</p>
+            <div class="mp-dfoot">
+                <a class="mp-btn mp-btn-ghost" href="/Purchase/Receive">Receive goods</a>
+                <button class="mp-btn" type="button" id="mp-batch-close">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- IMPORT (FR-PRD-06) -->
+    <dialog id="mp-import-dialog" class="mp-dialog" aria-labelledby="mp-import-title">
+        <form method="dialog">
+            <h3 id="mp-import-title">Import products</h3>
+            <p class="mp-sub">Upload a CSV or Excel file. SmartStock checks every row before anything is saved.</p>
+            <div class="mp-fgrid">
+                <label class="mp-field mp-wide">
+                    File
+                    <input type="file" id="mp-file" accept=".csv,.xlsx,.xls">
+                </label>
+                <span class="mp-hint mp-wide">Not sure about the layout? <a href="#" style="color:#159568">Download the template</a>.</span>
+            </div>
+            <div class="mp-result" id="mp-result" hidden></div>
+            <div class="mp-dfoot">
+                <button class="mp-btn mp-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="mp-btn mp-btn-ghost" type="button" id="mp-check" disabled>Check file</button>
+                <button class="mp-btn" value="import" id="mp-do-import" hidden>Import 118 products</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var rows = Array.prototype.slice.call($('mp-body').querySelectorAll('tr'));
+
+        /* ---------- search and filters (FR-PRD-05) ---------- */
+        function filter() {
+            var q = $('mp-q').value.toLowerCase().trim(), cat = $('mp-cat').value, st = $('mp-status').value, showOff = $('mp-inactive').checked, shown = 0;
+            rows.forEach(function (r) {
+                var d = r.dataset;
+                var ok = (!q || (d.name + ' ' + d.sku + ' ' + d.barcode).toLowerCase().indexOf(q) > -1) &&
+                    (!cat || d.cat === cat) && (!st || d.status === st) && (showOff || d.active === 'yes');
+                r.hidden = !ok;
+                if (ok) shown++;
+            });
+            $('mp-none').hidden = shown > 0;
+            $('mp-count').textContent = 'Showing ' + shown + ' of 120 products.';
+        }
+        ['mp-q', 'mp-cat', 'mp-status', 'mp-inactive'].forEach(function (id) { $(id).addEventListener('input', filter); });
+        filter();
+
+        /* ---------- add / edit ---------- */
+        var dlg = $('mp-dialog'), ownSku = '';
+        var skus = rows.map(function (r) { return { sku: r.dataset.sku.toLowerCase(), name: r.dataset.name }; });
+
+        function below() { $('f-below').hidden = !($('f-buy').value && $('f-sell').value && parseFloat($('f-sell').value) < parseFloat($('f-buy').value)); }
+        function skuCheck() {
+            var v = $('f-sku').value.trim().toLowerCase(), err = $('f-sku-err'), hit = null;
+            skus.forEach(function (s) { if (v && s.sku === v && v !== ownSku.toLowerCase()) hit = s; });
+            err.hidden = !hit;
+            err.textContent = hit ? 'This SKU is already used by ' + hit.name + '.' : '';
+            $('f-sku').setAttribute('aria-invalid', hit ? 'true' : 'false');
+            return !hit;
+        }
+        $('f-buy').addEventListener('input', below); $('f-sell').addEventListener('input', below);
+        $('f-sku').addEventListener('input', skuCheck);
+        $('mp-form').addEventListener('submit', function (e) { if (e.submitter && e.submitter.value === 'save' && !skuCheck()) e.preventDefault(); });
+
+        function openForm(row) {
+            var d = row ? row.dataset : null;
+            $('mp-title').textContent = d ? 'Edit product' : 'Add product';
+            $('f-name').value = d ? d.name : ''; $('f-sku').value = d ? d.sku : ''; $('f-barcode').value = d ? d.barcode : '';
+            $('f-cat').value = d ? d.cat : 'Rice and grains'; $('f-unit').value = d ? d.unit : 'pcs';
+            $('f-buy').value = d ? d.buy : ''; $('f-sell').value = d ? d.sell : '';
+            $('f-supplier').value = d ? d.supplier : 'Karim Wholesale';
+            $('f-expiry').checked = d ? d.expiry === 'yes' : false;
+            ownSku = d ? d.sku : '';
+            $('f-reorder').innerHTML = d
+                ? d.reorder + ' <small>' + (d.src === 'auto' ? 'Calculated automatically from sales. Only the Owner can change it.' : 'Set by the Owner. Only the Owner can change it.') + '</small>'
+                : 'Calculated automatically once there is enough sales history.<small>Only the Owner can set it by hand.</small>';
+            skuCheck(); below();
+            dlg.showModal();
+        }
+        $('mp-open-add').addEventListener('click', function () { openForm(null); });
+        $('mp-body').addEventListener('click', function (e) {
+            var row = e.target.closest('tr');
+            if (e.target.classList.contains('mp-edit')) openForm(row);
+            if (e.target.classList.contains('mp-batches')) openBatches(row.dataset.name);
+        });
+
+        /* ---------- batches (FR-PRD-07) ---------- */
+        var batches = {
+            'Cream biscuits 200g': [['B-2209', '17 Nov 2026', '36 pkt', '12 days', 'warn'], ['B-2214', '14 Jan 2027', '144 pkt', '70 days', 'ok']],
+            'Powdered milk 500g': []
+        };
+        function openBatches(name) {
+            $('mp-batch-title').textContent = 'Batches: ' + name;
+            var list = batches[name] || [], h;
+            if (!list.length) {
+                h = '<p class="mp-empty">There is no stock, so there are no batches right now.</p>';
+            } else {
+                h = '<table class="mp-table"><thead><tr><th>Batch</th><th>Expires</th><th class="mp-num">Quantity</th><th>Time left</th></tr></thead><tbody>' +
+                    list.map(function (b) { return '<tr><td>' + b[0] + '</td><td>' + b[1] + '</td><td class="mp-num">' + b[2] + '</td><td><span class="mp-pill mp-' + b[4] + '">' + b[3] + '</span></td></tr>'; }).join('') + '</tbody></table>';
+            }
+            $('mp-batch-body').innerHTML = h;
+            $('mp-batch-dialog').showModal();
+        }
+        $('mp-batch-close').addEventListener('click', function () { $('mp-batch-dialog').close(); });
+
+        /* ---------- import (FR-PRD-06) ---------- */
+        $('mp-open-import').addEventListener('click', function () {
+            $('mp-file').value = ''; $('mp-result').hidden = true; $('mp-do-import').hidden = true; $('mp-check').disabled = true;
+            $('mp-import-dialog').showModal();
+        });
+        $('mp-file').addEventListener('change', function () {
+            $('mp-check').disabled = !$('mp-file').value; $('mp-result').hidden = true; $('mp-do-import').hidden = true;
+        });
+        $('mp-check').addEventListener('click', function () {
+            var r = $('mp-result');
+            r.innerHTML = '<p class="mp-ok-line">118 of 120 rows are ready to import.</p>' +
+                '<p class="mp-bad-line">2 rows have problems and will be skipped.</p>' +
+                '<table class="mp-etbl"><thead><tr><th>Row</th><th>Column</th><th>Problem</th></tr></thead><tbody>' +
+                '<tr><td>14</td><td>SKU</td><td>RC-0012 is already used by another product</td></tr>' +
+                '<tr><td>57</td><td>Selling price</td><td>Must be a number</td></tr></tbody></table>' +
+                '<p class="mp-hint" style="margin-top:8px"><a href="#" style="color:#159568">Download the error report</a> to fix these rows and import them later.</p>';
+            r.hidden = false; $('mp-do-import').hidden = false;
+        });
+    })();
+</script>

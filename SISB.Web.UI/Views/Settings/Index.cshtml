@@ -1,0 +1,231 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Settings";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Settings.css" asp-append-version="true" />
+
+<div class="se">
+
+    <header class="se-top">
+        <h2>Settings</h2>
+        <p>Rules and options for the whole business.</p>
+    </header>
+
+    <div class="se-note" role="note">Only the Owner can change settings. Every change is recorded in the audit log.</div>
+
+    <div class="se-grid">
+
+        <nav class="se-nav" aria-label="Settings sections">
+            <a href="#se-business" aria-current="true">Business</a>
+            <a href="#se-sales">Sales and stock</a>
+            <a href="#se-alerts">Alerts and email</a>
+            <a href="#se-ai">AI features</a>
+            <a href="#se-data">Backup and data</a>
+        </nav>
+
+        <form id="se-form" novalidate>
+
+            <section class="se-card" id="se-business">
+                <h3>Business</h3>
+                <p class="se-sub">Shown on invoices and reports.</p>
+
+                <div class="se-row">
+                    <label class="se-lab" for="se-name">Business name</label>
+                    <div class="se-in"><input id="se-name" type="text" value="Rahim General Store" required></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-phone">Phone</label>
+                    <div class="se-in"><input id="se-phone" type="tel" value="01700-000000"></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-addr">Address</label>
+                    <div class="se-in"><input id="se-addr" type="text" value="Mirpur 10, Dhaka"></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-cur">Currency<small>Used for every amount in SmartStock.</small></label>
+                    <div class="se-in"><select id="se-cur"><option selected>BDT (৳)</option><option>USD ($)</option><option>INR (₹)</option></select></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-lang">Language<small>Bangla labels are planned for later. The AI assistant already understands Bangla questions.</small></label>
+                    <div class="se-in"><select id="se-lang" disabled><option>English</option></select></div>
+                </div>
+            </section>
+
+            <section class="se-card" id="se-sales">
+                <h3>Sales and stock</h3>
+                <p class="se-sub">Rules that protect your stock and prices.</p>
+
+                <div class="se-row">
+                    <label class="se-lab" for="se-neg">Allow selling more than is in stock<small>Off by default. When off, a sale is blocked if there isn't enough stock.</small></label>
+                    <div class="se-in se-end"><span class="se-switch"><input id="se-neg" type="checkbox" role="switch"><span></span></span></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-disc">Discounts that need Manager approval<small>Any discount above this percentage must be approved.</small></label>
+                    <div class="se-in"><input id="se-disc" type="number" min="0" max="100" step="0.5" value="10"><span class="se-unit">%</span></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-adj">Stock adjustments that need Manager approval<small>Adjustments worth more than this need approval. Sales Staff adjustments always do.</small></label>
+                    <div class="se-in"><span class="se-unit">৳</span><input id="se-adj" type="number" min="0" step="100" value="5000"></div>
+                </div>
+            </section>
+
+            <section class="se-card" id="se-alerts">
+                <h3>Alerts and email</h3>
+                <p class="se-sub">Low stock and out of stock alerts are always on.</p>
+
+                <div class="se-row">
+                    <label class="se-lab" for="se-exp">Expiry alert<small>Warn when a batch expires within this many days.</small></label>
+                    <div class="se-in"><input id="se-exp" type="number" min="1" max="365" value="30"><span class="se-unit">days</span></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-dead">Dead stock alert<small>Warn when a product in stock hasn't sold for this many days.</small></label>
+                    <div class="se-in"><input id="se-dead" type="number" min="1" max="730" value="90"><span class="se-unit">days</span></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-mail-on">Send alerts by email<small>Needs an email server (SMTP). Alerts still show inside SmartStock when this is off.</small></label>
+                    <div class="se-in se-end"><span class="se-switch"><input id="se-mail-on" type="checkbox" role="switch" checked><span></span></span></div>
+                </div>
+
+                <fieldset class="se-sub-group se-nested" id="se-mail">
+                    <legend class="sr-only" style="position:absolute;left:-9999px">Email server settings</legend>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-to">Send alerts to</label>
+                        <div class="se-in"><input id="se-to" type="email" value="rahim.uddin@smartstock.example"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-host">Email server</label>
+                        <div class="se-in"><input id="se-host" type="text" value="smtp.example.com"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-port">Port</label>
+                        <div class="se-in"><input id="se-port" type="number" min="1" max="65535" value="587"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-user">Username</label>
+                        <div class="se-in"><input id="se-user" type="text" value="alerts"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-pass">Password<small>Saved on the server. Type here only to change it.</small></label>
+                        <div class="se-in"><input id="se-pass" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-from">Send from</label>
+                        <div class="se-in"><input id="se-from" type="email" value="alerts@smartstock.example"></div>
+                    </div>
+                    <div class="se-row">
+                        <span class="se-lab">Check the settings<small>Sends a test message to the address above.</small></span>
+                        <div class="se-in se-end"><button class="se-btn se-btn-ghost" type="button" id="se-test">Send test email</button></div>
+                    </div>
+                </fieldset>
+            </section>
+
+            <section class="se-card" id="se-ai">
+                <h3>AI features</h3>
+                <p class="se-sub">Smart Reorder and the AI assistant. The rest of SmartStock works without them.</p>
+
+                <div class="se-row">
+                    <label class="se-lab" for="se-level">Reorder safety level<small>Higher means fewer stock-outs, but more stock kept on the shelf.</small></label>
+                    <div class="se-in"><select id="se-level"><option>90% (fewer extra items)</option><option selected>95% (balanced)</option><option>97.5%</option><option>99% (rarely run out)</option></select></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-run">Update forecasts every night at<small>Smart Reorder suggestions are refreshed at this time.</small></label>
+                    <div class="se-in"><input id="se-run" type="time" value="02:00"></div>
+                </div>
+                <div class="se-row">
+                    <label class="se-lab" for="se-ai-on">Turn on the AI assistant<small>Owner and Manager can ask questions. It can only read data.</small></label>
+                    <div class="se-in se-end"><span class="se-switch"><input id="se-ai-on" type="checkbox" role="switch" checked><span></span></span></div>
+                </div>
+
+                <fieldset class="se-sub-group se-nested" id="se-ai-opts">
+                    <legend class="sr-only" style="position:absolute;left:-9999px">AI assistant limits</legend>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-cap">Questions each person can ask per month<small>Helps control the cost of the AI service.</small></label>
+                        <div class="se-in"><input id="se-cap" type="number" min="1" max="5000" value="500"></div>
+                    </div>
+                    <div class="se-row">
+                        <label class="se-lab" for="se-rate">Questions each person can ask per minute</label>
+                        <div class="se-in"><input id="se-rate" type="number" min="1" max="60" value="5"></div>
+                    </div>
+                    <div class="se-row">
+                        <span class="se-lab">AI service<small>The access key is kept safely on the server and is never shown here.</small></span>
+                        <div class="se-in se-end"><span class="se-pill se-ok">Connected</span></div>
+                    </div>
+                </fieldset>
+            </section>
+
+            <section class="se-card" id="se-data">
+                <h3>Backup and data</h3>
+                <p class="se-sub">Your records are kept safe and never thrown away.</p>
+
+                <div class="se-row">
+                    <span class="se-lab">Daily backup<small id="se-last">Last backup: today at 2:30 am</small></span>
+                    <div class="se-in se-end"><span class="se-pill se-ok">On</span><button class="se-btn se-btn-ghost" type="button" id="se-backup">Back up now</button></div>
+                </div>
+                <p class="se-info">Sales, purchases, stock and other business records are kept forever. AI assistant chats are kept for 12 months.</p>
+            </section>
+
+            <div class="se-save" role="region" aria-label="Save settings">
+                <p id="se-status" role="status">All changes saved</p>
+                <div class="se-btns">
+                    <button class="se-btn se-btn-ghost" type="button" id="se-discard" disabled>Discard</button>
+                    <button class="se-btn" type="submit" id="se-submit" disabled>Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var form = document.getElementById('se-form');
+        var status = document.getElementById('se-status');
+        var save = document.getElementById('se-submit');
+        var discard = document.getElementById('se-discard');
+
+        function dirty(on) {
+            save.disabled = !on; discard.disabled = !on;
+            status.textContent = on ? 'You have unsaved changes' : 'All changes saved';
+        }
+        function sync() {
+            document.getElementById('se-mail').disabled = !document.getElementById('se-mail-on').checked;
+            document.getElementById('se-ai-opts').disabled = !document.getElementById('se-ai-on').checked;
+        }
+
+        form.addEventListener('input', function () { sync(); dirty(true); });
+        form.addEventListener('change', function () { sync(); dirty(true); });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!form.checkValidity()) { form.reportValidity(); status.textContent = 'Please fix the highlighted fields'; return; }
+            dirty(false);
+            status.textContent = 'Settings saved';
+        });
+        discard.addEventListener('click', function () {
+            form.reset(); sync(); dirty(false);
+        });
+
+        document.getElementById('se-test').addEventListener('click', function () {
+            status.textContent = 'Test email sent to ' + document.getElementById('se-to').value;
+        });
+        document.getElementById('se-backup').addEventListener('click', function () {
+            document.getElementById('se-last').textContent = 'Last backup: just now';
+            status.textContent = 'Backup completed';
+        });
+
+        /* highlight the section being read */
+        var links = Array.prototype.slice.call(document.querySelectorAll('.se-nav a'));
+        function mark(id) {
+            links.forEach(function (a) { a.setAttribute('aria-current', a.getAttribute('href') === '#' + id ? 'true' : 'false'); });
+        }
+        links.forEach(function (a) { a.addEventListener('click', function () { mark(a.getAttribute('href').slice(1)); }); });
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) mark(en.target.id); });
+            }, { rootMargin: '-20% 0px -70% 0px' });
+            links.forEach(function (a) { io.observe(document.getElementById(a.getAttribute('href').slice(1))); });
+        }
+
+        sync();
+    })();
+</script>

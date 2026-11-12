@@ -1,0 +1,286 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Smart Reorder";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mforecast.css" asp-append-version="true" />
+
+<div class="mf">
+
+    <header class="mf-top">
+        <div>
+            <h2>Smart reorder</h2>
+            <p>Products that are likely to run out, most urgent first. Nothing is ordered until you create the orders and approve them.</p>
+        </div>
+    </header>
+
+    <div class="mf-toast" id="mf-toast" role="status" hidden></div>
+
+    <!-- forecast period (FR-AI1-02), busy period uplift (FR-AI1-10), retrain on demand (FR-AI1-09) -->
+    <section class="mf-card mf-bar" aria-label="Forecast options">
+        <label class="mf-field">
+            Show forecast for
+            <select id="mf-h"><option value="7">Next 7 days</option><option value="14">Next 14 days</option><option value="30">Next 30 days</option></select>
+        </label>
+        <label class="mf-field">
+            Busy period uplift (%)
+            <input type="number" id="mf-up" min="0" max="200" step="5" value="0">
+            <span class="mf-hint">For Eid or a festival. Raises expected sales.</span>
+        </label>
+        <div class="mf-grow"></div>
+        <div>
+            <p class="mf-trained" id="mf-trained" style="margin-bottom:6px">Forecasts are updated every week. Last update: Sunday, 1 Nov.</p>
+            <button class="mf-btn mf-btn-ghost" type="button" id="mf-retrain">Update forecasts now</button>
+        </div>
+    </section>
+
+    <section class="mf-stats" aria-label="Reorder summary">
+        <div class="mf-card mf-stat mf-urgent"><span>Products to reorder</span><strong id="mf-n">0</strong><em>Sorted by days of stock left</em></div>
+        <div class="mf-card mf-stat"><span>Cost of the ticked products</span><strong id="mf-c">৳0</strong><em>At the supplier's current price</em></div>
+        <div class="mf-card mf-stat"><span>Low confidence</span><strong id="mf-l">0</strong><em>Less than 60 days of sales history</em></div>
+    </section>
+
+    <section class="mf-card">
+        <div class="mf-wrap">
+            <table class="mf-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="mf-all" aria-label="Tick all suggestions"></th>
+                        <th>Product</th>
+                        <th class="mf-num">Days left</th>
+                        <th class="mf-num" id="mf-fh">Next 7 days</th>
+                        <th class="mf-num">Order qty</th>
+                        <th>Supplier</th>
+                        <th class="mf-num">Cost</th>
+                        <th>Confidence</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="mf-body"></tbody>
+            </table>
+        </div>
+        <p class="mf-hint" id="mf-none" hidden style="margin-top:12px">Nothing left to reorder.</p>
+    </section>
+
+    <section class="mf-card mf-summary" aria-live="polite">
+        <div>
+            <h3>Draft purchase orders to create</h3>
+            <p class="mf-sub" style="margin-bottom:6px">One order for each supplier. They are saved as drafts for you to approve.</p>
+            <ul class="mf-groups" id="mf-groups"></ul>
+        </div>
+        <div class="mf-total">
+            <span>Total for ticked products</span>
+            <strong id="mf-sum">৳0</strong>
+            <button class="mf-btn" type="button" id="mf-create" disabled>Create purchase orders</button>
+        </div>
+    </section>
+
+    <section class="mf-card mf-how">
+        <h3>How the amounts are worked out</h3>
+        <ul>
+            <li>Expected sales per day come from a forecast built from each product's sales history.</li>
+            <li>Safety stock covers ups and downs in sales while you wait for the supplier.</li>
+            <li>The reorder point is the sales during the supplier's lead time plus the safety stock.</li>
+            <li>The order quantity covers the lead time and the review period, minus what you have and what is already on order, rounded up to full packs.</li>
+            <li>Products with less than 60 days of history use a 7-day average and are marked low confidence.</li>
+        </ul>
+    </section>
+
+    <!-- REVIEW A PRODUCT (FR-AI1-06, FR-AI1-08, FR-AI1-03) -->
+    <dialog id="mf-dialog" class="mf-dialog" aria-labelledby="mf-d-title">
+        <div class="mf-inner">
+            <h3 id="mf-d-title"></h3>
+            <p class="mf-sub" id="mf-d-sub" style="margin-bottom:8px"></p>
+            <p class="mf-lowbox" id="mf-d-low" hidden></p>
+            <div class="mf-tiles" id="mf-d-tiles"></div>
+            <svg class="mf-chart" id="mf-d-chart" viewBox="0 0 640 210" role="img"></svg>
+            <div class="mf-legend" aria-hidden="true">
+                <span><i style="background:#159568"></i>Actual sales per day</span>
+                <span><i style="background:#25508f"></i>Forecast</span>
+                <span><i style="background:#e3ecfa;height:10px"></i>Likely range</span>
+            </div>
+            <table class="mf-calc" id="mf-d-calc"></table>
+            <div class="mf-dfoot"><button class="mf-btn" type="button" id="mf-d-close">Close</button></div>
+        </div>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var Z = 1.65, REVIEW = 7;
+
+        var P = [
+            { n: 'Powdered milk 500g', sup: 'Dhaka Dairy Supply', stock: 0, onOrder: 0, d: 34 / 7, L: 2, sigma: 1.2, pack: 12, cost: 410, hist: 41, mape: null, mae: null },
+            { n: 'Red lentils 1kg', sup: 'Meghna Traders', stock: 12, onOrder: 0, d: 8, L: 5, sigma: 2, pack: 10, cost: 125, hist: 210, mape: 14, mae: 1.3 },
+            { n: 'Soybean oil 5L', sup: 'Meghna Traders', stock: 18, onOrder: 0, d: 52 / 7, L: 5, sigma: 2, pack: 6, cost: 840, hist: 300, mape: 9, mae: 0.8 },
+            { n: 'Basmati rice 5kg', sup: 'Karim Wholesale', stock: 25, onOrder: 0, d: 10, L: 4, sigma: 3, pack: 5, cost: 640, hist: 320, mape: 8, mae: 1.4 },
+            { n: 'Miniket rice 5kg', sup: 'Karim Wholesale', stock: 38, onOrder: 0, d: 86 / 7, L: 4, sigma: 3.6, pack: 10, cost: 560, hist: 290, mape: 7, mae: 1.1 }
+        ];
+        P.forEach(function (p, i) { p.id = i; p.picked = p.hist >= 60; p.hidden = false; p.edited = false; });
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN'); }
+        function r1(n) { return Math.round(n * 10) / 10; }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function say(t) { $('mf-toast').textContent = t; $('mf-toast').hidden = false; }
+        function H() { return parseInt($('mf-h').value, 10); }
+        function up() { return Math.min(Math.max(parseFloat($('mf-up').value) || 0, 0), 200); }
+
+        /* the formulas from the SRS (FR-AI1-03) */
+        function calc(p) {
+            var d = p.d * (1 + up() / 100);
+            var ss = Math.round(Z * p.sigma * Math.sqrt(p.L));
+            var rop = d * p.L + ss;
+            var raw = d * (p.L + REVIEW) + ss - (p.stock + p.onOrder);
+            var qty = Math.max(0, Math.ceil(raw / p.pack) * p.pack);
+            return { d: d, ss: ss, rop: rop, raw: raw, qty: qty, days: d > 0 ? p.stock / d : 99 };
+        }
+        function conf(p) {
+            if (p.hist < 60) return { t: 'Low', cls: 'mf-warn', low: true };
+            if (p.mape < 10) return { t: 'High', cls: 'mf-ok' };
+            if (p.mape < 20) return { t: 'Medium', cls: 'mf-ok' };
+            return { t: 'Low', cls: 'mf-warn', low: true };
+        }
+        function refresh(resetEdits) {
+            P.forEach(function (p) {
+                p.c = calc(p);
+                if (resetEdits) p.edited = false;
+                if (!p.edited) p.qty = p.c.qty;
+            });
+        }
+
+        /* ---------- table ---------- */
+        function rows() { return P.filter(function (p) { return !p.hidden; }).sort(function (a, b) { return a.c.days - b.c.days; }); }
+
+        function render() {
+            var h = '', list = rows();
+            list.forEach(function (p) {
+                var c = p.c, cf = conf(p), dcls = c.days < 2 ? 'mf-bad' : c.days < 3.5 ? 'mf-warn' : 'mf-ok';
+                h += '<tr class="mf-row" data-id="' + p.id + '">' +
+                    '<td><input type="checkbox" class="mf-pick" aria-label="Tick ' + esc(p.n) + '"' + (p.picked ? ' checked' : '') + '></td>' +
+                    '<td class="mf-prod"><b>' + esc(p.n) + '</b><small>' + p.stock + ' in stock · ' + p.onOrder + ' on order</small></td>' +
+                    '<td class="mf-num"><span class="mf-pill ' + dcls + '">' + r1(c.days) + '</span></td>' +
+                    '<td class="mf-num">' + Math.round(c.d * H()) + '</td>' +
+                    '<td class="mf-num"><input class="mf-qty" type="number" min="0" step="' + p.pack + '" value="' + p.qty + '" aria-label="Order quantity for ' + esc(p.n) + '"></td>' +
+                    '<td>' + esc(p.sup) + '</td>' +
+                    '<td class="mf-num mf-cost">' + money(p.qty * p.cost) + '</td>' +
+                    '<td>' + (cf.low ? '<span class="mf-warnicon" title="Low confidence">⚠</span>' : '') + '<span class="mf-pill ' + cf.cls + '">' + cf.t + '</span></td>' +
+                    '<td><div class="mf-actions"><button class="mf-link mf-review" type="button">Review</button><button class="mf-link mf-danger mf-dismiss" type="button">Dismiss</button></div></td></tr>';
+            });
+            $('mf-body').innerHTML = h;
+            $('mf-none').hidden = list.length > 0;
+            $('mf-fh').textContent = 'Next ' + H() + ' days';
+            summary();
+        }
+
+        function summary() {
+            var list = rows(), groups = {}, total = 0, picked = 0;
+            list.forEach(function (p) {
+                if (p.picked && p.qty > 0) {
+                    var g = groups[p.sup] || (groups[p.sup] = { n: 0, cost: 0 });
+                    g.n++; g.cost += p.qty * p.cost; total += p.qty * p.cost; picked++;
+                }
+            });
+            var ul = $('mf-groups'); ul.innerHTML = '';
+            var names = Object.keys(groups);
+            if (!names.length) { ul.innerHTML = '<li class="mf-none">Tick the products you want to order.</li>'; }
+            names.forEach(function (s) {
+                var li = document.createElement('li'), a = document.createElement('span'), b = document.createElement('span');
+                a.textContent = s + ' · ' + groups[s].n + (groups[s].n === 1 ? ' product' : ' products'); b.textContent = money(groups[s].cost);
+                li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+            });
+            $('mf-sum').textContent = money(total); $('mf-c').textContent = money(total);
+            $('mf-create').disabled = !picked;
+            $('mf-n').textContent = list.length;
+            $('mf-l').textContent = list.filter(function (p) { return conf(p).low; }).length;
+            $('mf-all').checked = list.length > 0 && list.every(function (p) { return p.picked; });
+        }
+
+        function rowOf(el) { return P[parseInt(el.closest('tr').dataset.id, 10)]; }
+
+        $('mf-body').addEventListener('input', function (e) {
+            if (!e.target.classList.contains('mf-qty')) return;
+            var p = rowOf(e.target); p.qty = Math.max(parseInt(e.target.value, 10) || 0, 0); p.edited = true;
+            e.target.closest('tr').querySelector('.mf-cost').textContent = money(p.qty * p.cost);
+            summary();
+        });
+        $('mf-body').addEventListener('change', function (e) {
+            if (e.target.classList.contains('mf-pick')) { rowOf(e.target).picked = e.target.checked; summary(); }
+        });
+        $('mf-body').addEventListener('click', function (e) {
+            if (e.target.classList.contains('mf-dismiss')) { rowOf(e.target).hidden = true; render(); }
+            if (e.target.classList.contains('mf-review')) review(rowOf(e.target));
+        });
+        $('mf-all').addEventListener('change', function () {
+            rows().forEach(function (p) { p.picked = $('mf-all').checked; }); render();
+        });
+        $('mf-h').addEventListener('change', render);
+        $('mf-up').addEventListener('input', function () { refresh(true); render(); });
+
+        $('mf-retrain').addEventListener('click', function () {
+            $('mf-trained').textContent = 'Forecasts updated just now, using your latest sales.';
+            say('The forecasts are being updated. The list refreshes when they are ready.');
+        });
+        $('mf-create').addEventListener('click', function () {
+            var n = $('mf-groups').querySelectorAll('li').length;
+            say(n + (n === 1 ? ' draft purchase order was' : ' draft purchase orders were') + ' created, one for each supplier. Review and approve them on Purchase Orders.');
+        });
+
+        /* ---------- review panel: forecast chart, accuracy and the working ---------- */
+        function chart(p, c) {
+            var W = 640, Ht = 210, L = 36, Rm = 8, T = 10, B = 26, pw = W - L - Rm, ph = Ht - T - B, N = 30, h = H(), total = N + h, seed = p.n.length;
+            var act = [], pred = [], i, band = Z * p.sigma;
+            for (i = 0; i < N; i++) act.push(Math.max(p.d + p.sigma * (Math.sin(i * 1.7 + seed) * 0.8 + Math.sin(i * 0.6 + seed * 2) * 0.4), 0));
+            for (i = N - 14; i < total; i++) pred.push([i, c.d * (1 + 0.06 * Math.sin(i * 0.9))]);
+            var max = 0;
+            act.forEach(function (v) { max = Math.max(max, v); });
+            pred.forEach(function (q) { max = Math.max(max, q[1] + band * 1.3); });
+            max = Math.ceil(max * 1.1);
+            var x = function (k) { return L + pw * k / (total - 1); }, y = function (v) { return T + ph * (1 - v / max); };
+
+            var s = '';
+            [0, 0.5, 1].forEach(function (f) { var v = max * f; s += '<line class="ax" x1="' + L + '" x2="' + (W - Rm) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text x="0" y="' + (y(v) + 4) + '">' + Math.round(v) + '</text>'; });
+            var up = [], lo = [];
+            pred.forEach(function (q) { if (q[0] >= N - 1) { var w = band * (1 + (q[0] - N + 1) / h * 0.3); up.push(x(q[0]) + ',' + y(q[1] + w)); lo.unshift(x(q[0]) + ',' + y(Math.max(q[1] - w, 0))); } });
+            s += '<polygon class="band" points="' + up.concat(lo).join(' ') + '"/>';
+            s += '<line class="today" x1="' + x(N - 1) + '" x2="' + x(N - 1) + '" y1="' + T + '" y2="' + (T + ph) + '"/>';
+            s += '<polyline class="act" points="' + act.map(function (v, k) { return x(k) + ',' + y(v); }).join(' ') + '"/>';
+            s += '<polyline class="prd" points="' + pred.map(function (q) { return x(q[0]) + ',' + y(q[1]); }).join(' ') + '"/>';
+            s += '<text x="' + L + '" y="' + (Ht - 6) + '">30 days ago</text><text x="' + (x(N - 1) - 14) + '" y="' + (Ht - 6) + '">Today</text><text x="' + (W - Rm) + '" y="' + (Ht - 6) + '" text-anchor="end">+' + h + ' days</text>';
+            $('mf-d-chart').setAttribute('aria-label', 'Chart of daily sales of ' + p.n + ' for the last 30 days and the forecast for the next ' + h + ' days, with the likely range');
+            $('mf-d-chart').innerHTML = s;
+        }
+
+        function review(p) {
+            var c = p.c, cf = conf(p), fmt = r1;
+            $('mf-d-title').textContent = p.n;
+            $('mf-d-sub').textContent = p.sup + ' · delivers in about ' + p.L + ' days';
+            $('mf-d-low').hidden = !p.hist || p.hist >= 60;
+            $('mf-d-low').textContent = 'Low confidence: there are only ' + p.hist + ' days of sales history, so SmartStock uses a 7-day average instead of a full forecast. Check the quantity before ordering.';
+            $('mf-d-tiles').innerHTML =
+                '<div class="mf-tile"><span>Confidence</span><strong>' + cf.t + '</strong></div>' +
+                '<div class="mf-tile"><span>Average error (MAE)</span><strong>' + (p.mae === null ? 'Not enough data' : p.mae + ' a day') + '</strong></div>' +
+                '<div class="mf-tile"><span>Average error (MAPE)</span><strong>' + (p.mape === null ? 'Not enough data' : p.mape + '%') + '</strong></div>' +
+                '<div class="mf-tile"><span>Sales history</span><strong>' + p.hist + ' days</strong></div>';
+            chart(p, c);
+
+            var row = function (a, small, b) { return '<tr><td>' + a + (small ? '<small>' + small + '</small>' : '') + '</td><td>' + b + '</td></tr>'; };
+            var h = '';
+            h += row('Expected sales per day', 'Forecast for the next ' + H() + ' days divided by ' + H() + (up() ? ', including a ' + up() + '% busy period uplift' : ''), fmt(c.d));
+            h += row('Supplier lead time', '', p.L + ' days');
+            h += row('Ups and downs in sales', 'Standard deviation of daily sales over the last 90 days', p.sigma);
+            h += row('Safety stock', Z + ' × ' + p.sigma + ' × √' + p.L + ', rounded', c.ss);
+            h += row('Reorder point', '(' + fmt(c.d) + ' × ' + p.L + ') + ' + c.ss + (p.stock <= c.rop ? '. Stock is below it, so a reorder is triggered.' : '.'), fmt(c.rop));
+            h += row('In stock / on order', '', p.stock + ' / ' + p.onOrder);
+            h += row('Review period', 'How often you plan to reorder', REVIEW + ' days');
+            h += row('Suggested order', '(' + fmt(c.d) + ' × (' + p.L + ' + ' + REVIEW + ')) + ' + c.ss + ' − ' + (p.stock + p.onOrder) + ' = ' + fmt(c.raw) + ', rounded up to packs of ' + p.pack, c.qty);
+            $('mf-d-calc').innerHTML = h;
+            $('mf-dialog').showModal();
+        }
+        $('mf-d-close').addEventListener('click', function () { $('mf-dialog').close(); });
+
+        refresh(true);
+        render();
+    })();
+</script>

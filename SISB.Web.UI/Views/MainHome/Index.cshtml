@@ -1,0 +1,286 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Smart Inventory Small Business";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartStock | Inventory for small shops</title>
+    <link rel="stylesheet" href="~/css/MainHome/MHome.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="hm-skip" href="#main">Skip to main content</a>
+
+    <header class="hm-nav">
+        <a class="hm-logo" href="/">Smart<span>Stock.</span></a>
+        <nav class="hm-links" aria-label="Page sections">
+            <a href="#roles">Who uses it</a>
+            <a href="#features">What it does</a>
+            <a class="hm-btn" href="#signin">Sign in</a>
+        </nav>
+    </header>
+
+    <main id="main">
+
+        <section class="hm-hero">
+            <div class="hm-hero-in">
+                <div>
+                    <h1>Know what is in stock, what is selling, and <em>what to order next.</em></h1>
+                    <p class="hm-lead">SmartStock helps small shops keep their stock, sales, purchases and suppliers in one place, in English or Bangla.</p>
+                    <ul class="hm-points">
+                        <li>Every sale, purchase and stock change is recorded, so the numbers always add up</li>
+                        <li>Smart Reorder tells you which products will run out and how much to order</li>
+                        <li>Ask questions like "Which products will run out this week?" and get an answer</li>
+                    </ul>
+                </div>
+
+                <!-- SIGN IN: one form for everyone. The account's role decides where you go. -->
+                <section class="hm-login" id="signin" aria-labelledby="hm-login-title">
+                    <div id="hm-form-wrap">
+                        <h2 id="hm-login-title">Sign in</h2>
+                        <p class="hm-sub">Use the email and password you were given. You will go straight to your own pages.</p>
+
+                        <div class="hm-alert hm-a-bad" id="hm-alert" role="alert" hidden></div>
+
+                        <form id="hm-form" novalidate>
+                            <label class="hm-field">
+                                Email
+                                <input type="email" id="hm-email" autocomplete="username" placeholder="Your email address" required>
+                                <span class="hm-err" id="hm-email-err" hidden></span>
+                            </label>
+                            <label class="hm-field">
+                                Password
+                                <span class="hm-pw">
+                                    <input type="password" id="hm-pass" autocomplete="current-password" placeholder="Your password" required>
+                                    <button type="button" id="hm-show" aria-pressed="false">Show</button>
+                                </span>
+                                <span class="hm-err" id="hm-pass-err" hidden></span>
+                            </label>
+                            <div class="hm-row"><span></span><button type="button" class="hm-link" id="hm-forgot">Forgot your password?</button></div>
+                            <button type="submit" class="hm-btn hm-btn-block" id="hm-submit">Sign in</button>
+                        </form>
+
+                        <div class="hm-demo">
+                            Trying the prototype? Fill in a demo account (password: demo1234). Remove these before going live.
+                            <div class="hm-demo-btns">
+                                <button type="button" class="hm-chip" data-demo="owner">Owner</button>
+                                <button type="button" class="hm-chip" data-demo="manager">Manager</button>
+                                <button type="button" class="hm-chip" data-demo="staff">Sales Staff</button>
+                                <button type="button" class="hm-chip" data-demo="locked">Locked account</button>
+                                <button type="button" class="hm-chip" data-demo="inactive">Turned-off account</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hm-done" id="hm-done" role="status" hidden>
+                        <div class="hm-tick" aria-hidden="true">✓</div>
+                        <h2 id="hm-welcome"></h2>
+                        <span class="hm-pill" id="hm-role-pill"></span>
+                        <p id="hm-where"></p>
+                        <a class="hm-btn hm-btn-block" id="hm-go" href="/">Continue</a>
+                        <p style="margin:14px 0 0"><button type="button" class="hm-link" id="hm-other">Use a different account</button></p>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="hm-sec" id="roles" aria-labelledby="roles-title">
+            <h2 id="roles-title">One system, three kinds of people</h2>
+            <p class="hm-intro">Everyone signs in at the same place. SmartStock then shows each person only the pages they need.</p>
+
+            <div class="hm-roles">
+                <article class="hm-role hm-role-owner">
+                    <span class="hm-pill hm-owner">Owner</span>
+                    <h3>The shop owner</h3>
+                    <p class="hm-who">Sees the whole business and controls who can do what.</p>
+                    <ul>
+                        <li>Full access to every page</li>
+                        <li>Cost and profit reports</li>
+                        <li>Adds users and sets their roles</li>
+                        <li>Business settings and the audit log</li>
+                    </ul>
+                    <div class="hm-land"><b>After signing in, you land on</b>The Owner dashboard</div>
+                </article>
+
+                <article class="hm-role hm-role-manager">
+                    <span class="hm-pill hm-manager">Manager</span>
+                    <h3>The person who runs the day</h3>
+                    <p class="hm-who">Keeps stock and orders in order.</p>
+                    <ul>
+                        <li>Products and purchase orders</li>
+                        <li>Receiving goods from suppliers</li>
+                        <li>Approving stock adjustments and counts</li>
+                        <li>Reports, Smart Reorder and the AI assistant</li>
+                    </ul>
+                    <div class="hm-land"><b>After signing in, you land on</b>The Manager dashboard</div>
+                </article>
+
+                <article class="hm-role hm-role-staff">
+                    <span class="hm-pill hm-staff">Sales Staff</span>
+                    <h3>The person at the counter</h3>
+                    <p class="hm-who">Serves customers quickly and keeps counts right.</p>
+                    <ul>
+                        <li>Makes sales and prints invoices</li>
+                        <li>Checks stock and prices</li>
+                        <li>Counts stock on the shelf</li>
+                        <li>Asks a Manager to approve stock changes</li>
+                    </ul>
+                    <div class="hm-land"><b>After signing in, you land on</b>The Sales screen</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="hm-sec" id="features" style="padding-top:0" aria-labelledby="feat-title">
+            <h2 id="feat-title">What SmartStock does for your shop</h2>
+            <p class="hm-intro">Built for the way small shops really work.</p>
+            <div class="hm-feat">
+                <div class="hm-f"><div class="hm-ic" aria-hidden="true">📦</div><h3>Stock you can trust</h3><p>Every change is written to a ledger. Expiry dates and batches are tracked for the products that need them.</p></div>
+                <div class="hm-f"><div class="hm-ic" aria-hidden="true">📈</div><h3>Smart Reorder</h3><p>See which products will run out and how much to order, with a draft purchase order for each supplier.</p></div>
+                <div class="hm-f"><div class="hm-ic" aria-hidden="true">💬</div><h3>Ask in Bangla or English</h3><p>Ask about stock, sales, profit and supplier balances and get a clear answer with a table or chart.</p></div>
+                <div class="hm-f"><div class="hm-ic" aria-hidden="true">🔒</div><h3>Safe and accountable</h3><p>Sign-ins are protected, and every create, change, delete and approval is recorded in an audit log.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="hm-foot"><b>SmartStock</b> · Inventory for small shops · © 2026</footer>
+
+    <!-- FORGOT PASSWORD -->
+    <dialog id="hm-reset" class="hm-dialog" aria-labelledby="hm-reset-title">
+        <form method="dialog" id="hm-reset-form">
+            <div id="hm-reset-ask">
+                <h2 id="hm-reset-title">Reset your password</h2>
+                <p class="hm-sub">Enter your email and we will send you a link to choose a new password.</p>
+                <label class="hm-field">Email<input type="email" id="hm-reset-email" autocomplete="username" required></label>
+                <div class="hm-dfoot">
+                    <button class="hm-btn hm-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                    <button class="hm-btn" type="button" id="hm-reset-send">Send reset link</button>
+                </div>
+            </div>
+            <div id="hm-reset-ok" hidden>
+                <h2>Check your email</h2>
+                <p class="hm-sub">If there is an account for that email, we have sent a link to reset the password. It may take a few minutes.</p>
+                <div class="hm-dfoot"><button class="hm-btn" value="close">Close</button></div>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+            (function () {
+                var $ = function (id) { return document.getElementById(id); };
+                var AT = '\u0040', DOMAIN = AT + 'smartstock.example', PASS = 'demo1234';
+                var MAX_TRIES = 5, LOCK_MINUTES = 15;
+
+                /* Prototype accounts only. In the real app the server checks the password
+                   and sends each role to its own page. */
+                var USERS = {
+                    owner: { email: 'rahim.uddin' + DOMAIN, name: 'Rahim Uddin', role: 'Owner', cls: 'hm-owner', url: '/Dashboard/Index', page: 'the Owner dashboard' },
+                    manager: { email: 'farhana' + DOMAIN, name: 'Farhana Rahman', role: 'Manager', cls: 'hm-manager', url: '/Dashboard/Manager', page: 'the Manager dashboard' },
+                    staff: { email: 'sumon' + DOMAIN, name: 'Sumon Das', role: 'Sales Staff', cls: 'hm-staff', url: '/Sales/Index', page: 'the Sales screen' },
+                    locked: { email: 'mita' + DOMAIN, name: 'Mita Akter', role: 'Sales Staff', cls: 'hm-staff', state: 'locked' },
+                    inactive: { email: 'jahid' + DOMAIN, name: 'Jahid Hasan', role: 'Sales Staff', cls: 'hm-staff', state: 'inactive' }
+                };
+
+                var tries = {}, lockUntil = {}, timer = null;
+                var form = $('hm-form'), email = $('hm-email'), pass = $('hm-pass'), alertBox = $('hm-alert'), submit = $('hm-submit');
+
+                function problem(input, errEl, msg) {
+                    errEl.textContent = msg; errEl.hidden = !msg;
+                    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+                    if (msg) input.setAttribute('aria-describedby', errEl.id); else input.removeAttribute('aria-describedby');
+                    return !msg;
+                }
+                function warn(kind, text) {
+                    alertBox.className = 'hm-alert ' + (kind === 'warn' ? 'hm-a-warn' : 'hm-a-bad');
+                    alertBox.textContent = text; alertBox.hidden = !text;
+                }
+                function find(addr) {
+                    var found = null;
+                    Object.keys(USERS).forEach(function (k) { if (USERS[k].email === addr) found = USERS[k]; });
+                    return found;
+                }
+
+                /* ---------- lock-out after 5 wrong passwords for 15 minutes ---------- */
+                function pad(n) { return n < 10 ? '0' + n : '' + n; }
+                function tick(addr) {
+                    var left = Math.max(Math.ceil((lockUntil[addr] - Date.now()) / 1000), 0);
+                    if (left === 0) {
+                        clearInterval(timer); delete lockUntil[addr]; tries[addr] = 0;
+                        submit.disabled = false; warn('', ''); return;
+                    }
+                    warn('bad', 'Too many wrong passwords. This account is locked. Try again in ' + Math.floor(left / 60) + ':' + pad(left % 60) + '.');
+                }
+                function lock(addr) {
+                    lockUntil[addr] = Date.now() + LOCK_MINUTES * 60000;
+                    submit.disabled = true; clearInterval(timer);
+                    tick(addr); timer = setInterval(function () { tick(addr); }, 1000);
+                }
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var addr = email.value.trim().toLowerCase(), pw = pass.value;
+                    var okE = problem(email, $('hm-email-err'), !addr ? 'Enter your email address.' : (addr.indexOf(AT) < 1 ? 'Enter a valid email address.' : ''));
+                    var okP = problem(pass, $('hm-pass-err'), !pw ? 'Enter your password.' : '');
+                    if (!okE || !okP) { warn('', ''); (okE ? pass : email).focus(); return; }
+
+                    if (lockUntil[addr] && lockUntil[addr] > Date.now()) { tick(addr); return; }
+
+                    var u = find(addr);
+                    if (u && u.state === 'locked') { warn('bad', 'This account is locked after too many wrong passwords. It unlocks by itself in a few minutes, or the Owner can unlock it now.'); return; }
+                    if (u && u.state === 'inactive') { warn('bad', 'This account has been turned off. Please ask the Owner.'); return; }
+
+                    if (u && pw === PASS) {
+                        tries[addr] = 0; warn('', '');
+                        $('hm-form-wrap').hidden = true; $('hm-done').hidden = false;
+                        $('hm-welcome').textContent = 'Welcome back, ' + u.name.split(' ')[0];
+                        var pill = $('hm-role-pill'); pill.textContent = u.role; pill.className = 'hm-pill ' + u.cls;
+                        $('hm-where').textContent = 'You are going to ' + u.page + '.';
+                        var go = $('hm-go'); go.href = u.url; go.textContent = 'Continue to ' + u.page.replace('the ', '');
+                        go.focus();
+                        return;
+                    }
+
+                    /* wrong email or password: the same message for both, so nobody can guess which accounts exist */
+                    tries[addr] = (tries[addr] || 0) + 1;
+                    if (tries[addr] >= MAX_TRIES) { lock(addr); return; }
+                    var left = MAX_TRIES - tries[addr];
+                    warn('bad', 'The email or password is wrong.' + (tries[addr] >= 3 ? ' ' + left + ' more wrong ' + (left === 1 ? 'try' : 'tries') + ' will lock this account for ' + LOCK_MINUTES + ' minutes.' : ''));
+                    pass.value = ''; pass.focus();
+                });
+
+                [email, pass].forEach(function (i) { i.addEventListener('input', function () { i.setAttribute('aria-invalid', 'false'); i.id === 'hm-email' ? $('hm-email-err').hidden = true : $('hm-pass-err').hidden = true; }); });
+
+                $('hm-show').addEventListener('click', function () {
+                    var show = pass.type === 'password';
+                    pass.type = show ? 'text' : 'password';
+                    this.textContent = show ? 'Hide' : 'Show'; this.setAttribute('aria-pressed', show ? 'true' : 'false');
+                });
+
+                document.querySelectorAll('[data-demo]').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        email.value = USERS[b.dataset.demo].email; pass.value = PASS;
+                        warn('', ''); problem(email, $('hm-email-err'), ''); problem(pass, $('hm-pass-err'), '');
+                        submit.focus();
+                    });
+                });
+
+                $('hm-other').addEventListener('click', function () {
+                    $('hm-done').hidden = true; $('hm-form-wrap').hidden = false;
+                    email.value = ''; pass.value = ''; email.focus();
+                });
+
+                /* ---------- forgot password ---------- */
+                var dlg = $('hm-reset');
+                $('hm-forgot').addEventListener('click', function () {
+                    $('hm-reset-ask').hidden = false; $('hm-reset-ok').hidden = true;
+                    $('hm-reset-email').value = email.value; dlg.showModal();
+                });
+                $('hm-reset-send').addEventListener('click', function () {
+                    if (!$('hm-reset-email').value.trim()) { $('hm-reset-email').focus(); return; }
+                    $('hm-reset-ask').hidden = true; $('hm-reset-ok').hidden = false;
+                });
+            })();
+    </script>
+</body>
+</html>

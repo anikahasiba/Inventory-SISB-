@@ -1,0 +1,102 @@
+﻿@using SISB.Entities
+@model Supplier
+
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Add Supplier";
+}
+
+<link rel="stylesheet"
+      href="~/css/Admin/Supplier.css"
+      asp-append-version="true" />
+
+<div class="sp">
+
+    <header class="sp-top">
+        <div>
+            <h2>Add Supplier</h2>
+            <p>Enter supplier contact details and payment terms.</p>
+        </div>
+
+        <a asp-controller="Supplier"
+           asp-action="Index"
+           class="sp-btn sp-btn-ghost">
+            Back to Suppliers
+        </a>
+    </header>
+
+    <section class="sp-card" style="padding:25px;">
+
+        <form asp-controller="Supplier"
+              asp-action="Create"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div class="sp-fgrid">
+
+                <label class="sp-field sp-wide">
+                    Supplier name
+                    <input asp-for="Name" type="text" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </label>
+
+                <label class="sp-field">
+                    Phone
+                    <input asp-for="Phone" type="tel" required />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </label>
+
+                <label class="sp-field">
+                    Email
+                    <input asp-for="Email" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </label>
+
+                <label class="sp-field">
+                    Payment terms
+                    <select asp-for="PaymentTerms">
+                        <option value="Cash on delivery">Cash on delivery</option>
+                        <option value="Net 7 days">Net 7 days</option>
+                        <option value="Net 15 days">Net 15 days</option>
+                        <option value="Net 30 days">Net 30 days</option>
+                    </select>
+                </label>
+
+                <label class="sp-field">
+                    Lead time (days)
+                    <input asp-for="LeadTimeDays" type="number" min="0" />
+                    <span asp-validation-for="LeadTimeDays" class="text-danger"></span>
+                </label>
+
+                <label class="sp-field sp-wide">
+                    Address
+                    <input asp-for="Address" type="text" />
+                </label>
+
+                <label class="sp-check">
+                    <input asp-for="IsActive" type="checkbox" />
+                    Active
+                </label>
+
+            </div>
+
+            <div class="sp-dfoot">
+
+                <a asp-controller="Supplier"
+                   asp-action="Index"
+                   class="sp-btn sp-btn-ghost">
+                    Cancel
+                </a>
+
+                <button type="submit" class="sp-btn">
+                    Save Supplier
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>

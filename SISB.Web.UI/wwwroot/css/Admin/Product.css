@@ -1,0 +1,369 @@
+﻿/* Product page – self-contained. All classes start with "pr-" so they never clash with Bootstrap or _PrivateLayout. */
+.pr {
+    --pr-green: #159568;
+    --pr-green-dark: #117a55;
+    --pr-soft: #edf8f4;
+    --pr-navy: #17243a;
+    --pr-line: #edf0f5;
+    --pr-muted: #778398;
+    --pr-ok: #159568;
+    --pr-warn: #c68a19;
+    --pr-bad: #dc4545;
+    --pr-ok-bg: #e2f7ed;
+    --pr-warn-bg: #fff2d9;
+    --pr-bad-bg: #ffe5e5;
+    font-variant-numeric: tabular-nums
+}
+
+    .pr * {
+        box-sizing: border-box
+    }
+
+    .pr :focus-visible {
+        outline: 2px solid var(--pr-green);
+        outline-offset: 2px
+    }
+
+.pr-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .pr-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .pr-top p {
+        margin: 2px 0 0;
+        color: var(--pr-muted);
+        font-size: 14px
+    }
+
+.pr-tools {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.pr-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--pr-green);
+    background: var(--pr-green);
+    color: #fff;
+    cursor: pointer
+}
+
+    .pr-btn:hover {
+        background: var(--pr-green-dark)
+    }
+
+.pr-btn-ghost {
+    background: #fff;
+    color: var(--pr-green)
+}
+
+    .pr-btn-ghost:hover {
+        background: var(--pr-soft)
+    }
+
+.pr-card {
+    background: #fff;
+    border: 1px solid var(--pr-line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.pr-sub {
+    color: var(--pr-muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.pr-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end
+}
+
+.pr-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--pr-muted)
+}
+
+    .pr-field input, .pr-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%
+    }
+
+.pr-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    padding-bottom: 9px;
+    white-space: nowrap
+}
+
+.pr-table-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.pr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .pr-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--pr-muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--pr-line);
+        white-space: nowrap
+    }
+
+    .pr-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--pr-line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .pr-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.pr-num {
+    text-align: right !important
+}
+
+.pr-prod {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+.pr-thumb {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--pr-soft);
+    color: var(--pr-green)
+}
+
+.pr-prod b {
+    font-weight: 600;
+    display: block
+}
+
+.pr-prod small {
+    color: var(--pr-muted);
+    font-size: 12px
+}
+
+.pr-stock {
+    font-weight: 600
+}
+
+    .pr-stock.pr-ok {
+        color: var(--pr-ok)
+    }
+
+    .pr-stock.pr-warn {
+        color: var(--pr-warn)
+    }
+
+    .pr-stock.pr-bad {
+        color: var(--pr-bad)
+    }
+
+.pr-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .pr-pill.pr-ok {
+        background: var(--pr-ok-bg);
+        color: #0f7650
+    }
+
+    .pr-pill.pr-warn {
+        background: var(--pr-warn-bg);
+        color: #8a5d06
+    }
+
+    .pr-pill.pr-bad {
+        background: var(--pr-bad-bg);
+        color: #b53030
+    }
+
+    .pr-pill.pr-off {
+        background: #eef1f5;
+        color: var(--pr-muted)
+    }
+
+.pr-tag {
+    font-size: 12px;
+    color: var(--pr-muted);
+    border: 1px solid #dfe4ec;
+    border-radius: 5px;
+    padding: 0 6px;
+    margin-left: 6px
+}
+
+.pr-off-row td {
+    color: var(--pr-muted)
+}
+
+.pr-off-row .pr-thumb {
+    background: #eef1f5;
+    color: var(--pr-muted)
+}
+
+.pr-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.pr-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--pr-green);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .pr-link:hover {
+        text-decoration: underline
+    }
+
+    .pr-link.pr-danger {
+        color: var(--pr-bad)
+    }
+
+.pr-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--pr-muted)
+}
+
+.pr-pager {
+    display: flex;
+    gap: 6px
+}
+
+    .pr-pager button {
+        font: inherit;
+        min-width: 34px;
+        padding: 5px 10px;
+        border: 1px solid #dfe4ec;
+        background: #fff;
+        border-radius: 7px;
+        cursor: pointer
+    }
+
+        .pr-pager button[aria-current] {
+            background: var(--pr-navy);
+            color: #fff;
+            border-color: var(--pr-navy)
+        }
+
+/* dialog */
+.pr-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(640px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .pr-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .pr-dialog form {
+        padding: 22px 24px
+    }
+
+    .pr-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.pr-fgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    margin: 16px 0
+}
+
+.pr-wide {
+    grid-column: 1/-1
+}
+
+.pr-hint {
+    font-size: 12px;
+    color: var(--pr-muted)
+}
+
+.pr-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px
+}
+
+@media (max-width:1100px) {
+    .pr-filters {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .pr-filters, .pr-fgrid {
+        grid-template-columns: 1fr
+    }
+}

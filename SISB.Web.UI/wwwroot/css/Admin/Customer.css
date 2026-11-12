@@ -1,0 +1,392 @@
+﻿/* Customer page – self-contained. All classes start with "cu-" so they never clash with Bootstrap or _PrivateLayout. */
+.cu {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    --ok-bg: #e2f7ed;
+    --warn-bg: #fff2d9;
+    --bad-bg: #ffe5e5;
+    font-variant-numeric: tabular-nums
+}
+
+    .cu * {
+        box-sizing: border-box
+    }
+
+    .cu :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+.cu-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .cu-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .cu-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.cu-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .cu-btn:hover {
+        background: var(--g-dark)
+    }
+
+.cu-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .cu-btn-ghost:hover {
+        background: var(--soft)
+    }
+
+.cu-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.cu-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.cu-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .cu-stats .cu-card {
+        margin: 0
+    }
+
+.cu-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.cu-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.cu-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.cu-stat.cu-due {
+    border-left: 4px solid var(--warn)
+}
+
+.cu-stat.cu-risk {
+    border-left: 4px solid var(--bad)
+}
+
+.cu-filters {
+    display: grid;
+    grid-template-columns: 2fr auto auto;
+    gap: 14px;
+    align-items: end
+}
+
+.cu-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .cu-field input {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%
+    }
+
+.cu-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    padding-bottom: 9px;
+    white-space: nowrap
+}
+
+.cu-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.cu-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .cu-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .cu-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .cu-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.cu-num {
+    text-align: right !important
+}
+
+.cu-name {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+.cu-avatar {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--soft);
+    color: var(--g)
+}
+
+.cu-name b {
+    font-weight: 600;
+    display: block
+}
+
+.cu-name small {
+    color: var(--muted);
+    font-size: 12px
+}
+
+.cu-owed {
+    font-weight: 600
+}
+
+    .cu-owed.cu-warn {
+        color: #8a5d06
+    }
+
+    .cu-owed.cu-bad {
+        color: #b53030
+    }
+
+.cu-clear {
+    color: var(--muted)
+}
+
+/* credit used meter */
+.cu-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px
+}
+
+.cu-track {
+    flex: 1;
+    height: 8px;
+    background: #eef1f5;
+    border-radius: 4px;
+    overflow: hidden
+}
+
+    .cu-track i {
+        display: block;
+        height: 100%;
+        border-radius: 4px;
+        background: var(--g)
+    }
+
+        .cu-track i.cu-warn {
+            background: var(--warn)
+        }
+
+        .cu-track i.cu-bad {
+            background: var(--bad)
+        }
+
+.cu-meter span {
+    font-size: 13px;
+    width: 40px;
+    text-align: right
+}
+
+.cu-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .cu-pill.cu-ok {
+        background: var(--ok-bg);
+        color: #0f7650
+    }
+
+    .cu-pill.cu-bad {
+        background: var(--bad-bg);
+        color: #b53030
+    }
+
+    .cu-pill.cu-off {
+        background: #eef1f5;
+        color: var(--muted)
+    }
+
+.cu-off-row td {
+    color: var(--muted)
+}
+
+.cu-off-row .cu-avatar {
+    background: #eef1f5;
+    color: var(--muted)
+}
+
+.cu-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.cu-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .cu-link:hover {
+        text-decoration: underline
+    }
+
+    .cu-link.cu-danger {
+        color: var(--bad)
+    }
+
+.cu-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* dialog */
+.cu-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(480px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .cu-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .cu-dialog form {
+        padding: 22px 24px
+    }
+
+    .cu-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.cu-fgrid {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0
+}
+
+.cu-hint {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.cu-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px
+}
+
+@media (max-width:900px) {
+    .cu-stats {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:700px) {
+    .cu-filters {
+        grid-template-columns: 1fr
+    }
+}

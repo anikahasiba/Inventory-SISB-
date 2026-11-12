@@ -1,0 +1,179 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "User Management";
+}
+
+<link rel="stylesheet" href="~/css/Admin/User.css" asp-append-version="true" />
+
+<div class="um">
+
+    <header class="um-top">
+        <div>
+            <h2>User management</h2>
+            <p>Decide who can sign in and what each person is allowed to do. Only the Owner can see this page.</p>
+        </div>
+        <button class="um-btn" type="button" data-open="add">Add user</button>
+    </header>
+
+    <div class="um-toast" id="um-toast" role="status" hidden></div>
+
+    <section class="um-stats" aria-label="User summary">
+        <div class="um-card um-stat"><span>Active users</span><strong>4</strong><em>1 Owner · 1 Manager · 2 Sales Staff</em></div>
+        <div class="um-card um-stat um-lock"><span>Locked accounts</span><strong>1</strong><em>Unlock automatically after 15 minutes</em></div>
+        <div class="um-card um-stat"><span>Inactive users</span><strong>1</strong><em>Can't sign in, history is kept</em></div>
+    </section>
+
+    <form class="um-card um-filters" role="search" aria-label="Filter users" onsubmit="return false">
+        <label class="um-field">
+            Search
+            <input type="search" placeholder="Name or email">
+        </label>
+        <label class="um-field">
+            Role
+            <select><option>All roles</option><option>Owner</option><option>Manager</option><option>Sales Staff</option></select>
+        </label>
+        <label class="um-field">
+            Status
+            <select><option>All</option><option>Active</option><option>Locked</option><option>Inactive</option></select>
+        </label>
+    </form>
+
+    <section class="um-card">
+        <div class="um-wrap">
+            <table class="um-table">
+                <thead>
+                    <tr><th>User</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="um-who"><span class="um-ava" aria-hidden="true">RU</span><div><b>Rahim Uddin<span class="um-you">You</span></b><small>rahim.uddin@smartstock.example</small></div></div></td>
+                        <td><span class="um-pill um-owner">Owner</span></td>
+                        <td><span class="um-pill um-ok">Active</span></td>
+                        <td class="um-when">Today<small>9:02 am</small></td>
+                        <td><div class="um-actions"><button class="um-link" type="button" data-open="edit" data-name="Rahim Uddin" data-email="rahim.uddin@smartstock.example" data-role="Owner">Edit</button><button class="um-link" type="button" disabled title="You can't deactivate your own account">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="um-who"><span class="um-ava" aria-hidden="true">FR</span><div><b>Farhana Rahman</b><small>farhana@smartstock.example</small></div></div></td>
+                        <td><span class="um-pill um-manager">Manager</span></td>
+                        <td><span class="um-pill um-ok">Active</span></td>
+                        <td class="um-when">Today<small>8:45 am</small></td>
+                        <td><div class="um-actions"><button class="um-link" type="button" data-open="edit" data-name="Farhana Rahman" data-email="farhana@smartstock.example" data-role="Manager">Edit</button><button class="um-link um-reset" type="button" data-name="Farhana Rahman">Reset password</button><button class="um-link um-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="um-who"><span class="um-ava" aria-hidden="true">SD</span><div><b>Sumon Das</b><small>sumon@smartstock.example</small></div></div></td>
+                        <td><span class="um-pill um-staff">Sales Staff</span></td>
+                        <td><span class="um-pill um-ok">Active</span></td>
+                        <td class="um-when">Today<small>8:50 am</small></td>
+                        <td><div class="um-actions"><button class="um-link" type="button" data-open="edit" data-name="Sumon Das" data-email="sumon@smartstock.example" data-role="Sales Staff">Edit</button><button class="um-link um-reset" type="button" data-name="Sumon Das">Reset password</button><button class="um-link um-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr id="um-locked-row">
+                        <td><div class="um-who"><span class="um-ava" aria-hidden="true">MA</span><div><b>Mita Akter</b><small>mita@smartstock.example</small></div></div></td>
+                        <td><span class="um-pill um-staff">Sales Staff</span></td>
+                        <td><span class="um-pill um-lockd" id="um-lock-pill">Locked</span><span class="um-note" id="um-lock-note">5 wrong passwords. Unlocks in 11 minutes.</span></td>
+                        <td class="um-when">4 Nov<small>5:48 pm</small></td>
+                        <td><div class="um-actions"><button class="um-link" type="button" id="um-unlock" data-name="Mita Akter">Unlock now</button><button class="um-link" type="button" data-open="edit" data-name="Mita Akter" data-email="mita@smartstock.example" data-role="Sales Staff">Edit</button><button class="um-link um-reset" type="button" data-name="Mita Akter">Reset password</button></div></td>
+                    </tr>
+                    <tr class="um-off">
+                        <td><div class="um-who"><span class="um-ava" aria-hidden="true">JH</span><div><b>Jahid Hasan</b><small>jahid@smartstock.example</small></div></div></td>
+                        <td><span class="um-pill um-staff">Sales Staff</span></td>
+                        <td><span class="um-pill um-inactive">Inactive</span></td>
+                        <td class="um-when">12 Sep<small>4:15 pm</small></td>
+                        <td><div class="um-actions"><button class="um-link" type="button" data-open="edit" data-name="Jahid Hasan" data-email="jahid@smartstock.example" data-role="Sales Staff">Edit</button><button class="um-link" type="button">Reactivate</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="um-foot">Users are never deleted, so their past sales and stock changes stay linked to their name. There must always be at least one active Owner.</p>
+    </section>
+
+    <section class="um-card">
+        <h3>What each role can do</h3>
+        <p class="um-sub">The menus and buttons people see depend on their role.</p>
+        <div class="um-wrap">
+            <table class="um-perm">
+                <thead><tr><th>Permission</th><th>Owner</th><th>Manager</th><th>Sales Staff</th></tr></thead>
+                <tbody>
+                    <tr><td>Make sales and check stock</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-yes">✓</td></tr>
+                    <tr><td>Enter physical stock counts</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-yes">✓</td></tr>
+                    <tr><td>Record stock adjustments</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td><span class="um-cond">Needs approval</span></td></tr>
+                    <tr><td>Approve adjustments and stock counts</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-no">–</td></tr>
+                    <tr><td>Products, purchases and receiving goods</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-no">–</td></tr>
+                    <tr><td>Reports</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-no">–</td></tr>
+                    <tr><td>AI assistant and Smart Reorder</td><td class="um-yes">✓</td><td class="um-yes">✓</td><td class="um-no">–</td></tr>
+                    <tr><td>Cost and profit reports</td><td class="um-yes">✓</td><td class="um-no">–</td><td class="um-no">–</td></tr>
+                    <tr><td>Users, settings and audit log</td><td class="um-yes">✓</td><td class="um-no">–</td><td class="um-no">–</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <dialog id="um-dialog" class="um-dialog" aria-labelledby="um-title">
+        <form method="dialog">
+            <h3 id="um-title">Add user</h3>
+            <p class="um-sub">They sign in with their email and a password.</p>
+            <div class="um-fgrid">
+                <label class="um-field">Full name<input type="text" id="um-name" required></label>
+                <label class="um-field">Email<input type="email" id="um-email" required></label>
+                <label class="um-field">
+                    Role
+                    <select id="um-role"><option>Sales Staff</option><option>Manager</option><option>Owner</option></select>
+                </label>
+                <p class="um-roledesc" id="um-roledesc"></p>
+                <label class="um-check" id="um-invite-wrap"><input type="checkbox" checked> Email them a link to set their own password</label>
+                <label class="um-check" id="um-active-wrap" hidden><input type="checkbox" checked> Active (can sign in)</label>
+            </div>
+            <div class="um-dfoot">
+                <button class="um-btn um-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="um-btn" value="save">Save user</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var dlg = document.getElementById('um-dialog');
+        var f = { name: document.getElementById('um-name'), email: document.getElementById('um-email'), role: document.getElementById('um-role') };
+        var desc = document.getElementById('um-roledesc');
+        var toast = document.getElementById('um-toast');
+        var roles = {
+            'Owner': 'Full access, including users, settings, the audit log and cost and profit reports.',
+            'Manager': 'Runs daily operations: products, purchases, approvals, reports and the AI assistant.',
+            'Sales Staff': 'Makes sales and enters stock counts. Stock adjustments need a Manager\'s approval.'
+        };
+
+        function say(msg) {
+            toast.textContent = msg; toast.hidden = false;
+            toast.scrollIntoView({ block: 'nearest' });
+        }
+        function showRole() { desc.textContent = roles[f.role.value]; }
+        f.role.addEventListener('change', showRole);
+
+        document.querySelectorAll('[data-open]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var edit = b.dataset.open === 'edit';
+                document.getElementById('um-title').textContent = edit ? 'Edit user' : 'Add user';
+                f.name.value = edit ? b.dataset.name : '';
+                f.email.value = edit ? b.dataset.email : '';
+                f.role.value = edit ? b.dataset.role : 'Sales Staff';
+                document.getElementById('um-invite-wrap').hidden = edit;
+                document.getElementById('um-active-wrap').hidden = !edit;
+                showRole();
+                dlg.showModal();
+            });
+        });
+
+        document.querySelectorAll('.um-reset').forEach(function (b) {
+            b.addEventListener('click', function () { say('A password reset email was sent to ' + b.dataset.name + '.'); });
+        });
+
+        document.getElementById('um-unlock').addEventListener('click', function (e) {
+            var pill = document.getElementById('um-lock-pill');
+            pill.textContent = 'Active'; pill.className = 'um-pill um-ok';
+            document.getElementById('um-lock-note').hidden = true;
+            e.target.hidden = true;
+            say(e.target.dataset.name + '\'s account is unlocked.');
+        });
+    })();
+</script>

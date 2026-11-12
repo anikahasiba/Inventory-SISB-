@@ -1,0 +1,254 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Receive Goods";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mreceive.css" asp-append-version="true" />
+
+<div class="rg">
+
+    <header class="rg-top">
+        <h2>Receive goods</h2>
+        <p>Pick an approved order, enter what arrived, then confirm. Stock and costs update when you confirm.</p>
+    </header>
+
+    <div class="rg-toast" id="rg-toast" role="status" hidden></div>
+
+    <div class="rg-grid">
+
+        <aside class="rg-card rg-list" aria-label="Orders waiting to be received">
+            <h3>Orders to receive</h3>
+            <div id="rg-orders"></div>
+            <p class="rg-none" id="rg-empty" hidden>All orders have been received.</p>
+        </aside>
+
+        <div id="rg-main">
+
+            <section class="rg-card">
+                <div class="rg-head">
+                    <div>
+                        <h3 id="rg-po"></h3>
+                        <p class="rg-sub" id="rg-supplier" style="margin:0"></p>
+                    </div>
+                    <button class="rg-btn rg-btn-ghost" type="button" id="rg-all">Receive all remaining</button>
+                </div>
+                <div class="rg-meta" id="rg-meta"></div>
+
+                <div class="rg-wrap">
+                    <table class="rg-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="rg-num">Ordered</th>
+                                <th class="rg-num">Received before</th>
+                                <th class="rg-num">Still to come</th>
+                                <th class="rg-num">Receive now</th>
+                                <th class="rg-num">Unit cost</th>
+                                <th>Batch and expiry</th>
+                                <th class="rg-num">Value</th>
+                                <th class="rg-num">Average cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rg-lines"></tbody>
+                    </table>
+                </div>
+
+                <div class="rg-override" id="rg-override" hidden>
+                    <label class="rg-check"><input type="checkbox" id="rg-ok-extra"> I approve receiving more than was ordered.</label>
+                    <label class="rg-field" style="margin:0">Reason<input type="text" id="rg-reason" placeholder="For example: supplier sent a bonus carton"></label>
+                </div>
+                <ul class="rg-msgs" id="rg-msgs" aria-live="polite"></ul>
+            </section>
+
+            <section class="rg-card rg-two">
+                <div>
+                    <h3>Delivery details</h3>
+                    <p class="rg-sub">Optional, but helpful if there is a question later.</p>
+                    <label class="rg-field">Supplier's delivery note number<input type="text" id="rg-dn"></label>
+                    <label class="rg-field">Received on<input type="date" id="rg-date" value="2026-11-05" max="2026-11-05"></label>
+                    <label class="rg-field">Note<input type="text" id="rg-note" placeholder="Anything to remember about this delivery"></label>
+                </div>
+                <div>
+                    <h3>What will happen</h3>
+                    <p class="rg-sub">A preview of the goods received note.</p>
+                    <div class="rg-sum">
+                        <div><span>Products received</span><span id="s-lines">0</span></div>
+                        <div><span>Value of goods</span><span id="s-val">৳0</span></div>
+                        <div><span>Order status will be</span><span id="s-status"></span></div>
+                        <div><span>Owed to the supplier</span><span id="s-bal"></span></div>
+                        <div class="rg-big"><span>Stock increases by</span><span id="s-units">0 items</span></div>
+                    </div>
+                    <p class="rg-info" id="s-lead"></p>
+                </div>
+            </section>
+
+            <div class="rg-confirm">
+                <p>Once confirmed, a goods received note can't be changed. A mistake is fixed with a reversing entry.</p>
+                <button class="rg-btn" type="button" id="rg-confirm" disabled>Confirm goods received</button>
+            </div>
+        </div>
+    </div>
+
+    <dialog id="rg-dialog" class="rg-dialog" aria-labelledby="rg-d-title">
+        <form method="dialog">
+            <h3 id="rg-d-title">Confirm goods received?</h3>
+            <p id="rg-d-text"></p>
+            <div class="rg-dfoot">
+                <button class="rg-btn rg-btn-ghost" value="cancel" formnovalidate>Go back</button>
+                <button class="rg-btn" type="button" id="rg-d-yes">Yes, confirm</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var TODAY = '2026-11-05', grn = 61, current = 0, refs = [];
+        var $ = function (id) { return document.getElementById(id); };
+
+        var POS = [
+            {
+                id: 'PO-2026-0143', supplier: 'Rupali Snacks Distribution', ordered: '28 Oct 2026', from: '2026-10-28', expected: '31 Oct 2026', late: 5,
+                status: 'Partly received', terms: 'Net 15 days', balance: 27800,
+                lines: [
+                    { n: 'Potato chips 50g', ord: 300, rec: 300, cost: 20, exp: false, stock: 150, wac: 19 },
+                    { n: 'Chocolate bar 40g', ord: 200, rec: 100, cost: 35, exp: true, stock: 40, wac: 33 },
+                    { n: 'Cake rusk 300g', ord: 100, rec: 0, cost: 20, exp: false, stock: 60, wac: 20 },
+                    { n: 'Fruit juice 250ml', ord: 320, rec: 0, cost: 40, exp: true, stock: 24, wac: 38 }
+                ]
+            },
+            {
+                id: 'PO-2026-0148', supplier: 'Dhaka Dairy Supply', ordered: '4 Nov 2026', from: '2026-11-04', expected: '6 Nov 2026', late: 0,
+                status: 'Approved', terms: 'Cash on delivery', balance: 42300,
+                lines: [{ n: 'Powdered milk 500g', ord: 48, rec: 0, cost: 410, exp: true, stock: 0, wac: 410 }]
+            },
+            {
+                id: 'PO-2026-0146', supplier: 'Karim Wholesale', ordered: '3 Nov 2026', from: '2026-11-03', expected: '7 Nov 2026', late: 0,
+                status: 'Approved', terms: 'Net 15 days', balance: 184000,
+                lines: [
+                    { n: 'Basmati rice 5kg', ord: 95, rec: 0, cost: 640, exp: false, stock: 25, wac: 640 },
+                    { n: 'Sugar 1kg', ord: 110, rec: 0, cost: 118, exp: false, stock: 240, wac: 118 }
+                ]
+            }
+        ];
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN'); }
+        function money2(n) { return '৳' + (Math.round(n * 100) / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+        function days(from) { return Math.round((new Date(TODAY) - new Date(from)) / 86400000); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+        /* ---------- list of orders ---------- */
+        function renderOrders() {
+            var box = $('rg-orders'); box.innerHTML = '';
+            POS.forEach(function (po, i) {
+                var b = document.createElement('button');
+                b.type = 'button'; b.className = 'rg-order';
+                b.setAttribute('aria-current', i === current ? 'true' : 'false');
+                b.innerHTML = '<b>' + po.id + '</b><span class="rg-s">' + esc(po.supplier) + '</span>' +
+                    '<span class="rg-pill ' + (po.status === 'Approved' ? 'rg-blue' : 'rg-warn') + '">' + po.status + '</span>' +
+                    (po.late ? '<span class="rg-pill rg-bad">' + po.late + ' days late</span>' : '<span class="rg-s" style="display:inline">Expected ' + po.expected.slice(0, -5) + '</span>');
+                b.addEventListener('click', function () { current = i; show(); });
+                box.appendChild(b);
+            });
+            $('rg-empty').hidden = POS.length > 0;
+            $('rg-main').hidden = POS.length === 0;
+        }
+
+        /* ---------- one order ---------- */
+        function show() {
+            if (!POS.length) { renderOrders(); return; }
+            var po = POS[current];
+            renderOrders();
+            $('rg-po').textContent = po.id;
+            $('rg-supplier').textContent = po.supplier;
+            $('rg-meta').innerHTML =
+                '<span>Ordered<b>' + po.ordered + '</b></span><span>Expected<b>' + po.expected + '</b></span>' +
+                '<span>Payment terms<b>' + po.terms + '</b></span><span>Owed now<b>' + money(po.balance) + '</b></span>';
+
+            var body = $('rg-lines'); body.innerHTML = ''; refs = [];
+            po.lines.forEach(function (l) {
+                var rem = Math.max(l.ord - l.rec, 0), tr = document.createElement('tr');
+                if (!rem) tr.className = 'rg-done';
+                tr.innerHTML =
+                    '<td class="rg-strong">' + esc(l.n) + (l.exp ? '<span class="rg-tag">Expiry tracked</span>' : '') + '</td>' +
+                    '<td class="rg-num">' + l.ord + '</td><td class="rg-num">' + l.rec + '</td><td class="rg-num">' + rem + '</td>' +
+                    '<td class="rg-num">' + (rem ? '<input class="rg-in rg-qty" type="number" min="0" value="0" aria-label="Quantity received for ' + esc(l.n) + '">' : 'Done') + '</td>' +
+                    '<td class="rg-num">' + money(l.cost) + '</td>' +
+                    '<td>' + (l.exp && rem ? '<input class="rg-in rg-batch" type="text" placeholder="Batch no." aria-label="Batch number for ' + esc(l.n) + '" disabled> <input class="rg-in rg-date" type="date" aria-label="Expiry date for ' + esc(l.n) + '" disabled>' : '<span class="rg-small">Not needed</span>') + '</td>' +
+                    '<td class="rg-num rg-val">৳0</td><td class="rg-num rg-wac"></td>';
+                body.appendChild(tr);
+                var ins = tr.querySelectorAll('input');
+                refs.push({ qty: rem ? ins[0] : null, batch: l.exp && rem ? ins[1] : null, expiry: l.exp && rem ? ins[2] : null, val: tr.querySelector('.rg-val'), wac: tr.querySelector('.rg-wac'), rem: rem });
+                tr.addEventListener('input', recalc);
+            });
+            $('rg-ok-extra').checked = false; $('rg-reason').value = '';
+            recalc();
+        }
+
+        /* ---------- checks and preview ---------- */
+        var latest = null;
+        function recalc() {
+            var po = POS[current], problems = [], any = false, excess = false, total = 0, units = 0, lines = 0, left = 0;
+            po.lines.forEach(function (l, i) {
+                var r = refs[i], q = r.qty ? Math.max(parseInt(r.qty.value, 10) || 0, 0) : 0;
+                if (q > 0) { any = true; lines++; units += q; if (q > r.rem) excess = true; }
+                if (r.batch) {
+                    var on = q > 0; r.batch.disabled = !on; r.expiry.disabled = !on;
+                    if (on) {
+                        if (!r.batch.value.trim()) problems.push(l.n + ': enter a batch number.');
+                        if (!r.expiry.value) problems.push(l.n + ': enter an expiry date.');
+                        else if (r.expiry.value <= TODAY) problems.push(l.n + ': the expiry date must be in the future. Expired goods can\'t be sold.');
+                    }
+                }
+                var v = q * l.cost; total += v; r.val.textContent = money(v);
+                var after = q > 0 && l.stock + q > 0 ? (l.stock * l.wac + q * l.cost) / (l.stock + q) : l.wac;
+                r.wac.textContent = q > 0 && Math.abs(after - l.wac) > 0.005 ? money2(l.wac) + ' → ' + money2(after) : money2(l.wac);
+                left += Math.max(l.ord - l.rec - q, 0);
+            });
+
+            $('rg-override').hidden = !excess;
+            if (excess && !$('rg-ok-extra').checked) problems.push('You are receiving more than was ordered. Tick the box to approve it.');
+            if (excess && $('rg-ok-extra').checked && !$('rg-reason').value.trim()) problems.push('Give a reason for receiving extra.');
+
+            var msgs = $('rg-msgs'); msgs.innerHTML = '';
+            problems.forEach(function (p) { var li = document.createElement('li'); li.textContent = p; msgs.appendChild(li); });
+
+            $('s-lines').textContent = lines;
+            $('s-val').textContent = money(total);
+            $('s-units').textContent = units + (units === 1 ? ' item' : ' items');
+            $('s-status').textContent = !any ? po.status : (left === 0 ? 'Received' : 'Partly received');
+            $('s-bal').textContent = any ? money(po.balance) + ' → ' + money(po.balance + total) : money(po.balance);
+            $('s-lead').textContent = 'This order has taken ' + days(po.from) + ' days so far. The time from order to delivery is used to update ' + po.supplier + '\'s average lead time.';
+
+            $('rg-confirm').disabled = !any || problems.length > 0;
+            latest = { total: total, lines: lines, left: left, units: units };
+        }
+
+        $('rg-all').addEventListener('click', function () {
+            refs.forEach(function (r) { if (r.qty) r.qty.value = r.rem; });
+            recalc();
+        });
+        ['rg-ok-extra', 'rg-reason'].forEach(function (id) { $(id).addEventListener('input', recalc); });
+
+        /* ---------- confirm ---------- */
+        $('rg-confirm').addEventListener('click', function () {
+            var po = POS[current];
+            $('rg-d-text').textContent = 'You are receiving ' + latest.units + ' items (' + money(latest.total) + ') from ' + po.supplier + ' against ' + po.id + '. Stock will go up and average costs will be recalculated.';
+            $('rg-dialog').showModal();
+        });
+        $('rg-d-yes').addEventListener('click', function () {
+            var po = POS[current];
+            po.lines.forEach(function (l, i) { l.rec += refs[i].qty ? Math.max(parseInt(refs[i].qty.value, 10) || 0, 0) : 0; });
+            po.balance += latest.total;
+            var number = 'GRN-2026-00' + (grn++), done = latest.left === 0;
+            $('rg-dialog').close();
+            $('rg-toast').textContent = number + ' was created for ' + po.id + '. Stock is updated and the order is now ' + (done ? 'received.' : 'partly received.');
+            $('rg-toast').hidden = false;
+            if (done) { POS.splice(current, 1); current = 0; } else { po.status = 'Partly received'; }
+            show();
+        });
+
+        show();
+    })();
+</script>

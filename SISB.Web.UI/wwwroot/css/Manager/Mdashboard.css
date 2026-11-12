@@ -1,0 +1,431 @@
+﻿/* Manager Dashboard – self-contained. All classes start with "md-" so they never clash with Bootstrap or _PrivateLayout. */
+.md {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .md * {
+        box-sizing: border-box
+    }
+
+    .md :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .md [hidden] {
+        display: none !important
+    }
+
+.md-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px
+}
+
+    .md-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .md-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.md-quick {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap
+}
+
+.md-btn {
+    display: inline-block;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none
+}
+
+    .md-btn:hover {
+        background: var(--g-dark);
+        color: #fff
+    }
+
+.md-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .md-btn-ghost:hover {
+        background: var(--soft);
+        color: var(--g)
+    }
+
+.md-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #e3ecfa;
+    color: #25508f;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+    .md-banner a {
+        color: #25508f;
+        font-weight: 600;
+        text-decoration: none
+    }
+
+        .md-banner a:hover {
+            text-decoration: underline
+        }
+
+.md-toast {
+    background: #e2f7ed;
+    color: #0f7650;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+.md-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+    .md-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.md-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 12px
+}
+
+.md-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px
+}
+
+.md-all {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--g);
+    text-decoration: none;
+    white-space: nowrap
+}
+
+    .md-all:hover {
+        text-decoration: underline
+    }
+
+/* the six dashboard figures */
+.md-kpis {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+.md-kpi span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.md-kpi strong {
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.md-kpi em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.md-kpi.md-k-low {
+    border-left: 4px solid var(--warn)
+}
+
+    .md-kpi.md-k-low em {
+        color: #8a5d06
+    }
+
+.md-row {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px
+}
+
+.md-r1 {
+    grid-template-columns: 2fr 1fr
+}
+
+.md-r2 {
+    grid-template-columns: 1.6fr 1fr
+}
+
+.md-r3 {
+    grid-template-columns: 1fr 1fr
+}
+
+/* 30-day trend */
+.md-chart {
+    width: 100%;
+    height: auto;
+    display: block
+}
+
+    .md-chart .grid {
+        stroke: var(--line);
+        stroke-width: 1
+    }
+
+    .md-chart .line {
+        fill: none;
+        stroke: var(--g);
+        stroke-width: 2.5;
+        stroke-linejoin: round
+    }
+
+    .md-chart .area {
+        fill: var(--soft);
+        opacity: .8
+    }
+
+    .md-chart text {
+        font-size: 11px;
+        fill: var(--muted)
+    }
+
+    .md-chart .dot {
+        fill: var(--g);
+        stroke: #fff;
+        stroke-width: 2
+    }
+
+/* top 5 */
+.md-top5 {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    font-size: 14px
+}
+
+    .md-top5 li {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 2px 10px
+    }
+
+    .md-top5 .md-bar {
+        grid-column: 1/-1;
+        height: 8px;
+        background: #eef1f5;
+        border-radius: 4px
+    }
+
+        .md-top5 .md-bar i {
+            display: block;
+            height: 100%;
+            background: var(--g);
+            border-radius: 4px
+        }
+
+    .md-top5 b {
+        font-weight: 600
+    }
+
+.md-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.md-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .md-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .md-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .md-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.md-num {
+    text-align: right !important
+}
+
+.md-strong {
+    font-weight: 600
+}
+
+.md-small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400
+}
+
+.md-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 22px 0 6px;
+    font-size: 14px
+}
+
+.md-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+.md-ok {
+    background: #e2f7ed;
+    color: #0f7650
+}
+
+.md-warn {
+    background: #fff2d9;
+    color: #8a5d06
+}
+
+.md-bad {
+    background: #ffe5e5;
+    color: #b53030
+}
+
+.md-blue {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.md-grey {
+    background: #eef1f5;
+    color: #556178
+}
+
+.md-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.md-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    text-decoration: none
+}
+
+    .md-link:hover {
+        text-decoration: underline
+    }
+
+    .md-link.md-danger {
+        color: var(--bad)
+    }
+
+.md-alerts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    font-size: 14px
+}
+
+    .md-alerts li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start
+    }
+
+    .md-alerts .md-pill {
+        flex: none;
+        margin-top: 1px
+    }
+
+.md-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 12px 0 0
+}
+
+@media (max-width:1100px) {
+    .md-kpis {
+        grid-template-columns: repeat(2,1fr)
+    }
+
+    .md-r1, .md-r2, .md-r3 {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .md-kpis {
+        grid-template-columns: 1fr
+    }
+}

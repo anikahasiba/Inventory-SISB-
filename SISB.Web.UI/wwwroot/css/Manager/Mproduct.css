@@ -1,0 +1,450 @@
+﻿/* Manager Products page – self-contained. All classes start with "mp-" so they never clash with Bootstrap or the layout. */
+.mp {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .mp * {
+        box-sizing: border-box
+    }
+
+    .mp :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .mp [hidden] {
+        display: none !important
+    }
+
+.mp-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .mp-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .mp-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.mp-tools {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.mp-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block
+}
+
+    .mp-btn:hover:not(:disabled) {
+        background: var(--g-dark);
+        color: #fff
+    }
+
+    .mp-btn:disabled {
+        background: #c9d3dd;
+        border-color: #c9d3dd;
+        cursor: not-allowed
+    }
+
+.mp-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .mp-btn-ghost:hover:not(:disabled) {
+        background: var(--soft);
+        color: var(--g)
+    }
+
+.mp-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.mp-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.mp-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end
+}
+
+.mp-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .mp-field input, .mp-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+        .mp-field input[aria-invalid="true"] {
+            border-color: var(--bad)
+        }
+
+.mp-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    padding-bottom: 9px;
+    white-space: nowrap
+}
+
+    .mp-check input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--g)
+    }
+
+.mp-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.mp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .mp-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .mp-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .mp-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.mp-num {
+    text-align: right !important
+}
+
+.mp-off td {
+    color: var(--muted)
+}
+
+.mp-off .mp-thumb {
+    background: #eef1f5;
+    color: var(--muted)
+}
+
+.mp-prod {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+.mp-thumb {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--soft);
+    color: var(--g)
+}
+
+.mp-prod b {
+    font-weight: 600;
+    display: block
+}
+
+.mp-prod small {
+    color: var(--muted);
+    font-size: 12px
+}
+
+.mp-stock {
+    font-weight: 600
+}
+
+    .mp-stock.mp-ok {
+        color: var(--g)
+    }
+
+    .mp-stock.mp-warn {
+        color: var(--warn)
+    }
+
+    .mp-stock.mp-bad {
+        color: var(--bad)
+    }
+
+.mp-tag {
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid #dfe4ec;
+    border-radius: 5px;
+    padding: 0 6px;
+    margin-left: 6px;
+    font-weight: 400
+}
+
+.mp-src {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400
+}
+
+.mp-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .mp-pill.mp-ok {
+        background: #e2f7ed;
+        color: #0f7650
+    }
+
+    .mp-pill.mp-warn {
+        background: #fff2d9;
+        color: #8a5d06
+    }
+
+    .mp-pill.mp-bad {
+        background: #ffe5e5;
+        color: #b53030
+    }
+
+    .mp-pill.mp-grey {
+        background: #eef1f5;
+        color: #556178
+    }
+
+.mp-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.mp-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    text-decoration: none
+}
+
+    .mp-link:hover {
+        text-decoration: underline
+    }
+
+    .mp-link.mp-danger {
+        color: var(--bad)
+    }
+
+.mp-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 22px 0 6px;
+    font-size: 14px
+}
+
+.mp-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* dialogs */
+.mp-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(640px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .mp-dialog.mp-narrow {
+        width: min(520px,calc(100% - 28px))
+    }
+
+    .mp-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .mp-dialog form, .mp-dialog .mp-inner {
+        padding: 22px 24px
+    }
+
+    .mp-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.mp-fgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    margin: 16px 0
+}
+
+.mp-wide {
+    grid-column: 1/-1
+}
+
+.mp-hint {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.mp-err {
+    font-size: 12px;
+    color: #b53030;
+    font-weight: 600
+}
+
+.mp-warnbox {
+    background: #fff2d9;
+    color: #6f4a05;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px
+}
+
+.mp-readonly {
+    background: #f7f9fb;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #46526a
+}
+
+    .mp-readonly small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px
+    }
+
+.mp-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px
+}
+
+.mp-result {
+    margin-top: 14px;
+    font-size: 14px
+}
+
+    .mp-result .mp-ok-line {
+        color: #0f7650;
+        font-weight: 600
+    }
+
+    .mp-result .mp-bad-line {
+        color: #b53030;
+        font-weight: 600
+    }
+
+.mp-etbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px
+}
+
+    .mp-etbl th {
+        text-align: left;
+        color: var(--muted);
+        font-weight: 600;
+        padding: 5px 8px;
+        border-bottom: 1px solid var(--line)
+    }
+
+    .mp-etbl td {
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line)
+    }
+
+@media (max-width:1000px) {
+    .mp-filters {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .mp-filters, .mp-fgrid {
+        grid-template-columns: 1fr
+    }
+}

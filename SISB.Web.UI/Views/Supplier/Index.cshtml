@@ -1,0 +1,97 @@
+﻿@using SISB.Entities
+@model List<Supplier>
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Suppliers";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Supplier.css" asp-append-version="true" />
+
+<div class="sp">
+
+    <header class="sp-top">
+        <div>
+            <h2>Suppliers</h2>
+            <p>@Model.Count active suppliers · 120 products linked</p>
+        </div>
+        <a asp-controller="Supplier"
+           asp-action="Create"
+           class="sp-btn">
+            Add Supplier
+        </a>
+    </header>
+
+    <section class="sp-stats" aria-label="Supplier summary">
+        <div class="sp-card sp-stat sp-due"><span>Total payable</span><strong>৳3,50,600</strong><em>Owed to 4 suppliers</em></div>
+        <div class="sp-card sp-stat"><span>Average lead time</span><strong>@Model.Average(x => x.LeadTimeDays) days</strong><em>From order to delivery</em></div>
+        <div class="sp-card sp-stat"><span>Orders in progress</span><strong>3</strong><em>Approved or partly received</em></div>
+    </section>
+
+    <form class="sp-card sp-filters" role="search" aria-label="Filter suppliers" onsubmit="return false">
+        <label class="sp-field">
+            Search
+            <input type="search" placeholder="Supplier name or phone">
+        </label>
+        <label class="sp-field">
+            Payment terms
+            <select><option>All terms</option><option>Cash on delivery</option><option>Net 7 days</option><option>Net 15 days</option><option>Net 30 days</option></select>
+        </label>
+        <label class="sp-check"><input type="checkbox"> Show inactive</label>
+    </form>
+
+    <section class="sp-card">
+        <div class="sp-wrap">
+            <table class="sp-table">
+                <thead>
+                    <tr>
+                        <th>Supplier</th>
+                        <th>Phone</th>
+                        <th>Payment terms</th>
+                        <th class="sp-num">Lead time</th>
+                        <th class="sp-num">Products</th>
+                        <th>Last order</th>
+                        <th class="sp-num">Balance due</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @foreach(var supplier in Model)
+                    {       
+                        <tr>
+                            <td><div class="sp-name"><span class="sp-logo" aria-hidden="true">MT</span><div><b>@supplier.Name</b><small>Chawkbazar, Dhaka</small></div></div></td>
+                            <td>@supplier.Phone</td>
+                            <td>@supplier.PaymentTerms</td>
+                            <td class="sp-num">@supplier.LeadTimeDays days</td>
+                            <td class="sp-num">31</td>
+                            <td>30 Oct 2026</td>
+                            <td class="sp-num"><span class="sp-owed">@supplier.Balance</span></td>
+                            <td><span class="sp-pill sp-ok">@{
+                                        if (supplier.IsActive)
+                                        {
+                                            <span>Active</span>
+                                        }
+                                        else{
+                                            <span>InActive</span>
+                                        }
+                                    }
+                            </span></td>
+                            <td><div class="sp-actions"><button class="sp-link" type="button">History</button><button class="sp-link" type="button" data-open="edit" data-name="Meghna Traders" data-phone="01819-882210" data-address="Chawkbazar, Dhaka" data-terms="Net 7 days" data-lead="5">
+                                    <a asp-controller="Supplier"
+                                       asp-action="Edit"
+                                       asp-route-id="@supplier.SupplierId"
+                                       class="sp-link">
+                                        Edit
+                                    </a>
+                            </button><button class="sp-link sp-danger" type="button">Deactivate</button></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="sp-foot">Lead time is updated automatically from the order date and received date of each purchase order. Suppliers with purchase history can be deactivated but not deleted.</p>
+    </section>
+
+    
+</div>

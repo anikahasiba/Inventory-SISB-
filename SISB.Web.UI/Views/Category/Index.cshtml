@@ -1,0 +1,234 @@
+﻿@using SISB.Entities
+@model List<Category>
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Categories";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Category.css" asp-append-version="true" />
+
+<div class="ct">
+
+    <header class="ct-top">
+        <div>
+            <h2>Categories</h2>
+            <p>7 categories · 8 sub-categories · 120 active products</p>
+        </div>
+        <button class="ct-btn" type="button" data-open="add">Add category</button>
+    </header>
+
+    <form class="ct-card ct-filters" role="search" aria-label="Filter categories" onsubmit="return false">
+        <label class="ct-field">
+            Search
+            <input type="search" placeholder="Category or sub-category name">
+        </label>
+        <label class="ct-check"><input type="checkbox"> Show inactive</label>
+    </form>
+
+    <section class="ct-card">
+        <div class="ct-wrap">
+            <table class="ct-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Parent</th>
+                        <th class="ct-num">Products</th>
+                        <th class="ct-num">Need attention</th>
+                        <th class="ct-num">Stock value</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="ct-parent">
+                        <td>Rice and grains<small>3 sub-categories</small></td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">22</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">3</span></td>
+                        <td class="ct-num">৳3,60,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Rice and grains">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Rice and grains">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child">
+                        <td>Basmati rice</td>
+                        <td>Rice and grains</td>
+                        <td class="ct-num">8</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">2</span></td>
+                        <td class="ct-num">৳1,80,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Basmati rice">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child">
+                        <td>Miniket rice</td>
+                        <td>Rice and grains</td>
+                        <td class="ct-num">9</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">1</span></td>
+                        <td class="ct-num">৳1,35,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Miniket rice">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child ct-last">
+                        <td>Flour and atta</td>
+                        <td>Rice and grains</td>
+                        <td class="ct-num">5</td>
+                        <td class="ct-num ct-zero">0</td>
+                        <td class="ct-num">৳45,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Flour and atta">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+
+                    <tr class="ct-parent">
+                        <td>Cooking oil</td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">9</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">2</span></td>
+                        <td class="ct-num">৳2,45,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Cooking oil">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Cooking oil">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-parent">
+                        <td>Pulses</td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">16</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">3</span></td>
+                        <td class="ct-num">৳1,60,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Pulses">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Pulses">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-parent">
+                        <td>Dairy</td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">14</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">3</span></td>
+                        <td class="ct-num">৳2,35,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Dairy">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Dairy">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-parent">
+                        <td>Sugar and salt</td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">8</td>
+                        <td class="ct-num ct-zero">0</td>
+                        <td class="ct-num">৳90,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Sugar and salt">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Sugar and salt">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+
+                    <tr class="ct-parent">
+                        <td>Snacks<small>3 sub-categories</small></td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">31</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">2</span></td>
+                        <td class="ct-num">৳1,02,500</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Snacks">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Snacks">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child">
+                        <td>Biscuits</td>
+                        <td>Snacks</td>
+                        <td class="ct-num">14</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">1</span></td>
+                        <td class="ct-num">৳52,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Biscuits">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child">
+                        <td>Chips</td>
+                        <td>Snacks</td>
+                        <td class="ct-num">11</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">1</span></td>
+                        <td class="ct-num">৳38,500</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Chips">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child ct-last">
+                        <td>Chocolate</td>
+                        <td>Snacks</td>
+                        <td class="ct-num">6</td>
+                        <td class="ct-num ct-zero">0</td>
+                        <td class="ct-num">৳12,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Chocolate">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+
+                    <tr class="ct-parent">
+                        <td>Stationery<small>2 sub-categories</small></td>
+                        <td class="ct-zero">Top level</td>
+                        <td class="ct-num">20</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">1</span></td>
+                        <td class="ct-num">৳92,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Stationery">Edit</button><button class="ct-link" type="button" data-open="sub" data-parent="Stationery">Add sub-category</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child">
+                        <td>Notebooks</td>
+                        <td>Stationery</td>
+                        <td class="ct-num">12</td>
+                        <td class="ct-num"><span class="ct-pill ct-warn">1</span></td>
+                        <td class="ct-num">৳58,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Notebooks">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="ct-child ct-last">
+                        <td>Pens</td>
+                        <td>Stationery</td>
+                        <td class="ct-num">8</td>
+                        <td class="ct-num ct-zero">0</td>
+                        <td class="ct-num">৳34,000</td>
+                        <td><span class="ct-pill ct-ok">Active</span></td>
+                        <td><div class="ct-actions"><button class="ct-link" type="button" data-open="edit" data-name="Pens">Edit</button><button class="ct-link ct-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="ct-foot">Categories that have products can be deactivated but not deleted, and a category with sub-categories needs them moved first.</p>
+    </section>
+
+    <dialog id="cat-dialog" class="ct-dialog" aria-labelledby="cat-title">
+        <form method="dialog">
+            <h3 id="cat-title">Add category</h3>
+            <p class="ct-sub">Use a parent category to make this a sub-category.</p>
+            <div class="ct-fgrid">
+                <label class="ct-field">Category name<input type="text" id="cat-name" required></label>
+                <label class="ct-field">
+                    Parent category
+                    <select id="cat-parent">
+                        <option value="">None (top-level category)</option>
+                        <option>Rice and grains</option>
+                        <option>Cooking oil</option>
+                        <option>Pulses</option>
+                        <option>Dairy</option>
+                        <option>Sugar and salt</option>
+                        <option>Snacks</option>
+                        <option>Stationery</option>
+                    </select>
+                    <span class="ct-hint">A sub-category cannot have its own sub-categories.</span>
+                </label>
+                <label class="ct-check"><input type="checkbox" checked> Active</label>
+            </div>
+            <div class="ct-dfoot">
+                <button class="ct-btn ct-btn-ghost" value="cancel">Cancel</button>
+                <button class="ct-btn" value="save">Save category</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var dlg = document.getElementById('cat-dialog');
+        var title = document.getElementById('cat-title');
+        var name = document.getElementById('cat-name');
+        var parent = document.getElementById('cat-parent');
+        document.querySelectorAll('[data-open]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var mode = btn.dataset.open;
+                title.textContent = mode === 'edit' ? 'Edit category' : (mode === 'sub' ? 'Add sub-category' : 'Add category');
+                name.value = mode === 'edit' ? btn.dataset.name : '';
+                parent.value = mode === 'sub' ? btn.dataset.parent : '';
+                dlg.showModal();
+            });
+        });
+    })();
+</script>

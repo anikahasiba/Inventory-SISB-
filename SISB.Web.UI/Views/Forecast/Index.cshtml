@@ -1,0 +1,232 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Smart Reorder";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Forecast.css" asp-append-version="true" />
+
+<div class="sr">
+
+    <header class="sr-top">
+        <h2>Smart reorder</h2>
+        <p>Products that are likely to run out soon, with a suggested amount to order. Nothing is ordered until you confirm.</p>
+    </header>
+
+    <section class="sr-stats" aria-label="Reorder summary">
+        <div class="sr-card sr-stat sr-urgent"><span>Products to reorder</span><strong id="sr-count">5</strong><em>2 have less than 2 days of stock</em></div>
+        <div class="sr-card sr-stat"><span>Estimated cost of all suggestions</span><strong>৳1,61,440</strong><em>At current average cost</em></div>
+        <div class="sr-card sr-stat"><span>Forecast last updated</span><strong>Today, 2:00 am</strong><em>Runs every night</em></div>
+    </section>
+
+    <form class="sr-card sr-filters" aria-label="Filter suggestions" onsubmit="return false">
+        <label class="sr-field">
+            Supplier
+            <select><option>All suppliers</option><option>Karim Wholesale</option><option>Meghna Traders</option><option>Dhaka Dairy Supply</option></select>
+        </label>
+        <label class="sr-field">
+            Confidence
+            <select><option>All</option><option>High</option><option>Medium</option><option>Low</option></select>
+        </label>
+        <label class="sr-check"><input type="checkbox"> Urgent only (under 3 days)</label>
+    </form>
+
+    <section class="sr-card">
+        <div class="sr-wrap">
+            <table class="sr-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="sr-all" aria-label="Select all suggestions" checked></th>
+                        <th>Product</th>
+                        <th class="sr-num">Days left</th>
+                        <th class="sr-num">Next 7 days</th>
+                        <th class="sr-num">Order qty</th>
+                        <th>Supplier</th>
+                        <th class="sr-num">Cost</th>
+                        <th>Confidence</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="sr-body">
+
+                    <tr class="sr-row" data-cost="410" data-supplier="Dhaka Dairy Supply">
+                        <td><input type="checkbox" class="sr-pick" aria-label="Select Powdered milk 500g"></td>
+                        <td class="sr-prod"><b>Powdered milk 500g</b><small>0 in stock</small></td>
+                        <td class="sr-num"><span class="sr-pill sr-bad">0</span></td>
+                        <td class="sr-num">34</td>
+                        <td class="sr-num"><input class="sr-qty" type="number" min="1" value="48" aria-label="Order quantity for Powdered milk 500g"></td>
+                        <td>Dhaka Dairy Supply</td>
+                        <td class="sr-num sr-cost">৳19,680</td>
+                        <td><span class="sr-pill sr-warn">Low</span></td>
+                        <td><div class="sr-actions"><button class="sr-link sr-toggle" type="button" aria-expanded="false">Why?</button><button class="sr-link sr-danger sr-dismiss" type="button">Dismiss</button></div></td>
+                    </tr>
+                    <tr class="sr-why" hidden>
+                        <td colspan="9">
+                            <p>Out of stock now. About 5 are expected to sell each day (34 over the next 7 days). Dhaka Dairy Supply usually delivers in 2 days, so the suggestion covers a week of sales plus a small buffer.</p>
+                            <p class="sr-lowc">Low confidence: this product has less than 60 days of sales history. Check the quantity before ordering.</p>
+                        </td>
+                    </tr>
+
+                    <tr class="sr-row" data-cost="125" data-supplier="Meghna Traders">
+                        <td><input type="checkbox" class="sr-pick" aria-label="Select Red lentils 1kg" checked></td>
+                        <td class="sr-prod"><b>Red lentils 1kg</b><small>12 in stock</small></td>
+                        <td class="sr-num"><span class="sr-pill sr-bad">1.5</span></td>
+                        <td class="sr-num">58</td>
+                        <td class="sr-num"><input class="sr-qty" type="number" min="1" value="60" aria-label="Order quantity for Red lentils 1kg"></td>
+                        <td>Meghna Traders</td>
+                        <td class="sr-num sr-cost">৳7,500</td>
+                        <td><span class="sr-pill sr-ok">Medium</span></td>
+                        <td><div class="sr-actions"><button class="sr-link sr-toggle" type="button" aria-expanded="false">Why?</button><button class="sr-link sr-danger sr-dismiss" type="button">Dismiss</button></div></td>
+                    </tr>
+                    <tr class="sr-why" hidden>
+                        <td colspan="9"><p>About 8 are sold each day and 12 are left, which lasts 1.5 days. Meghna Traders takes about 5 days to deliver, so the shelf would be empty before the order arrives. The quantity covers the next 7 days (58) plus a small buffer.</p></td>
+                    </tr>
+
+                    <tr class="sr-row" data-cost="640" data-supplier="Karim Wholesale">
+                        <td><input type="checkbox" class="sr-pick" aria-label="Select Basmati rice 5kg" checked></td>
+                        <td class="sr-prod"><b>Basmati rice 5kg</b><small>25 in stock</small></td>
+                        <td class="sr-num"><span class="sr-pill sr-warn">2.5</span></td>
+                        <td class="sr-num">70</td>
+                        <td class="sr-num"><input class="sr-qty" type="number" min="1" value="95" aria-label="Order quantity for Basmati rice 5kg"></td>
+                        <td>Karim Wholesale</td>
+                        <td class="sr-num sr-cost">৳60,800</td>
+                        <td><span class="sr-pill sr-ok">High</span></td>
+                        <td><div class="sr-actions"><button class="sr-link sr-toggle" type="button" aria-expanded="false">Why?</button><button class="sr-link sr-danger sr-dismiss" type="button">Dismiss</button></div></td>
+                    </tr>
+                    <tr class="sr-why" hidden>
+                        <td colspan="9"><p>About 10 are sold each day and 25 are left, which lasts 2.5 days. Karim Wholesale takes about 4 days to deliver, so stock would run out before the order arrives. The suggestion covers the next 7 days (70) plus a buffer for the delivery time.</p></td>
+                    </tr>
+
+                    <tr class="sr-row" data-cost="840" data-supplier="Meghna Traders">
+                        <td><input type="checkbox" class="sr-pick" aria-label="Select Soybean oil 5L" checked></td>
+                        <td class="sr-prod"><b>Soybean oil 5L</b><small>18 in stock</small></td>
+                        <td class="sr-num"><span class="sr-pill sr-warn">2.4</span></td>
+                        <td class="sr-num">52</td>
+                        <td class="sr-num"><input class="sr-qty" type="number" min="1" value="72" aria-label="Order quantity for Soybean oil 5L"></td>
+                        <td>Meghna Traders</td>
+                        <td class="sr-num sr-cost">৳60,480</td>
+                        <td><span class="sr-pill sr-ok">High</span></td>
+                        <td><div class="sr-actions"><button class="sr-link sr-toggle" type="button" aria-expanded="false">Why?</button><button class="sr-link sr-danger sr-dismiss" type="button">Dismiss</button></div></td>
+                    </tr>
+                    <tr class="sr-why" hidden>
+                        <td colspan="9"><p>About 7 are sold each day and 18 are left, which lasts 2.4 days. Sales are expected to stay steady, with 52 over the next 7 days. The extra quantity covers the 5 days Meghna Traders needs to deliver.</p></td>
+                    </tr>
+
+                    <tr class="sr-row" data-cost="118" data-supplier="Karim Wholesale">
+                        <td><input type="checkbox" class="sr-pick" aria-label="Select Sugar 1kg" checked></td>
+                        <td class="sr-prod"><b>Sugar 1kg</b><small>38 in stock</small></td>
+                        <td class="sr-num"><span class="sr-pill sr-warn">3.1</span></td>
+                        <td class="sr-num">86</td>
+                        <td class="sr-num"><input class="sr-qty" type="number" min="1" value="110" aria-label="Order quantity for Sugar 1kg"></td>
+                        <td>Karim Wholesale</td>
+                        <td class="sr-num sr-cost">৳12,980</td>
+                        <td><span class="sr-pill sr-ok">High</span></td>
+                        <td><div class="sr-actions"><button class="sr-link sr-toggle" type="button" aria-expanded="false">Why?</button><button class="sr-link sr-danger sr-dismiss" type="button">Dismiss</button></div></td>
+                    </tr>
+                    <tr class="sr-why" hidden>
+                        <td colspan="9"><p>About 12 are sold each day, and the current stock lasts about 3 days. Karim Wholesale takes about 4 days to deliver. The suggestion covers the next 7 days (86) plus a buffer for the delivery time.</p></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="sr-card sr-summary" aria-live="polite">
+        <div>
+            <h3>Purchase orders to create</h3>
+            <ul class="sr-groups" id="sr-groups"></ul>
+            <div class="sr-done" id="sr-done" role="status" hidden></div>
+        </div>
+        <div class="sr-total">
+            <span>Total for selected</span>
+            <strong id="sr-sum">৳0</strong>
+            <button class="sr-btn" type="button" id="sr-create" disabled>Create draft purchase orders</button>
+        </div>
+    </section>
+
+    <section class="sr-card sr-how">
+        <h3>How suggestions work</h3>
+        <ul>
+            <li>Each product's recent sales are used to forecast the next 7 days.</li>
+            <li>Days left is the stock you have divided by the expected daily sales.</li>
+            <li>The order quantity covers the forecast plus the time the supplier takes to deliver.</li>
+            <li>Products with less than 60 days of sales history show low confidence and start unticked.</li>
+            <li>Orders are created as drafts, grouped by supplier. You approve them on the Purchases page.</li>
+        </ul>
+    </section>
+
+</div>
+
+<script>
+    (function () {
+        var body = document.getElementById('sr-body');
+        var all = document.getElementById('sr-all');
+        var groupsEl = document.getElementById('sr-groups');
+        var sumEl = document.getElementById('sr-sum');
+        var createBtn = document.getElementById('sr-create');
+        var doneEl = document.getElementById('sr-done');
+        var countEl = document.getElementById('sr-count');
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN'); }
+        function rows() { return Array.prototype.slice.call(body.querySelectorAll('.sr-row')).filter(function (r) { return !r.hidden; }); }
+
+        function recalc() {
+            var groups = {}, total = 0, picked = 0;
+            rows().forEach(function (r) {
+                var qty = Math.max(parseInt(r.querySelector('.sr-qty').value, 10) || 0, 0);
+                var cost = qty * parseFloat(r.dataset.cost);
+                r.querySelector('.sr-cost').textContent = money(cost);
+                if (r.querySelector('.sr-pick').checked && qty > 0) {
+                    var g = groups[r.dataset.supplier] || (groups[r.dataset.supplier] = { items: 0, cost: 0 });
+                    g.items++; g.cost += cost; total += cost; picked++;
+                }
+            });
+            groupsEl.innerHTML = '';
+            var names = Object.keys(groups);
+            if (!names.length) {
+                groupsEl.innerHTML = '<li class="sr-none">Tick the products you want to order.</li>';
+            }
+            names.forEach(function (n) {
+                var li = document.createElement('li');
+                var a = document.createElement('span'), b = document.createElement('span');
+                a.textContent = n + ' · ' + groups[n].items + (groups[n].items === 1 ? ' product' : ' products');
+                b.textContent = money(groups[n].cost);
+                li.appendChild(a); li.appendChild(b); groupsEl.appendChild(li);
+            });
+            sumEl.textContent = money(total);
+            createBtn.disabled = !picked;
+            countEl.textContent = rows().length;
+            all.checked = rows().length > 0 && rows().every(function (r) { return r.querySelector('.sr-pick').checked; });
+        }
+
+        body.addEventListener('input', recalc);
+        body.addEventListener('change', recalc);
+
+        body.addEventListener('click', function (e) {
+            var row = e.target.closest('.sr-row');
+            if (!row) return;
+            var why = row.nextElementSibling;
+            if (e.target.classList.contains('sr-toggle')) {
+                why.hidden = !why.hidden;
+                e.target.setAttribute('aria-expanded', why.hidden ? 'false' : 'true');
+                row.classList.toggle('sr-open', !why.hidden);
+            }
+            if (e.target.classList.contains('sr-dismiss')) {
+                row.hidden = true; why.hidden = true; recalc();
+            }
+        });
+
+        all.addEventListener('change', function () {
+            rows().forEach(function (r) { r.querySelector('.sr-pick').checked = all.checked; });
+            recalc();
+        });
+
+        createBtn.addEventListener('click', function () {
+            var n = groupsEl.querySelectorAll('li').length;
+            doneEl.textContent = n + (n === 1 ? ' draft purchase order was' : ' draft purchase orders were') + ' created. Review and approve them on the Purchases page.';
+            doneEl.hidden = false;
+        });
+
+        recalc();
+    })();
+</script>

@@ -1,0 +1,277 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Reports";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mreport.css" asp-append-version="true" />
+
+<div class="mr">
+
+    <header class="mr-top">
+        <h2>Reports</h2>
+        <p>Choose a report, set the dates, then view it here or export it.</p>
+        <p class="mr-lockinfo" style="margin-top:10px">Cost and profit reports are only for the Owner, so Profit and loss is locked for your role.</p>
+    </header>
+
+    <div class="mr-grid">
+
+        <nav class="mr-card mr-nav" aria-label="Reports">
+            <h3>Stock</h3>
+            <button type="button" class="mr-pick" data-key="stock">Stock summary</button>
+            <button type="button" class="mr-pick" data-key="ledger">Stock ledger</button>
+            <button type="button" class="mr-pick" data-key="expiry">Expiry report</button>
+            <button type="button" class="mr-pick" data-key="dead">Dead stock</button>
+            <h3>Sales and profit</h3>
+            <button type="button" class="mr-pick" data-key="sales">Sales report</button>
+            <button type="button" class="mr-pick" disabled title="Only the Owner can see cost and profit reports">Profit and loss <span class="mr-own">Owner only</span></button>
+            <button type="button" class="mr-pick" data-key="abc">ABC analysis</button>
+            <h3>Purchases and people</h3>
+            <button type="button" class="mr-pick" data-key="purchase">Purchase report</button>
+            <button type="button" class="mr-pick" data-key="payables">Supplier payables</button>
+            <button type="button" class="mr-pick" data-key="dues">Customer dues</button>
+        </nav>
+
+        <section class="mr-card" aria-live="polite">
+            <div class="mr-head">
+                <div>
+                    <h3 id="mr-title"></h3>
+                    <p id="mr-desc"></p>
+                </div>
+                <div class="mr-export">
+                    <button type="button" class="mr-btn mr-btn-ghost" id="mr-pdf">Export PDF</button>
+                    <button type="button" class="mr-btn" id="mr-xls">Export Excel</button>
+                </div>
+            </div>
+
+            <div class="mr-bar">
+                <label class="mr-field">
+                    Period
+                    <select id="mr-preset">
+                        <option value="today">Today</option>
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="month" selected>This month</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </label>
+                <label class="mr-field">From<input type="date" id="mr-from"></label>
+                <label class="mr-field"><span id="mr-to-label">To</span><input type="date" id="mr-to"></label>
+                <div class="mr-field" id="mr-seg-wrap" hidden>
+                    Group by
+                    <div class="mr-seg" role="group" aria-label="Group by">
+                        <button type="button" data-g="product" aria-pressed="true">Product</button>
+                        <button type="button" data-g="category" aria-pressed="false">Category</button>
+                        <button type="button" data-g="date" aria-pressed="false">Date</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mr-kpis" id="mr-kpis"></div>
+
+            <div class="mr-wrap">
+                <table class="mr-table" id="mr-table"></table>
+            </div>
+            <p class="mr-note" id="mr-note"></p>
+        </section>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var R = {
+            stock: {
+                title: 'Stock summary', desc: 'Quantity and value of each product, at average cost.', dated: false,
+                kpis: [['Products', '120'], ['Stock value', '৳12,84,500'], ['Need reordering', '14']],
+                cols: [['Product', 't'], ['Category', 't'], ['In stock', 'r'], ['Average cost', 'm'], ['Stock value', 'm']],
+                rows: [
+                    ['Basmati rice 5kg', 'Rice and grains', '25 bags', 640, 16000],
+                    ['Soybean oil 5L', 'Cooking oil', '18 btl', 840, 15120],
+                    ['Sugar 1kg', 'Sugar and salt', '240 kg', 118, 28320],
+                    ['Red lentils 1kg', 'Pulses', '12 kg', 125, 1500],
+                    ['Powdered milk 500g', 'Dairy', '0 pkt', 410, 0],
+                    ['Cream biscuits 200g', 'Snacks', '180 pkt', 32, 5760],
+                    ['Notebook A4 200 pages', 'Stationery', '48 pcs', 70, 3360]],
+                foot: ['Total for these 7 products', '', '', '', 70060],
+                note: 'Showing 7 of 120 products. The exported file has every product.'
+            },
+            ledger: {
+                title: 'Stock ledger', desc: 'Every stock movement in the period. Entries can never be edited or deleted.', dated: true,
+                kpis: [['Movements', '214'], ['Stock in', '+1,126'], ['Stock out', '−1,043']],
+                cols: [['Date', 't'], ['Product', 't'], ['Type', 'p'], ['Quantity', 'r'], ['Reference', 't']],
+                rows: [
+                    ['5 Nov, 2:14 pm', 'Sugar 1kg', ['Sale', 'blue'], '−4', 'INV-2026-1058'],
+                    ['5 Nov, 1:52 pm', 'Basmati rice 5kg', ['Sale', 'blue'], '−2', 'INV-2026-1057'],
+                    ['5 Nov, 10:40 am', 'Red lentils 1kg', ['Return', 'teal'], '+2', 'INV-2026-1054'],
+                    ['4 Nov, 3:40 pm', 'Cream biscuits 200g', ['Purchase', 'ok'], '+144', 'PO-2026-0145'],
+                    ['4 Nov, 11:05 am', 'Cream biscuits 200g', ['Adjustment', 'warn'], '−6', 'ADJ-0031'],
+                    ['2 Nov, 4:10 pm', 'Basmati rice 5kg', ['Purchase', 'ok'], '+60', 'PO-2026-0140']],
+                note: 'Showing the latest 6 movements.'
+            },
+            expiry: {
+                title: 'Expiry report', desc: 'Batches that expire within the next 90 days, soonest first.', dated: false,
+                kpis: [['Expiring within 30 days', '1 batch'], ['Packs at risk', '36'], ['Value at risk', '৳1,152']],
+                cols: [['Product', 't'], ['Batch', 't'], ['Expires', 't'], ['Quantity', 'r'], ['Value', 'm'], ['Time left', 'p']],
+                rows: [
+                    ['Cream biscuits 200g', 'B-2209', '17 Nov 2026', '36 pkt', 1152, ['12 days', 'warn']],
+                    ['Cream biscuits 200g', 'B-2214', '14 Jan 2027', '144 pkt', 4608, ['70 days', 'ok']]],
+                note: 'Expired batches can\'t be sold and must be written off from Stock control.'
+            },
+            dead: {
+                title: 'Dead stock', desc: 'Products in stock that have not sold for a long time.', dated: false,
+                kpis: [['Dead stock products', '2'], ['Money tied up', '৳3,690'], ['Longest without a sale', '156 days']],
+                cols: [['Product', 't'], ['In stock', 'r'], ['Last sale', 't'], ['Days without a sale', 'n'], ['Value', 'm']],
+                rows: [
+                    ['Gel pen blue (box of 12)', '3 box', '2 Jun 2026', 156, 330],
+                    ['Notebook A4 200 pages', '48 pcs', '24 Jul 2026', 104, 3360]],
+                foot: ['Total', '', '', '', 3690]
+            },
+            sales: {
+                title: 'Sales report', desc: 'Sales by day, after returns and voids.', dated: true,
+                kpis: [['Sales', '৳2,88,700'], ['Invoices', '179'], ['Average sale', '৳1,613']],
+                cols: [['Date', 't'], ['Invoices', 'n'], ['Items sold', 'n'], ['Sales', 'm']],
+                rows: [['5 Nov 2026', 41, 130, 66240], ['4 Nov 2026', 38, 121, 61380], ['3 Nov 2026', 36, 117, 58910], ['2 Nov 2026', 33, 104, 52450], ['1 Nov 2026', 31, 98, 49720]],
+                foot: ['Total', 179, 570, 288700]
+            },
+            abc: {
+                title: 'ABC analysis', desc: 'Products ranked by how much of your revenue they bring in.', dated: true,
+                kpis: [['Class A', '2 products'], ['Class B', '2 products'], ['Class C', '1 product']],
+                cols: [['Product', 't'], ['Revenue', 'm'], ['Share', 'r'], ['Running total', 'r'], ['Class', 'p']],
+                rows: [
+                    ['Soybean oil 5L', 270840, '38.2%', '38.2%', ['A', 'ok']],
+                    ['Basmati rice 5kg', 255600, '36.1%', '74.3%', ['A', 'ok']],
+                    ['Powdered milk 500g', 91080, '12.8%', '87.1%', ['B', 'warn']],
+                    ['Sugar 1kg', 53560, '7.6%', '94.7%', ['B', 'warn']],
+                    ['Red lentils 1kg', 37845, '5.3%', '100.0%', ['C', 'grey']]],
+                note: 'A covers the first 80% of revenue, B the next 15%, and C the rest.'
+            },
+            purchase: {
+                title: 'Purchase report', desc: 'Purchase orders placed in the period.', dated: true,
+                kpis: [['Total ordered', '৳5,12,040'], ['Orders', '7'], ['Received', '3 of 7']],
+                cols: [['Order', 't'], ['Date', 't'], ['Supplier', 't'], ['Status', 'p'], ['Total', 'm']],
+                rows: [
+                    ['PO-2026-0148', '4 Nov', 'Dhaka Dairy Supply', ['Approved', 'blue'], 19680],
+                    ['PO-2026-0147', '3 Nov', 'Meghna Traders', ['Draft', 'grey'], 67980],
+                    ['PO-2026-0146', '3 Nov', 'Karim Wholesale', ['Approved', 'blue'], 73780],
+                    ['PO-2026-0145', '2 Nov', 'Dhaka Dairy Supply', ['Received', 'ok'], 42300],
+                    ['PO-2026-0140', '30 Oct', 'Karim Wholesale', ['Received', 'ok'], 184000],
+                    ['PO-2026-0143', '28 Oct', 'Rupali Snacks Distribution', ['Partly received', 'warn'], 27800],
+                    ['PO-2026-0139', '28 Oct', 'Meghna Traders', ['Received', 'ok'], 96500]],
+                foot: ['Total', '', '', '', 512040]
+            },
+            payables: {
+                title: 'Supplier payables', desc: 'What you owe each supplier for goods already received.', dated: false,
+                kpis: [['Total payable', '৳3,50,600'], ['Suppliers owed', '4'], ['Oldest unpaid order', '28 Oct']],
+                cols: [['Supplier', 't'], ['Payment terms', 't'], ['Oldest unpaid order', 't'], ['Payment due', 'p'], ['Balance due', 'm']],
+                rows: [
+                    ['Karim Wholesale', 'Net 15 days', '30 Oct', ['14 Nov', 'ok'], 184000],
+                    ['Meghna Traders', 'Net 7 days', '28 Oct', ['Overdue since 4 Nov', 'bad'], 96500],
+                    ['Dhaka Dairy Supply', 'Cash on delivery', '2 Nov', ['Due now', 'bad'], 42300],
+                    ['Rupali Snacks Distribution', 'Net 15 days', '28 Oct', ['12 Nov', 'ok'], 27800]],
+                foot: ['Total', '', '', '', 350600]
+            },
+            dues: {
+                title: 'Customer dues', desc: 'Customers who owe money, with how much of their credit limit is used.', dated: false,
+                kpis: [['Total dues', '৳78,350'], ['Customers owing', '4'], ['At credit limit', '1']],
+                cols: [['Customer', 't'], ['Credit limit', 'm'], ['Due balance', 'm'], ['Credit used', 'p'], ['Last purchase', 't']],
+                rows: [
+                    ['Rafiq Store', 50000, 50000, ['100%', 'bad'], '28 Oct'],
+                    ['Nasrin Akter', 15000, 13200, ['88%', 'warn'], '5 Nov'],
+                    ['Hasan Mia', 20000, 8400, ['42%', 'ok'], '5 Nov'],
+                    ['Tanvir Ahmed', 25000, 6750, ['27%', 'ok'], '5 Nov']],
+                foot: ['Total', 110000, 78350, '', '']
+            }
+        };
+
+        var TODAY = new Date(2026, 10, 5);
+        var key = 'sales', grp = 'product';
+        var el = function (id) { return document.getElementById(id); };
+        var from = el('mr-from'), to = el('mr-to'), preset = el('mr-preset');
+
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function parse(v) { var p = v.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+        function short(d, yr) { return d.toLocaleDateString('en-GB', yr ? { day: 'numeric', month: 'short', year: 'numeric' } : { day: 'numeric', month: 'short' }); }
+
+        function cell(v, t) {
+            if (Array.isArray(v)) return '<span class="mr-pill mr-' + v[1] + '">' + esc(v[0]) + '</span>';
+            if (typeof v === 'number') return (t === 'm' ? '৳' : '') + v.toLocaleString('en-IN');
+            return esc(v);
+        }
+        function right(t) { return t === 'r' || t === 'm' || t === 'n'; }
+
+        function setPreset() {
+            var v = preset.value, f = new Date(TODAY);
+            if (v === 'custom') return;
+            if (v === '7') f.setDate(f.getDate() - 6);
+            if (v === '30') f.setDate(f.getDate() - 29);
+            if (v === 'month') f.setDate(1);
+            from.value = iso(f); to.value = iso(TODAY);
+        }
+
+        function rangeText(r) {
+            var t = parse(to.value);
+            if (!r.dated) return 'As of ' + short(t, true);
+            var f = parse(from.value);
+            return f.getTime() === t.getTime() ? short(t, true) : short(f) + ' – ' + short(t, true);
+        }
+
+        function view() {
+            var r = R[key], rows = r.rows, foot = r.foot, kpis = r.kpis, note = r.note, cols = r.cols;
+            if (r.g) {
+                var g = r.groups[grp];
+                rows = g.rows; foot = g.foot; kpis = g.kpis; note = g.note;
+                cols = [[g.label, 't']].concat(r.cols);
+            }
+            el('mr-title').textContent = r.title;
+            el('mr-desc').textContent = r.desc + '  ' + rangeText(r);
+            el('mr-seg-wrap').hidden = !r.g;
+            from.disabled = !r.dated; preset.disabled = !r.dated;
+            el('mr-to-label').textContent = r.dated ? 'To' : 'As of';
+
+            el('mr-kpis').innerHTML = kpis.map(function (k) {
+                return '<div class="mr-kpi"><span>' + esc(k[0]) + '</span><strong>' + esc(k[1]) + '</strong></div>';
+            }).join('');
+
+            var h = '<thead><tr>' + cols.map(function (c) {
+                return '<th' + (right(c[1]) ? ' class="mr-r"' : '') + '>' + esc(c[0]) + '</th>';
+            }).join('') + '</tr></thead><tbody>';
+            rows.forEach(function (row) {
+                h += '<tr>' + row.map(function (v, i) {
+                    return '<td' + (right(cols[i][1]) ? ' class="mr-r"' : '') + '>' + cell(v, cols[i][1]) + '</td>';
+                }).join('') + '</tr>';
+            });
+            h += '</tbody>';
+            if (foot) {
+                h += '<tfoot><tr>' + foot.map(function (v, i) {
+                    return '<td' + (right(cols[i][1]) ? ' class="mr-r"' : '') + '>' + cell(v, cols[i][1]) + '</td>';
+                }).join('') + '</tr></tfoot>';
+            }
+            el('mr-table').innerHTML = h;
+            el('mr-note').textContent = note || '';
+            el('mr-note').hidden = !note;
+
+            document.querySelectorAll('.mr-pick').forEach(function (b) {
+                b.setAttribute('aria-current', b.dataset.key === key ? 'true' : 'false');
+            });
+        }
+
+        document.querySelectorAll('.mr-pick').forEach(function (b) {
+            b.addEventListener('click', function () { key = b.dataset.key; view(); });
+        });
+        document.querySelectorAll('[data-g]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                grp = b.dataset.g;
+                document.querySelectorAll('[data-g]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+                view();
+            });
+        });
+        preset.addEventListener('change', function () { setPreset(); view(); });
+        [from, to].forEach(function (i) {
+            i.addEventListener('change', function () { preset.value = 'custom'; view(); });
+        });
+
+        setPreset();
+        view();
+    })();
+</script>

@@ -1,0 +1,258 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Stock Control";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Stock.css" asp-append-version="true" />
+
+<div class="st">
+
+    <header class="st-top">
+        <div>
+            <h2>Stock control</h2>
+            <p>Every change in stock is recorded in the ledger, so the numbers always add up.</p>
+        </div>
+        <div class="st-tools">
+            <button class="st-btn st-btn-ghost" type="button" id="st-open-count">Count stock</button>
+            <button class="st-btn" type="button" id="st-open-adj">Record adjustment</button>
+        </div>
+    </header>
+
+    <section class="st-stats" aria-label="Stock summary">
+        <div class="st-card st-stat"><span>Stock value</span><strong>৳12,84,500</strong><em>At average cost, 120 products</em></div>
+        <div class="st-card st-stat st-lowc"><span>Need reordering</span><strong>14</strong><em>11 low · 3 out of stock</em></div>
+        <div class="st-card st-stat st-wait"><span>Waiting for approval</span><strong>2</strong><em>Adjustments to review</em></div>
+    </section>
+
+    <div class="st-tabs" role="tablist" aria-label="Stock views">
+        <button class="st-tab" role="tab" id="tab-levels" aria-controls="panel-levels" aria-selected="true" type="button">Stock levels</button>
+        <button class="st-tab" role="tab" id="tab-ledger" aria-controls="panel-ledger" aria-selected="false" type="button" tabindex="-1">Movement ledger</button>
+        <button class="st-tab" role="tab" id="tab-adj" aria-controls="panel-adj" aria-selected="false" type="button" tabindex="-1">Adjustments<b>2</b></button>
+    </div>
+
+    <!-- STOCK LEVELS -->
+    <div role="tabpanel" id="panel-levels" aria-labelledby="tab-levels">
+        <form class="st-filters" role="search" aria-label="Filter stock" onsubmit="return false">
+            <label class="st-field">Search<input type="search" placeholder="Name, SKU or barcode"></label>
+            <label class="st-field">
+                Category
+                <select><option>All categories</option><option>Rice and grains</option><option>Cooking oil</option><option>Pulses</option><option>Dairy</option><option>Sugar and salt</option><option>Snacks</option><option>Stationery</option></select>
+            </label>
+            <label class="st-field">
+                Stock status
+                <select><option>All</option><option>Healthy</option><option>Low stock</option><option>Out of stock</option></select>
+            </label>
+        </form>
+
+        <section class="st-card">
+            <div class="st-wrap">
+                <table class="st-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th class="st-num">In stock</th>
+                            <th class="st-num">Reorder at</th>
+                            <th class="st-num">Average cost</th>
+                            <th class="st-num">Stock value</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="st-strong">Basmati rice 5kg</td><td>Rice and grains</td><td class="st-num">25 bags</td><td class="st-num">50</td><td class="st-num">৳640</td><td class="st-num">৳16,000</td><td><span class="st-pill st-warn">Low stock</span></td></tr>
+                        <tr><td class="st-strong">Soybean oil 5L</td><td>Cooking oil</td><td class="st-num">18 btl</td><td class="st-num">40</td><td class="st-num">৳840</td><td class="st-num">৳15,120</td><td><span class="st-pill st-warn">Low stock</span></td></tr>
+                        <tr><td class="st-strong">Sugar 1kg</td><td>Sugar and salt</td><td class="st-num">240 kg</td><td class="st-num">90</td><td class="st-num">৳118</td><td class="st-num">৳28,320</td><td><span class="st-pill st-ok">Healthy</span></td></tr>
+                        <tr><td class="st-strong">Red lentils 1kg</td><td>Pulses</td><td class="st-num">12 kg</td><td class="st-num">40</td><td class="st-num">৳125</td><td class="st-num">৳1,500</td><td><span class="st-pill st-warn">Low stock</span></td></tr>
+                        <tr><td class="st-strong">Powdered milk 500g</td><td>Dairy <span class="st-tag">Expiry tracked</span></td><td class="st-num">0 pkt</td><td class="st-num">30</td><td class="st-num">৳410</td><td class="st-num">৳0</td><td><span class="st-pill st-bad">Out of stock</span></td></tr>
+                        <tr><td class="st-strong">Cream biscuits 200g</td><td>Snacks <span class="st-tag">Expiry tracked</span></td><td class="st-num">180 pkt</td><td class="st-num">60</td><td class="st-num">৳32</td><td class="st-num">৳5,760</td><td><span class="st-pill st-ok">Healthy</span></td></tr>
+                        <tr><td class="st-strong">Notebook A4 200 pages</td><td>Stationery</td><td class="st-num">48 pcs</td><td class="st-num">15</td><td class="st-num">৳70</td><td class="st-num">৳3,360</td><td><span class="st-pill st-ok">Healthy</span></td></tr>
+                        <tr class="st-total"><td colspan="5">Total for these 7 products</td><td class="st-num">৳70,060</td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="st-foot">Showing 7 of 120 products. Stock value is the quantity in stock multiplied by the product's average cost.</p>
+        </section>
+
+        <section class="st-card">
+            <h3>Batches with expiry dates</h3>
+            <p class="st-sub">Stock is sold from the batch that expires first. Expired batches can't be sold and must be written off.</p>
+            <div class="st-wrap">
+                <table class="st-table">
+                    <thead><tr><th>Product</th><th>Batch</th><th>Expires</th><th class="st-num">Quantity</th><th>Time left</th></tr></thead>
+                    <tbody>
+                        <tr><td class="st-strong">Cream biscuits 200g</td><td>B-2209</td><td>17 Nov 2026</td><td class="st-num">36 pkt</td><td><span class="st-pill st-warn">12 days</span></td></tr>
+                        <tr><td class="st-strong">Cream biscuits 200g</td><td>B-2214</td><td>14 Jan 2027</td><td class="st-num">144 pkt</td><td><span class="st-pill st-ok">70 days</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- LEDGER -->
+    <div role="tabpanel" id="panel-ledger" aria-labelledby="tab-ledger" hidden>
+        <form class="st-filters" role="search" aria-label="Filter ledger" onsubmit="return false">
+            <label class="st-field">Product<input type="search" placeholder="Product name or SKU"></label>
+            <label class="st-field">
+                Movement type
+                <select><option>All types</option><option>Purchase</option><option>Sale</option><option>Return</option><option>Adjustment</option></select>
+            </label>
+            <label class="st-field">From date<input type="date" value="2026-11-01"></label>
+        </form>
+
+        <section class="st-card">
+            <div class="st-wrap">
+                <table class="st-table">
+                    <thead>
+                        <tr><th>Date</th><th>Product</th><th>Type</th><th class="st-num">Quantity</th><th>Reference</th><th>Note</th><th>By</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="st-when">5 Nov<small>2:14 pm</small></td><td class="st-strong">Sugar 1kg</td><td><span class="st-pill st-blue">Sale</span></td><td class="st-num"><span class="st-qty-out">−4</span></td><td>INV-2026-1058</td><td class="st-muted">—</td><td>Sumon</td></tr>
+                        <tr><td class="st-when">5 Nov<small>1:52 pm</small></td><td class="st-strong">Basmati rice 5kg</td><td><span class="st-pill st-blue">Sale</span></td><td class="st-num"><span class="st-qty-out">−2</span></td><td>INV-2026-1057</td><td class="st-muted">—</td><td>Sumon</td></tr>
+                        <tr><td class="st-when">5 Nov<small>12:30 pm</small></td><td class="st-strong">Soybean oil 5L</td><td><span class="st-pill st-blue">Sale</span></td><td class="st-num"><span class="st-qty-out">−3</span></td><td>INV-2026-1056</td><td class="st-muted">—</td><td>Sumon</td></tr>
+                        <tr><td class="st-when">5 Nov<small>10:40 am</small></td><td class="st-strong">Red lentils 1kg</td><td><span class="st-pill st-teal">Return</span></td><td class="st-num"><span class="st-qty-in">+2</span></td><td>INV-2026-1054</td><td>Customer returned two packs</td><td>Farhana</td></tr>
+                        <tr><td class="st-when">4 Nov<small>3:40 pm</small></td><td class="st-strong">Cream biscuits 200g</td><td><span class="st-pill st-ok">Purchase</span></td><td class="st-num"><span class="st-qty-in">+144</span></td><td>PO-2026-0145</td><td>Batch B-2214</td><td>Farhana</td></tr>
+                        <tr><td class="st-when">4 Nov<small>11:05 am</small></td><td class="st-strong">Cream biscuits 200g</td><td><span class="st-pill st-warn">Adjustment</span></td><td class="st-num"><span class="st-qty-out">−6</span></td><td>ADJ-0031</td><td>Damaged packs</td><td>Farhana</td></tr>
+                        <tr><td class="st-when">3 Nov<small>9:20 am</small></td><td class="st-strong">Notebook A4 200 pages</td><td><span class="st-pill st-warn">Adjustment</span></td><td class="st-num"><span class="st-qty-in">+3</span></td><td>ADJ-0030</td><td>Found stock after count</td><td>Farhana</td></tr>
+                        <tr><td class="st-when">2 Nov<small>4:10 pm</small></td><td class="st-strong">Basmati rice 5kg</td><td><span class="st-pill st-ok">Purchase</span></td><td class="st-num"><span class="st-qty-in">+60</span></td><td>PO-2026-0140</td><td class="st-muted">—</td><td>Farhana</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="st-foot">The ledger can't be edited or deleted. A mistake is fixed by adding a reversing entry.</p>
+        </section>
+    </div>
+
+    <!-- ADJUSTMENTS -->
+    <div role="tabpanel" id="panel-adj" aria-labelledby="tab-adj" hidden>
+        <section class="st-card">
+            <div class="st-wrap">
+                <table class="st-table">
+                    <thead>
+                        <tr><th>Reference</th><th>Date</th><th>Product</th><th>Reason</th><th class="st-num">Quantity</th><th class="st-num">Value</th><th>Requested by</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="st-strong">ADJ-0033</td>
+                            <td>5 Nov</td>
+                            <td>Cream biscuits 200g</td>
+                            <td>Expiry write-off</td>
+                            <td class="st-num"><span class="st-qty-out">−12</span></td>
+                            <td class="st-num">৳384</td>
+                            <td>Sumon <span class="st-tag">Sales Staff</span></td>
+                            <td><span class="st-pill st-blue">Pending</span></td>
+                            <td><div class="st-actions"><button class="st-link" type="button">Approve</button><button class="st-link st-danger" type="button">Reject</button></div></td>
+                        </tr>
+                        <tr>
+                            <td class="st-strong">ADJ-0032</td>
+                            <td>5 Nov</td>
+                            <td>Red lentils 1kg</td>
+                            <td>Stock count difference</td>
+                            <td class="st-num"><span class="st-qty-out">−2</span></td>
+                            <td class="st-num">৳250</td>
+                            <td>Sumon <span class="st-tag">Sales Staff</span></td>
+                            <td><span class="st-pill st-blue">Pending</span></td>
+                            <td><div class="st-actions"><button class="st-link" type="button">Approve</button><button class="st-link st-danger" type="button">Reject</button></div></td>
+                        </tr>
+                        <tr><td class="st-strong">ADJ-0031</td><td>4 Nov</td><td>Cream biscuits 200g</td><td>Damaged packs</td><td class="st-num"><span class="st-qty-out">−6</span></td><td class="st-num">৳192</td><td>Farhana</td><td><span class="st-pill st-ok">Approved</span></td><td></td></tr>
+                        <tr><td class="st-strong">ADJ-0030</td><td>3 Nov</td><td>Notebook A4 200 pages</td><td>Found stock</td><td class="st-num"><span class="st-qty-in">+3</span></td><td class="st-num">৳210</td><td>Farhana</td><td><span class="st-pill st-ok">Approved</span></td><td></td></tr>
+                        <tr><td class="st-strong">ADJ-0029</td><td>1 Nov</td><td>Soybean oil 5L</td><td>Loss</td><td class="st-num"><span class="st-qty-out">−1</span></td><td class="st-num">৳840</td><td>Sumon <span class="st-tag">Sales Staff</span></td><td><span class="st-pill st-grey">Rejected</span></td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="st-foot">Every adjustment by Sales Staff, and any adjustment above the set value, needs Manager approval before it changes stock.</p>
+        </section>
+    </div>
+
+    <!-- RECORD ADJUSTMENT -->
+    <dialog id="st-adj-dialog" class="st-dialog" aria-labelledby="st-adj-title">
+        <form method="dialog">
+            <h3 id="st-adj-title">Record adjustment</h3>
+            <p class="st-sub">Stock changes only after the adjustment is approved.</p>
+            <div class="st-fgrid">
+                <label class="st-field st-wide">
+                    Product
+                    <select><option>Basmati rice 5kg</option><option>Soybean oil 5L</option><option>Sugar 1kg</option><option>Red lentils 1kg</option><option>Powdered milk 500g</option><option>Cream biscuits 200g</option><option>Notebook A4 200 pages</option></select>
+                </label>
+                <label class="st-field">
+                    Type
+                    <select><option>Damage</option><option>Loss</option><option>Expiry write-off</option><option>Found stock</option></select>
+                </label>
+                <label class="st-field">Quantity<input type="number" min="1" required></label>
+                <span class="st-hint st-wide">Damage, loss and expiry write-offs reduce stock. Found stock adds to it.</span>
+                <label class="st-field st-wide">Reason (required)<textarea required placeholder="What happened?"></textarea></label>
+            </div>
+            <div class="st-dfoot">
+                <button class="st-btn st-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="st-btn" value="save">Submit adjustment</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- STOCK COUNT -->
+    <dialog id="st-count-dialog" class="st-dialog st-big" aria-labelledby="st-count-title">
+        <form method="dialog">
+            <h3 id="st-count-title">Count stock</h3>
+            <p class="st-sub">Enter what you counted on the shelf. Differences are sent to a Manager for approval.</p>
+            <div class="st-wrap">
+                <table class="st-table">
+                    <thead><tr><th>Product</th><th class="st-num">In system</th><th class="st-num">Counted</th><th class="st-num">Difference</th></tr></thead>
+                    <tbody>
+                        <tr><td class="st-strong">Basmati rice 5kg</td><td class="st-num" data-sys="25">25</td><td class="st-num"><input class="st-count-in" type="number" min="0" aria-label="Counted Basmati rice 5kg"></td><td class="st-num st-var">–</td></tr>
+                        <tr><td class="st-strong">Sugar 1kg</td><td class="st-num" data-sys="240">240</td><td class="st-num"><input class="st-count-in" type="number" min="0" aria-label="Counted Sugar 1kg"></td><td class="st-num st-var">–</td></tr>
+                        <tr><td class="st-strong">Red lentils 1kg</td><td class="st-num" data-sys="12">12</td><td class="st-num"><input class="st-count-in" type="number" min="0" aria-label="Counted Red lentils 1kg"></td><td class="st-num st-var">–</td></tr>
+                        <tr><td class="st-strong">Notebook A4 200 pages</td><td class="st-num" data-sys="48">48</td><td class="st-num"><input class="st-count-in" type="number" min="0" aria-label="Counted Notebook A4 200 pages"></td><td class="st-num st-var">–</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="st-dfoot">
+                <button class="st-btn st-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="st-btn" value="save">Submit count</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        /* tabs */
+        var tabs = Array.prototype.slice.call(document.querySelectorAll('.st-tab'));
+        function select(tab) {
+            tabs.forEach(function (t) {
+                var on = t === tab;
+                t.setAttribute('aria-selected', on ? 'true' : 'false');
+                t.tabIndex = on ? 0 : -1;
+                document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+            });
+        }
+        tabs.forEach(function (t, i) {
+            t.addEventListener('click', function () { select(t); });
+            t.addEventListener('keydown', function (e) {
+                var n = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+                if (n < 0) return;
+                n = (n + tabs.length) % tabs.length;
+                tabs[n].focus(); select(tabs[n]);
+            });
+        });
+
+        /* dialogs */
+        document.getElementById('st-open-adj').addEventListener('click', function () {
+            document.getElementById('st-adj-dialog').showModal();
+        });
+        document.getElementById('st-open-count').addEventListener('click', function () {
+            document.getElementById('st-count-dialog').showModal();
+        });
+
+        /* live difference in the stock count */
+        document.querySelectorAll('.st-count-in').forEach(function (input) {
+            input.addEventListener('input', function () {
+                var row = input.closest('tr');
+                var sys = parseInt(row.querySelector('[data-sys]').dataset.sys, 10);
+                var out = row.querySelector('.st-var');
+                if (input.value === '') { out.textContent = '–'; out.className = 'st-num st-var'; return; }
+                var diff = parseInt(input.value, 10) - sys;
+                out.textContent = diff > 0 ? '+' + diff : diff < 0 ? '−' + Math.abs(diff) : '0';
+                out.className = 'st-num st-var ' + (diff > 0 ? 'st-qty-in' : diff < 0 ? 'st-qty-out' : 'st-muted');
+            });
+        });
+    })();
+</script>

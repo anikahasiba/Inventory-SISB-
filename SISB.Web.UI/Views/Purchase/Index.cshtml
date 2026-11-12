@@ -1,0 +1,245 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Purchases";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Purchase.css" asp-append-version="true" />
+
+<div class="pu">
+
+    <header class="pu-top">
+        <div>
+            <h2>Purchase orders</h2>
+            <p>4 open orders · 1 delivery is late</p>
+        </div>
+        <button class="pu-btn" type="button" id="pu-new">New purchase order</button>
+    </header>
+
+    <section class="pu-stats" aria-label="Purchase summary">
+        <div class="pu-card pu-stat"><span>Awaiting delivery</span><strong>৳93,460</strong><em>2 approved orders</em></div>
+        <div class="pu-card pu-stat pu-late"><span>Late deliveries</span><strong>1</strong><em>Rupali Snacks, 5 days late</em></div>
+        <div class="pu-card pu-stat pu-owed"><span>Payable to suppliers</span><strong>৳3,50,600</strong><em>On received goods</em></div>
+    </section>
+
+    <form class="pu-card pu-filters" role="search" aria-label="Filter purchase orders" onsubmit="return false">
+        <label class="pu-field">
+            Search
+            <input type="search" placeholder="PO number or supplier">
+        </label>
+        <label class="pu-field">
+            Status
+            <select><option>All statuses</option><option>Draft</option><option>Approved</option><option>Partially received</option><option>Received</option><option>Cancelled</option></select>
+        </label>
+        <label class="pu-field">
+            Supplier
+            <select><option>All suppliers</option><option>Karim Wholesale</option><option>Meghna Traders</option><option>Dhaka Dairy Supply</option><option>Paper Point</option><option>Rupali Snacks Distribution</option></select>
+        </label>
+    </form>
+
+    <section class="pu-card">
+        <div class="pu-wrap">
+            <table class="pu-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Supplier</th>
+                        <th>Ordered</th>
+                        <th>Delivery</th>
+                        <th class="pu-num">Items</th>
+                        <th class="pu-num">Total</th>
+                        <th class="pu-num">Balance due</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="pu-po">PO-2026-0148</td>
+                        <td>Dhaka Dairy Supply</td>
+                        <td>4 Nov 2026</td>
+                        <td class="pu-date">Expected 6 Nov</td>
+                        <td class="pu-num">1</td>
+                        <td class="pu-num">৳19,680</td>
+                        <td class="pu-num pu-clear">৳0</td>
+                        <td><span class="pu-pill pu-approved">Approved</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Receive goods</button><button class="pu-link pu-danger" type="button">Cancel</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0147</td>
+                        <td>Meghna Traders</td>
+                        <td>3 Nov 2026</td>
+                        <td class="pu-date">Expected 8 Nov</td>
+                        <td class="pu-num">2</td>
+                        <td class="pu-num">৳67,980</td>
+                        <td class="pu-num pu-clear">৳0</td>
+                        <td><span class="pu-pill pu-draft">Draft</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">Edit</button><button class="pu-link" type="button">Approve</button><button class="pu-link pu-danger" type="button">Cancel</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0146</td>
+                        <td>Karim Wholesale</td>
+                        <td>3 Nov 2026</td>
+                        <td class="pu-date">Expected 7 Nov</td>
+                        <td class="pu-num">2</td>
+                        <td class="pu-num">৳73,780</td>
+                        <td class="pu-num pu-clear">৳0</td>
+                        <td><span class="pu-pill pu-approved">Approved</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Receive goods</button><button class="pu-link pu-danger" type="button">Cancel</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0145</td>
+                        <td>Dhaka Dairy Supply</td>
+                        <td>2 Nov 2026</td>
+                        <td class="pu-date">Received 4 Nov</td>
+                        <td class="pu-num">3</td>
+                        <td class="pu-num">৳42,300</td>
+                        <td class="pu-num"><span class="pu-owed-amt">৳42,300</span></td>
+                        <td><span class="pu-pill pu-received">Received</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Record payment</button><button class="pu-link" type="button">PDF</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0143</td>
+                        <td>Rupali Snacks Distribution</td>
+                        <td>28 Oct 2026</td>
+                        <td class="pu-date">Expected 31 Oct<span class="pu-late-note">5 days late</span></td>
+                        <td class="pu-num">4</td>
+                        <td class="pu-num">৳27,800</td>
+                        <td class="pu-num"><span class="pu-owed-amt">৳27,800</span></td>
+                        <td><span class="pu-pill pu-partial">Partly received</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Receive remaining</button><button class="pu-link" type="button">Record payment</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0140</td>
+                        <td>Karim Wholesale</td>
+                        <td>30 Oct 2026</td>
+                        <td class="pu-date">Received 2 Nov</td>
+                        <td class="pu-num">6</td>
+                        <td class="pu-num">৳1,84,000</td>
+                        <td class="pu-num"><span class="pu-owed-amt">৳1,84,000</span></td>
+                        <td><span class="pu-pill pu-received">Received</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Record payment</button><button class="pu-link" type="button">PDF</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0139</td>
+                        <td>Meghna Traders</td>
+                        <td>28 Oct 2026</td>
+                        <td class="pu-date">Received 30 Oct</td>
+                        <td class="pu-num">5</td>
+                        <td class="pu-num">৳96,500</td>
+                        <td class="pu-num"><span class="pu-owed-amt">৳96,500</span></td>
+                        <td><span class="pu-pill pu-received">Received</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">Record payment</button><button class="pu-link" type="button">PDF</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="pu-po">PO-2026-0120</td>
+                        <td>Paper Point</td>
+                        <td>12 Oct 2026</td>
+                        <td class="pu-date">Received 18 Oct</td>
+                        <td class="pu-num">4</td>
+                        <td class="pu-num">৳38,000</td>
+                        <td class="pu-num pu-clear">৳0</td>
+                        <td><span class="pu-pill pu-received">Received</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button><button class="pu-link" type="button">PDF</button></div></td>
+                    </tr>
+                    <tr class="pu-cancelled">
+                        <td class="pu-po">PO-2026-0118</td>
+                        <td>Paper Point</td>
+                        <td>2 Oct 2026</td>
+                        <td class="pu-date">Cancelled</td>
+                        <td class="pu-num">2</td>
+                        <td class="pu-num">৳12,000</td>
+                        <td class="pu-num">৳0</td>
+                        <td><span class="pu-pill pu-cancelled">Cancelled</span></td>
+                        <td><div class="pu-actions"><button class="pu-link" type="button">View</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pu-foot">Draft orders can be edited. Once an order is approved it can only be received or cancelled. Receiving goods adds them to stock and updates the product's average cost.</p>
+    </section>
+
+    <dialog id="pu-dialog" class="pu-dialog" aria-labelledby="pu-title">
+        <form method="dialog">
+            <h3 id="pu-title">New purchase order</h3>
+            <p class="pu-sub">The order is saved as a draft. Approve it when you are ready to send it.</p>
+
+            <div class="pu-fgrid">
+                <label class="pu-field">
+                    Supplier
+                    <select><option>Karim Wholesale</option><option>Meghna Traders</option><option>Dhaka Dairy Supply</option><option>Paper Point</option><option>Rupali Snacks Distribution</option></select>
+                </label>
+                <label class="pu-field">Expected delivery date<input type="date" required></label>
+            </div>
+
+            <div class="pu-items-head" aria-hidden="true"><span>Product</span><span>Quantity</span><span>Unit cost (৳)</span><span class="pu-line">Line total</span><span></span></div>
+            <div id="pu-items"></div>
+            <button class="pu-btn pu-btn-ghost" type="button" id="pu-add">Add product</button>
+
+            <div class="pu-total"><span>Order total</span><strong id="pu-sum">৳0</strong></div>
+
+            <div class="pu-dfoot">
+                <button class="pu-btn pu-btn-ghost" value="cancel">Cancel</button>
+                <div>
+                    <button class="pu-btn pu-btn-ghost" value="draft">Save as draft</button>
+                    <button class="pu-btn" value="approve">Save and approve</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <template id="pu-row">
+        <div class="pu-item">
+            <select aria-label="Product">
+                <option>Basmati rice 5kg</option>
+                <option>Soybean oil 5L</option>
+                <option>Sugar 1kg</option>
+                <option>Red lentils 1kg</option>
+                <option>Powdered milk 500g</option>
+                <option>Cream biscuits 200g</option>
+                <option>Notebook A4 200 pages</option>
+            </select>
+            <input type="number" min="1" value="1" aria-label="Quantity">
+            <input type="number" min="0" step="0.01" value="0" aria-label="Unit cost">
+            <span class="pu-line">৳0</span>
+            <button class="pu-remove" type="button" aria-label="Remove product">×</button>
+        </div>
+    </template>
+
+</div>
+
+<script>
+    (function () {
+        var dlg = document.getElementById('pu-dialog');
+        var list = document.getElementById('pu-items');
+        var tpl = document.getElementById('pu-row');
+        var sum = document.getElementById('pu-sum');
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+
+        function recalc() {
+            var total = 0;
+            list.querySelectorAll('.pu-item').forEach(function (row) {
+                var inputs = row.querySelectorAll('input');
+                var line = (parseFloat(inputs[0].value) || 0) * (parseFloat(inputs[1].value) || 0);
+                row.querySelector('.pu-line').textContent = money(line);
+                total += line;
+            });
+            sum.textContent = money(total);
+        }
+
+        function addRow() {
+            var row = tpl.content.firstElementChild.cloneNode(true);
+            row.addEventListener('input', recalc);
+            row.querySelector('.pu-remove').addEventListener('click', function () { row.remove(); recalc(); });
+            list.appendChild(row);
+        }
+
+        document.getElementById('pu-add').addEventListener('click', addRow);
+        document.getElementById('pu-new').addEventListener('click', function () {
+            list.innerHTML = '';
+            addRow();
+            recalc();
+            dlg.showModal();
+        });
+    })();
+</script>

@@ -1,0 +1,194 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "AI Assistant";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Assistant.css" asp-append-version="true" />
+
+<div class="as">
+
+    <header class="as-top">
+        <div>
+            <h2>AI assistant</h2>
+            <p>Ask about your stock, sales and suppliers in English or Bangla.</p>
+        </div>
+        <span class="as-badge">Read-only · it can't change your data</span>
+    </header>
+
+    <div class="as-grid">
+
+        <section class="as-card as-chat" aria-label="Chat with the assistant">
+            <div class="as-offline" id="as-offline" role="status" hidden>
+                The assistant isn't available right now. The rest of SmartStock keeps working, so please try again in a few minutes.
+            </div>
+
+            <div class="as-msgs" id="as-msgs" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+            <form class="as-comp" id="as-form" autocomplete="off">
+                <div class="as-chips" aria-label="Suggested questions">
+                    <button type="button" class="as-chip" data-q="Which products will run out this week?">Which products will run out this week?</button>
+                    <button type="button" class="as-chip" data-q="What were my top 5 items last month?">Top 5 items last month</button>
+                    <button type="button" class="as-chip" data-q="How much profit did I make yesterday?">Profit yesterday</button>
+                    <button type="button" class="as-chip" data-q="How much are today’s sales?" lang="bn">How much are today’s sales?</button>
+                </div>
+                <div class="as-row">
+                    <textarea id="as-input" rows="1" placeholder="Ask a question about your business" aria-label="Your question" maxlength="500"></textarea>
+                    <button class="as-btn" id="as-send" type="submit">Send</button>
+                </div>
+                <p class="as-fine">Answers come from your live SmartStock data. If the data isn't there, the assistant will say so instead of guessing.</p>
+            </form>
+        </section>
+
+        <aside aria-label="Assistant details">
+            <section class="as-card">
+                <h3>Your usage this month</h3>
+                <div class="as-use"><span>38 of 500 questions</span><span>Resets 1 Dec</span></div>
+                <div class="as-meter" role="img" aria-label="38 of 500 questions used"><i></i></div>
+                <p class="as-sub">There is a limit on how fast and how often questions can be asked.</p>
+            </section>
+
+            <section class="as-card">
+                <h3>What it can look up</h3>
+                <ul class="as-list">
+                    <li>Stock, price and reorder level of a product</li>
+                    <li>Products that are low on stock</li>
+                    <li>Sales and profit for any dates</li>
+                    <li>Best-selling products</li>
+                    <li>Dead stock</li>
+                    <li>Sales forecast for a product</li>
+                    <li>Reorder suggestions</li>
+                    <li>Money owed to suppliers</li>
+                </ul>
+            </section>
+
+            <section class="as-card">
+                <h3>Recent questions</h3>
+                <p class="as-sub">Tap one to ask it again. Every question and answer is logged.</p>
+                <ul class="as-hist">
+                    <li><button type="button" data-q="How much profit did I make yesterday?">How much profit did I make yesterday?<small>Today, 9:12 am</small></button></li>
+                    <li><button type="button" data-q="What were my top 5 items last month?">What were my top 5 items last month?<small>Yesterday, 6:40 pm</small></button></li>
+                    <li><button type="button" data-q="Which products will run out this week?">Which products will run out this week?<small>Yesterday, 10:05 am</small></button></li>
+                    <li><button type="button" data-q="আজকের বিক্রি কত?" lang="bn">আজকের বিক্রি কত?<small>3 Nov, 4:30 pm</small></button></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var msgs = document.getElementById('as-msgs');
+        var form = document.getElementById('as-form');
+        var input = document.getElementById('as-input');
+        var send = document.getElementById('as-send');
+        var busy = false;
+
+        function table(heads, rows, rightCols) {
+            rightCols = rightCols || [];
+            var h = '<div class="as-tbl-wrap"><table class="as-tbl"><thead><tr>';
+            heads.forEach(function (t, i) { h += '<th' + (rightCols.indexOf(i) > -1 ? ' class="as-r"' : '') + '>' + t + '</th>'; });
+            h += '</tr></thead><tbody>';
+            rows.forEach(function (r) {
+                h += '<tr>';
+                r.forEach(function (c, i) { h += '<td' + (rightCols.indexOf(i) > -1 ? ' class="as-r"' : '') + '>' + c + '</td>'; });
+                h += '</tr>';
+            });
+            return h + '</tbody></table></div>';
+        }
+
+        var answers = {
+            reorder: {
+                text: '5 products are likely to run out within the next 7 days. Powdered milk is already out of stock, and red lentils have about 1.5 days left.',
+                tool: 'Reorder suggestions',
+                html: table(['Product', 'Days left', 'Suggested order', 'Supplier'], [
+                    ['Powdered milk 500g', '<span class="as-pill as-bad">0</span>', '48', 'Dhaka Dairy Supply'],
+                    ['Red lentils 1kg', '<span class="as-pill as-bad">1.5</span>', '60', 'Meghna Traders'],
+                    ['Soybean oil 5L', '<span class="as-pill as-warn">2.4</span>', '72', 'Meghna Traders'],
+                    ['Basmati rice 5kg', '<span class="as-pill as-warn">2.5</span>', '95', 'Karim Wholesale'],
+                    ['Sugar 1kg', '<span class="as-pill as-warn">3.1</span>', '110', 'Karim Wholesale']
+                ], [1, 2]),
+                action: '<div class="as-action"><span>I can\'t place orders myself. Review these on Smart Reorder to create draft purchase orders.</span><a class="as-link" href="/Forecast/Index">Open Smart Reorder</a></div>'
+            },
+            top: {
+                text: 'Here are your 5 best sellers for October 2026, by units sold. Sugar 1kg was the clear leader.',
+                tool: 'Top-selling products',
+                html: '<div class="as-bars">' + [['Sugar 1kg', 412, 100], ['Basmati rice 5kg', 355, 86], ['Soybean oil 5L', 296, 72], ['Red lentils 1kg', 261, 63], ['Powdered milk 500g', 198, 48]].map(function (b) {
+                    return '<div class="as-bar"><span>' + b[0] + '</span><span><i style="width:' + b[2] + '%"></i></span><span>' + b[1] + '</span></div>';
+                }).join('') + '</div>'
+            },
+            profit: {
+                text: 'Yesterday (4 November) you made ৳10,250 profit on sales of ৳61,380. That is a margin of 16.7% across 38 invoices.',
+                tool: 'Sales summary',
+                html: '<div class="as-tiles"><div class="as-tile"><span>Sales</span><strong>৳61,380</strong></div><div class="as-tile"><span>Profit</span><strong>৳10,250</strong></div><div class="as-tile"><span>Invoices</span><strong>38</strong></div></div>',
+                fine: 'Profit figures are shown to the Owner and Manager only.'
+            },
+            bangla: {
+                lang: 'bn',
+                text: 'আজ এ পর্যন্ত মোট বিক্রি ৳৬৬,২৪০, ইনভয়েস ৪১টি।',
+                tool: 'Sales summary'
+            },
+            none: {
+                text: 'I couldn\'t find that in your SmartStock data, so I won\'t guess. I can answer questions about stock levels, sales and profit, top sellers, dead stock, forecasts, reorder suggestions and supplier payables.'
+            }
+        };
+
+        function pick(q) {
+            var s = q.toLowerCase();
+            if (/বিক্রি|বিক্রয়/.test(q)) return answers.bangla;
+            if (/profit/.test(s)) return answers.profit;
+            if (/top|best.?sell/.test(s)) return answers.top;
+            if (/run out|running out|reorder|low stock/.test(s)) return answers.reorder;
+            return answers.none;
+        }
+
+        function bubble(a) {
+            return '<p' + (a.lang ? ' lang="' + a.lang + '"' : '') + '>' + a.text + '</p>' + (a.html || '') +
+                (a.fine ? '<p class="as-fine">' + a.fine + '</p>' : '') + (a.action || '') +
+                (a.tool ? '<p><span class="as-tool">Looked up: ' + a.tool + '</span></p>' : '');
+        }
+
+        function scrollDown() { msgs.scrollTop = msgs.scrollHeight; }
+
+        function addMsg(me) {
+            var m = document.createElement('div');
+            m.className = 'as-msg' + (me ? ' as-me' : '');
+            m.innerHTML = '<div class="as-ava" aria-hidden="true">' + (me ? 'You' : 'AI') + '</div><div class="as-bub"></div>';
+            msgs.appendChild(m);
+            return m.querySelector('.as-bub');
+        }
+
+        function ask(q, instant) {
+            q = q.trim();
+            if (!q || busy) return;
+            busy = true; send.disabled = true;
+            addMsg(true).textContent = q;
+            var b = addMsg(false);
+            b.innerHTML = '<span class="as-dots" aria-label="The assistant is thinking"><i></i><i></i><i></i></span>';
+            scrollDown();
+            setTimeout(function () {
+                b.innerHTML = bubble(pick(q));
+                busy = false; send.disabled = false;
+                scrollDown();
+            }, instant ? 0 : 800);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var q = input.value;
+            input.value = ''; input.style.height = '';
+            ask(q);
+        });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+        });
+        input.addEventListener('input', function () {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        });
+        document.querySelectorAll('[data-q]').forEach(function (b) {
+            b.addEventListener('click', function () { ask(b.dataset.q); });
+        });
+
+        ask('Which products will run out this week?', true);
+    })();
+</script>

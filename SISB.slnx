@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Business/">
+    <Project Path="SISB.Facade/SISB.Facade.csproj" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="SISB.DataAccess/SISB.DataAccess.csproj" />
+    <Project Path="SISB.Entities/SISB.Entities.csproj" />
+    <Project Path="SISB.Framework/SISB.Framework.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <File Path="SISB.Web.Service/Controllers/DashboardController.cs" />
+    <Project Path="SISB.Web.UI/SISB.Web.UI.csproj" />
+  </Folder>
+  <Folder Name="/Service/">
+    <Project Path="SISB.Web.Service/SISB.Web.Service.csproj" />
+  </Folder>
+</Solution>

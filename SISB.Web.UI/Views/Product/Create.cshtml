@@ -1,0 +1,187 @@
+﻿@model SISB.Entities.Product
+
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Add Product";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Product.css" asp-append-version="true" />
+
+<div class="pr">
+
+    <header class="pr-top">
+        <div>
+            <h2>Add Product</h2>
+            <p>Add a new product to your inventory.</p>
+        </div>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="pr-btn pr-btn-ghost">
+            Cancel
+        </a>
+    </header>
+
+    <section class="pr-card">
+        <form asp-controller="Product"
+              asp-action="Create"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="pr-fgrid">
+
+                <!-- Product Name -->
+                <label class="pr-field pr-wide">
+                    Product name
+                    <input asp-for="Name"
+                           type="text"
+                           placeholder="Enter product name" />
+
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- SKU -->
+                <label class="pr-field">
+                    SKU
+                    <input asp-for="SKU"
+                           type="text"
+                           placeholder="Auto-generated if empty" />
+
+                    <span asp-validation-for="SKU"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Barcode -->
+                <label class="pr-field">
+                    Barcode
+                    <input asp-for="Barcode"
+                           type="text"
+                           placeholder="Enter barcode" />
+
+                    <span asp-validation-for="Barcode"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Category -->
+                <label class="pr-field">
+                    Category
+
+                    <select asp-for="CategoryId"
+                            asp-items="ViewBag.Categories">
+                        <option value="">Select category</option>
+                    </select>
+
+                    <span asp-validation-for="CategoryId"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Unit -->
+                <label class="pr-field">
+                    Unit
+
+                    <select asp-for="Unit">
+                        <option value="">Select unit</option>
+                        <option value="pcs">Pieces</option>
+                        <option value="kg">Kilogram</option>
+                        <option value="box">Box</option>
+                        <option value="liter">Liter</option>
+                        <option value="packet">Packet</option>
+                    </select>
+
+                    <span asp-validation-for="Unit"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Purchase Price -->
+                <label class="pr-field">
+                    Purchase price (৳)
+
+                    <input asp-for="PurchasePrice"
+                           type="number"
+                           min="0"
+                           step="0.01"
+                           placeholder="0.00" />
+
+                    <span asp-validation-for="PurchasePrice"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Selling Price -->
+                <label class="pr-field">
+                    Selling price (৳)
+
+                    <input asp-for="SellingPrice"
+                           type="number"
+                           min="0"
+                           step="0.01"
+                           placeholder="0.00" />
+
+                    <span asp-validation-for="SellingPrice"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Reorder Level -->
+                <label class="pr-field">
+                    Reorder level
+
+                    <input asp-for="ReorderLevel"
+                           type="number"
+                           min="0"
+                           placeholder="Enter minimum stock" />
+
+                    <span class="pr-hint">
+                        Minimum quantity before generating a low-stock alert.
+                    </span>
+
+                    <span asp-validation-for="ReorderLevel"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Preferred Supplier -->
+                <label class="pr-field">
+                    Preferred supplier
+
+                    <select asp-for="PreferredSupplierId"
+                            asp-items="ViewBag.Suppliers">
+                        <option value="">Select supplier</option>
+                    </select>
+
+                    <span asp-validation-for="PreferredSupplierId"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- Expiry Tracking -->
+                <label class="pr-check pr-wide">
+                    <input asp-for="IsExpiryTracked" type="checkbox" />
+                    Track expiry dates (stock is held in batches)
+                </label>
+
+            </div>
+
+            <div class="pr-dfoot">
+
+                <a asp-controller="Product"
+                   asp-action="Index"
+                   class="pr-btn pr-btn-ghost">
+                    Cancel
+                </a>
+
+                <button type="submit" class="pr-btn">
+                    Save Product
+                </button>
+
+            </div>
+
+        </form>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

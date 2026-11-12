@@ -1,0 +1,465 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartStock | Admin Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                background: #f5f7fb;
+                font-family: 'Segoe UI', sans-serif;
+                color: #253047;
+            }
+
+            .sidebar {
+                width: 250px;
+                background: #17243a;
+                color: white;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                padding: 24px 16px;
+                overflow-y: auto;
+            }
+
+            .brand {
+                font-size: 23px;
+                font-weight: 750;
+                padding: 5px 12px 30px;
+            }
+
+                .brand span {
+                    color: #45d6a0;
+                }
+
+            .menu-title {
+                color: #8d9bb1;
+                font-size: 11px;
+                font-weight: 700;
+                margin: 20px 12px 10px;
+                letter-spacing: 1px;
+            }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 12px;
+                margin: 4px 0;
+                border-radius: 8px;
+                color: #bdc9d9;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+                .sidebar a:hover, .sidebar a.active {
+                    background: #263b55;
+                    color: #fff;
+                }
+
+                .sidebar a.active {
+                    border-left: 3px solid #45d6a0;
+                }
+
+            .main {
+                margin-left: 250px;
+                padding: 25px 30px;
+            }
+
+            .topbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 28px;
+                gap: 15px;
+            }
+
+                .topbar h4 {
+                    font-weight: 700;
+                    margin: 0;
+                }
+
+            .profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #d9f5e9;
+                color: #159568;
+                display: grid;
+                place-items: center;
+                font-weight: 700;
+            }
+
+            .stat-card, .panel {
+                background: white;
+                border: 1px solid #edf0f5;
+                border-radius: 12px;
+                padding: 20px;
+                height: 100%;
+                box-shadow: 0 3px 12px rgba(30,50,80,.035);
+            }
+
+            .stat-icon {
+                width: 43px;
+                height: 43px;
+                border-radius: 10px;
+                display: grid;
+                place-items: center;
+                font-size: 20px;
+            }
+
+            .stat-label {
+                color: #778398;
+                font-size: 13px;
+            }
+
+            .stat-number {
+                font-size: 25px;
+                font-weight: 750;
+                margin: 9px 0;
+            }
+
+            .stat-note {
+                font-size: 12px;
+                color: #159568;
+            }
+
+            .panel-title {
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 18px;
+            }
+
+            .table {
+                font-size: 13px;
+            }
+
+                .table th {
+                    color: #8290a4;
+                    font-weight: 600;
+                }
+
+                .table td {
+                    vertical-align: middle;
+                }
+
+            .status {
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 650;
+            }
+
+            .success {
+                background: #e2f7ed;
+                color: #159568;
+            }
+
+            .warning {
+                background: #fff2d9;
+                color: #c68a19;
+            }
+
+            .danger {
+                background: #ffe5e5;
+                color: #dc4545;
+            }
+
+            .action-btn {
+                background: #172f49;
+                color: white;
+                border: none;
+                padding: 9px 14px;
+                border-radius: 7px;
+                font-size: 13px;
+            }
+
+                .action-btn:hover {
+                    background: #159568;
+                    color: white;
+                }
+
+            .ai-box {
+                background: #edf8f4;
+                border: 1px solid #d8eee5;
+                border-radius: 10px;
+                padding: 16px;
+            }
+
+            .ai-icon {
+                background: #d3f1e3;
+                color: #159568;
+                padding: 10px;
+                border-radius: 9px;
+                font-size: 20px;
+            }
+
+            .quick-link {
+                text-decoration: none;
+                color: #334155;
+                border: 1px solid #edf0f5;
+                border-radius: 9px;
+                padding: 13px 8px;
+                text-align: center;
+                font-size: 12px;
+                display: block;
+            }
+
+                .quick-link i {
+                    display: block;
+                    font-size: 21px;
+                    color: #159568;
+                    margin-bottom: 7px;
+                }
+
+                .quick-link:hover {
+                    background: #edf8f4;
+                }
+
+            @@media(max - width: 900px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 20px 8px;
+                }
+
+                .brand {
+                    font-size: 0;
+                    padding: 5px 10px 30px;
+                }
+
+                    .brand span {
+                        font-size: 22px;
+                    }
+
+                .sidebar a {
+                    justify-content: center;
+                    font-size: 0;
+                }
+
+                    .sidebar a i {
+                        font-size: 19px;
+                    }
+
+                .menu-title {
+                    display: none;
+                }
+
+                .main {
+                    margin-left: 70px;
+                    padding: 20px 14px;
+                }
+            }
+
+            @@media(max - width: 550px) {
+                .topbar {
+                    align-items: flex-start;
+                }
+
+                .profile .user-info {
+                    display: none;
+                }
+
+                .main {
+                    padding: 15px 10px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">Smart<span>Stock.</span></div>
+
+
+        <!-- MAIN MENU -->
+        <div class="menu-title">MAIN MENU</div>
+
+        <a href="/Dashboard/Index">
+            <i class="bi bi-grid"></i> Dashboard
+        </a>
+
+        <a href="/Product/Index">
+            <i class="bi bi-box-seam"></i> Products
+        </a>
+
+        <a href="/Category/Index">
+            <i class="bi bi-tags"></i> Categories
+        </a>
+
+        <a href="/Supplier/Index">
+            <i class="bi bi-truck"></i> Suppliers
+        </a>
+
+        <a href="/Customer/Index">
+            <i class="bi bi-people"></i> Customers
+        </a>
+
+
+        <!-- TRANSACTIONS -->
+        <div class="menu-title">TRANSACTIONS</div>
+
+        <a href="/Purchase/Index">
+            <i class="bi bi-cart-plus"></i> Purchases
+        </a>
+
+        <a href="/MReceive/Index">
+            <i class="bi bi-box-arrow-in-down"></i> Receive Goods (GRN)
+        </a>
+
+        <a href="/Sales/Index">
+            <i class="bi bi-receipt"></i> Create Sales
+        </a>
+
+        <a href="/Sales/Index">
+            <i class="bi bi-bag-check"></i> My Sales
+        </a>
+
+
+        <!-- INVENTORY MANAGEMENT -->
+        <div class="menu-title">INVENTORY MANAGEMENT</div>
+
+        <a href="/Stock/Index">
+            <i class="bi bi-boxes"></i> Stock Availability & Control
+        </a>
+
+        <a href="/MAdjustment/Index">
+            <i class="bi bi-check2-circle"></i> Adjustment Approval
+        </a>
+
+        <a href="/Stock/Index">
+            <i class="bi bi-clipboard-check"></i> Physical Stock Count
+        </a>
+
+        <a href="/Stock/Index">
+            <i class="bi bi-clipboard2-check"></i> Stock Count Approval
+        </a>
+
+
+        <!-- ANALYTICS & AI -->
+        <div class="menu-title">ANALYTICS & AI</div>
+
+        <a href="/Report/Index">
+            <i class="bi bi-bar-chart"></i> Reports
+        </a>
+
+        <a href="/Forecast/Index">
+            <i class="bi bi-graph-up-arrow"></i> Smart Reorder
+        </a>
+
+        <a href="/Assistant/Index">
+            <i class="bi bi-robot"></i> AI Assistant
+        </a>
+
+
+        <!-- SYSTEM -->
+        <div class="menu-title">SYSTEM</div>
+
+        <a href="/User/Index">
+            <i class="bi bi-person-gear"></i> User Management
+        </a>
+
+        <a href="/User/Index">
+            <i class="bi bi-person-circle"></i> My Profile
+        </a>
+
+        <a href="/AuditLog/Index">
+            <i class="bi bi-clock-history"></i> Audit Log
+        </a>
+
+        <a href="/Settings/Index">
+            <i class="bi bi-gear"></i> Settings
+        </a>
+
+        <a href="/Account/Logout" class="logout-link">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <div class="topbar">
+            <div>
+                <h4>Dashboard Overview</h4>
+                <small class="text-secondary">Welcome back! Here's your business summary.</small>
+            </div>
+            <div class="profile">
+                <i class="bi bi-bell fs-5 me-2"></i>
+                <div class="avatar">A</div>
+                <div class="user-info">
+                    <strong class="d-block small">Admin</strong>
+                    <small class="text-secondary">Owner</small>
+                </div>
+            </div>
+        </div>
+
+        @RenderBody()
+
+        <footer class="text-center text-secondary small mt-4">
+            © 2026 SmartStock. All Rights Reserved.
+        </footer>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+            const ctx = document.getElementById('salesChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Oct 7', 'Oct 10', 'Oct 13', 'Oct 16', 'Oct 19', 'Oct 22', 'Oct 25', 'Oct 28', 'Oct 31', 'Nov 3', 'Nov 5'],
+                    datasets: [{
+                        label: 'Sales (BDT)',
+                        data: [12000, 15000, 11000, 19000, 16000, 22000, 18000, 25000, 21000, 28000, 25450],
+                        borderColor: '#159568',
+                        backgroundColor: 'rgba(21,149,104,0.10)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#edf0f5' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Customers";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Customer.css" asp-append-version="true" />
+
+<div class="cu">
+
+    <header class="cu-top">
+        <div>
+            <h2>Customers</h2>
+            <p>5 active customers · 4 have an unpaid balance</p>
+        </div>
+        <button class="cu-btn" type="button" data-open="add">Add customer</button>
+    </header>
+
+    <section class="cu-stats" aria-label="Customer summary">
+        <div class="cu-card cu-stat cu-due"><span>Total dues</span><strong>৳78,350</strong><em>Owed by 4 customers</em></div>
+        <div class="cu-card cu-stat cu-risk"><span>Near credit limit</span><strong>2</strong><em>At 80% or more of their limit</em></div>
+        <div class="cu-card cu-stat"><span>Credit given</span><strong>৳1,20,000</strong><em>Total of all credit limits</em></div>
+    </section>
+
+    <form class="cu-card cu-filters" role="search" aria-label="Filter customers" onsubmit="return false">
+        <label class="cu-field">
+            Search
+            <input type="search" placeholder="Customer name or phone">
+        </label>
+        <label class="cu-check"><input type="checkbox"> With dues only</label>
+        <label class="cu-check"><input type="checkbox"> Show inactive</label>
+    </form>
+
+    <section class="cu-card">
+        <div class="cu-wrap">
+            <table class="cu-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th class="cu-num">Credit limit</th>
+                        <th class="cu-num">Due balance</th>
+                        <th>Credit used</th>
+                        <th>Last purchase</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">HM</span><div><b>Hasan Mia</b><small>Mirpur 10, Dhaka</small></div></div></td>
+                        <td>01712-445566</td>
+                        <td class="cu-num">৳20,000</td>
+                        <td class="cu-num"><span class="cu-owed">৳8,400</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i style="width:42%"></i></div><span>42%</span></div></td>
+                        <td>4 Nov 2026</td>
+                        <td><span class="cu-pill cu-ok">Active</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Hasan Mia" data-phone="01712-445566" data-limit="20000">Edit</button><button class="cu-link cu-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">NA</span><div><b>Nasrin Akter</b><small>Mohammadpur, Dhaka</small></div></div></td>
+                        <td>01811-223344</td>
+                        <td class="cu-num">৳15,000</td>
+                        <td class="cu-num"><span class="cu-owed cu-warn">৳13,200</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i class="cu-warn" style="width:88%"></i></div><span>88%</span></div></td>
+                        <td>3 Nov 2026</td>
+                        <td><span class="cu-pill cu-ok">Active</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Nasrin Akter" data-phone="01811-223344" data-limit="15000">Edit</button><button class="cu-link cu-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">RS</span><div><b>Rafiq Store</b><small>Shyamoli, Dhaka</small></div></div></td>
+                        <td>01922-778899</td>
+                        <td class="cu-num">৳50,000</td>
+                        <td class="cu-num"><span class="cu-owed cu-bad">৳50,000</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i class="cu-bad" style="width:100%"></i></div><span>100%</span></div></td>
+                        <td>28 Oct 2026</td>
+                        <td><span class="cu-pill cu-bad">Limit reached</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Rafiq Store" data-phone="01922-778899" data-limit="50000">Edit</button><button class="cu-link cu-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">SB</span><div><b>Salma Begum</b><small>Dhanmondi, Dhaka</small></div></div></td>
+                        <td>01633-120045</td>
+                        <td class="cu-num">৳10,000</td>
+                        <td class="cu-num"><span class="cu-clear">৳0</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i style="width:0"></i></div><span>0%</span></div></td>
+                        <td>5 Nov 2026</td>
+                        <td><span class="cu-pill cu-ok">Active</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Salma Begum" data-phone="01633-120045" data-limit="10000">Edit</button><button class="cu-link cu-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">TA</span><div><b>Tanvir Ahmed</b><small>Uttara, Dhaka</small></div></div></td>
+                        <td>01755-667788</td>
+                        <td class="cu-num">৳25,000</td>
+                        <td class="cu-num"><span class="cu-owed">৳6,750</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i style="width:27%"></i></div><span>27%</span></div></td>
+                        <td>1 Nov 2026</td>
+                        <td><span class="cu-pill cu-ok">Active</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Tanvir Ahmed" data-phone="01755-667788" data-limit="25000">Edit</button><button class="cu-link cu-danger" type="button">Deactivate</button></div></td>
+                    </tr>
+                    <tr class="cu-off-row">
+                        <td><div class="cu-name"><span class="cu-avatar" aria-hidden="true">JU</span><div><b>Jamal Uddin</b><small>Badda, Dhaka</small></div></div></td>
+                        <td>01844-300215</td>
+                        <td class="cu-num">৳5,000</td>
+                        <td class="cu-num"><span class="cu-clear">৳0</span></td>
+                        <td><div class="cu-meter"><div class="cu-track"><i style="width:0"></i></div><span>0%</span></div></td>
+                        <td>14 Jun 2026</td>
+                        <td><span class="cu-pill cu-off">Inactive</span></td>
+                        <td><div class="cu-actions"><button class="cu-link" type="button">Statement</button><button class="cu-link" type="button" data-open="edit" data-name="Jamal Uddin" data-phone="01844-300215" data-limit="5000">Edit</button><button class="cu-link" type="button">Reactivate</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="cu-foot">Sales on credit are blocked when they would take a customer over their limit. The due balance changes only through sales and payments, so it can't be edited here.</p>
+    </section>
+
+    <dialog id="cu-dialog" class="cu-dialog" aria-labelledby="cu-title">
+        <form method="dialog">
+            <h3 id="cu-title">Add customer</h3>
+            <p class="cu-sub">Customers can buy on credit up to their limit.</p>
+            <div class="cu-fgrid">
+                <label class="cu-field">Customer name<input type="text" id="cu-name-in" required></label>
+                <label class="cu-field">Phone<input type="tel" id="cu-phone" required></label>
+                <label class="cu-field">
+                    Credit limit (৳)
+                    <input type="number" min="0" step="100" id="cu-limit" required>
+                    <span class="cu-hint">Enter 0 if this customer should only pay at the time of sale.</span>
+                </label>
+                <label class="cu-check"><input type="checkbox" checked> Active</label>
+            </div>
+            <div class="cu-dfoot">
+                <button class="cu-btn cu-btn-ghost" value="cancel">Cancel</button>
+                <button class="cu-btn" value="save">Save customer</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var dlg = document.getElementById('cu-dialog');
+        var name = document.getElementById('cu-name-in'),
+            phone = document.getElementById('cu-phone'),
+            limit = document.getElementById('cu-limit');
+        document.querySelectorAll('[data-open]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var edit = btn.dataset.open === 'edit', d = btn.dataset;
+                document.getElementById('cu-title').textContent = edit ? 'Edit customer' : 'Add customer';
+                name.value = edit ? d.name : '';
+                phone.value = edit ? d.phone : '';
+                limit.value = edit ? d.limit : '';
+                dlg.showModal();
+            });
+        });
+    })();
+</script>

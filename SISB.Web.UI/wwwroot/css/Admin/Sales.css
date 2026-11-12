@@ -1,0 +1,522 @@
+﻿/* Sales page – self-contained. All classes start with "sa-" so they never clash with Bootstrap or _PrivateLayout. */
+.sa {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .sa * {
+        box-sizing: border-box
+    }
+
+    .sa :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+.sa-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .sa-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .sa-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.sa-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .sa-btn:hover:not(:disabled) {
+        background: var(--g-dark)
+    }
+
+    .sa-btn:disabled {
+        background: #c9d3dd;
+        border-color: #c9d3dd;
+        cursor: not-allowed
+    }
+
+.sa-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .sa-btn-ghost:hover:not(:disabled) {
+        background: var(--soft)
+    }
+
+.sa-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.sa-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.sa-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .sa-stats .sa-card {
+        margin: 0
+    }
+
+.sa-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.sa-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.sa-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.sa-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: end
+}
+
+.sa-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .sa-field input, .sa-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+.sa-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.sa-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .sa-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .sa-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .sa-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.sa-num {
+    text-align: right !important
+}
+
+.sa-inv {
+    font-weight: 600
+}
+
+.sa-when small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.sa-walk {
+    color: var(--muted)
+}
+
+.sa-due {
+    font-weight: 600;
+    color: #8a5d06
+}
+
+.sa-profit {
+    color: #0f7650;
+    font-weight: 600
+}
+
+.sa-void td {
+    color: var(--muted)
+}
+
+.sa-void .sa-inv, .sa-void .sa-amt {
+    text-decoration: line-through
+}
+
+.sa-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .sa-pill.sa-paid {
+        background: #e2f7ed;
+        color: #0f7650
+    }
+
+    .sa-pill.sa-owing {
+        background: #fff2d9;
+        color: #8a5d06
+    }
+
+    .sa-pill.sa-ret {
+        background: #e3ecfa;
+        color: #25508f
+    }
+
+    .sa-pill.sa-voided {
+        background: #eef1f5;
+        color: #556178
+    }
+
+.sa-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.sa-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .sa-link:hover {
+        text-decoration: underline
+    }
+
+    .sa-link.sa-danger {
+        color: var(--bad)
+    }
+
+.sa-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* new sale dialog */
+.sa-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(940px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .sa-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .sa-dialog form {
+        padding: 22px 24px
+    }
+
+    .sa-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.sa-pos {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 20px;
+    margin-top: 16px
+}
+
+    .sa-pos h4 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0 0 8px
+    }
+
+.sa-catalog {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 2px
+}
+
+.sa-prod {
+    font: inherit;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid #dfe4ec;
+    border-radius: 9px;
+    background: #fff;
+    color: inherit;
+    cursor: pointer
+}
+
+    .sa-prod:hover:not(:disabled) {
+        border-color: var(--g);
+        background: var(--soft)
+    }
+
+    .sa-prod:disabled {
+        cursor: not-allowed;
+        background: #f6f7f9;
+        color: var(--muted)
+    }
+
+    .sa-prod b {
+        display: block;
+        font-weight: 600;
+        font-size: 14px
+    }
+
+    .sa-prod small {
+        font-size: 12px;
+        color: var(--g)
+    }
+
+        .sa-prod small.sa-low {
+            color: var(--warn)
+        }
+
+        .sa-prod small.sa-none {
+            color: var(--bad)
+        }
+
+    .sa-prod span {
+        font-weight: 600;
+        white-space: nowrap
+    }
+
+.sa-cart {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    min-height: 120px;
+    margin-bottom: 12px
+}
+
+.sa-empty {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 8px 4px
+}
+
+.sa-line {
+    display: grid;
+    grid-template-columns: 1fr 62px 84px auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line)
+}
+
+    .sa-line:last-child {
+        border-bottom: 0
+    }
+
+    .sa-line b {
+        font-size: 14px;
+        font-weight: 600;
+        min-width: 0
+    }
+
+        .sa-line b small {
+            display: block;
+            font-weight: 400;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+    .sa-line input {
+        font: inherit;
+        font-size: 14px;
+        padding: 6px 8px;
+        border: 1px solid #dfe4ec;
+        border-radius: 7px;
+        width: 100%;
+        min-width: 0
+    }
+
+.sa-remove {
+    font: inherit;
+    font-size: 18px;
+    line-height: 1;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px
+}
+
+    .sa-remove:hover {
+        color: var(--bad);
+        background: #ffe5e5
+    }
+
+.sa-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px
+}
+
+    .sa-opts .sa-wide {
+        grid-column: 1/-1
+    }
+
+.sa-sums {
+    display: grid;
+    gap: 4px;
+    font-size: 14px;
+    margin-bottom: 10px
+}
+
+    .sa-sums div {
+        display: flex;
+        justify-content: space-between
+    }
+
+    .sa-sums .sa-grand {
+        font-size: 18px;
+        font-weight: 700;
+        border-top: 1px solid var(--line);
+        padding-top: 8px;
+        margin-top: 4px
+    }
+
+.sa-msgs {
+    list-style: none;
+    margin: 0 0 4px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 13px
+}
+
+    .sa-msgs li {
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: #fff2d9;
+        color: #6f4a05
+    }
+
+        .sa-msgs li.sa-blocked {
+            background: #ffe5e5;
+            color: #9c2b2b
+        }
+
+.sa-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px
+}
+
+@media (max-width:900px) {
+    .sa-stats {
+        grid-template-columns: 1fr
+    }
+
+    .sa-pos {
+        grid-template-columns: 1fr
+    }
+
+    .sa-filters {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .sa-filters, .sa-opts {
+        grid-template-columns: 1fr
+    }
+
+    .sa-line {
+        grid-template-columns: 1fr 1fr
+    }
+
+        .sa-line b {
+            grid-column: 1/-1
+        }
+}

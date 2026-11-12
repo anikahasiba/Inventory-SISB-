@@ -1,0 +1,55 @@
+using SISB.DataAccess.Interface;
+using SISB.Entities;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
+namespace SISB.DataAccess.Implementation
+{
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly ApplicationDbContext _dbContext;
+
+        public CustomerRepository(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<List<Customer>> GetAllAsync()
+        {
+            return await _dbContext.Customers
+                .OrderByDescending(x => x.CustomerId)
+                .ToListAsync();
+        }
+
+        public async Task<Customer?> GetByIdAsync(int id)
+        {
+            return await _dbContext.Customers.FindAsync(id);
+        }
+
+        public async Task AddAsync(Customer customer)
+        {
+            await _dbContext.Customers.AddAsync(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Customer customer)
+        {
+            _dbContext.Customers.Update(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var customer = await _dbContext.Customers.FindAsync(id);
+
+            if (customer == null)
+                return;
+
+            _dbContext.Customers.Remove(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+}

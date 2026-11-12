@@ -1,0 +1,306 @@
+﻿/* Category page – self-contained. All classes start with "ct-" so they never clash with Bootstrap or _PrivateLayout. */
+.ct {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --ok-bg: #e2f7ed;
+    --warn-bg: #fff2d9;
+    --bad-bg: #ffe5e5;
+    font-variant-numeric: tabular-nums
+}
+
+    .ct * {
+        box-sizing: border-box
+    }
+
+    .ct :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+.ct-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .ct-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .ct-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.ct-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .ct-btn:hover {
+        background: var(--g-dark)
+    }
+
+.ct-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .ct-btn-ghost:hover {
+        background: var(--soft)
+    }
+
+.ct-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.ct-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.ct-filters {
+    display: grid;
+    grid-template-columns: 2fr auto;
+    gap: 12px;
+    align-items: end
+}
+
+.ct-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .ct-field input, .ct-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%
+    }
+
+.ct-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    padding-bottom: 9px;
+    white-space: nowrap
+}
+
+.ct-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.ct-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .ct-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .ct-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .ct-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.ct-num {
+    text-align: right !important
+}
+
+/* parent rows are bold; sub-category rows are indented under a guide line */
+.ct-parent td:first-child {
+    font-weight: 600
+}
+
+    .ct-parent td:first-child small {
+        font-weight: 400;
+        color: var(--muted);
+        margin-left: 8px;
+        font-size: 12px
+    }
+
+.ct-child td:first-child {
+    padding-left: 30px;
+    position: relative
+}
+
+    .ct-child td:first-child::before {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 0;
+        bottom: 0;
+        border-left: 2px solid #dfe4ec
+    }
+
+.ct-child:last-of-type td:first-child::before, .ct-child.ct-last td:first-child::before {
+    bottom: 50%
+}
+
+.ct-child td:first-child::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    width: 10px;
+    border-top: 2px solid #dfe4ec
+}
+
+.ct-child {
+    background: #fafbfd
+}
+
+.ct-off td {
+    color: var(--muted)
+}
+
+.ct-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .ct-pill.ct-ok {
+        background: var(--ok-bg);
+        color: #0f7650
+    }
+
+    .ct-pill.ct-warn {
+        background: var(--warn-bg);
+        color: #8a5d06
+    }
+
+    .ct-pill.ct-off {
+        background: #eef1f5;
+        color: var(--muted)
+    }
+
+.ct-zero {
+    color: var(--muted)
+}
+
+.ct-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.ct-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .ct-link:hover {
+        text-decoration: underline
+    }
+
+    .ct-link.ct-danger {
+        color: #dc4545
+    }
+
+.ct-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* dialog */
+.ct-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(480px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .ct-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .ct-dialog form {
+        padding: 22px 24px
+    }
+
+    .ct-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.ct-fgrid {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0
+}
+
+.ct-hint {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.ct-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px
+}
+
+@media (max-width:560px) {
+    .ct-filters {
+        grid-template-columns: 1fr
+    }
+}

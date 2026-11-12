@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SISB.DataAccess\SISB.DataAccess.csproj" />
+    <ProjectReference Include="..\SISB.Entities\SISB.Entities.csproj" />
+    <ProjectReference Include="..\SISB.Framework\SISB.Framework.csproj" />
+  </ItemGroup>
+
+</Project>

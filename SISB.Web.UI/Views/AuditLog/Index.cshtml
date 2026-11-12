@@ -1,0 +1,151 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Audit Log";
+}
+
+<link rel="stylesheet" href="~/css/Admin/AuditLog.css" asp-append-version="true" />
+
+<div class="al">
+
+    <header class="al-top">
+        <h2>Audit log</h2>
+        <p>A record of who created, changed, deleted or approved something, and when.</p>
+    </header>
+
+    <div class="al-lock" role="note">Only the Owner can see this page. Entries can't be edited or deleted by anyone.</div>
+
+    <section class="al-stats" aria-label="Audit summary">
+        <div class="al-card al-stat"><span>Changes today</span><strong>5</strong><em>By 3 people</em></div>
+        <div class="al-card al-stat"><span>Changes this week</span><strong>38</strong><em>Since Monday, 2 Nov</em></div>
+        <div class="al-card al-stat"><span>Deletions this month</span><strong>1</strong><em>A category with no products</em></div>
+    </section>
+
+    <form class="al-card al-filters" role="search" aria-label="Filter the audit log" onsubmit="return false">
+        <label class="al-field">
+            Search
+            <input type="search" id="al-q" placeholder="Record, person or change">
+        </label>
+        <label class="al-field">Person<select id="al-user"><option value="">Everyone</option></select></label>
+        <label class="al-field">Type of record<select id="al-ent"><option value="">All records</option></select></label>
+        <label class="al-field">
+            Action
+            <select id="al-act"><option value="">All actions</option><option>Create</option><option>Update</option><option>Delete</option><option>Approve</option></select>
+        </label>
+        <div class="al-dates">
+            <label class="al-field">From<input type="date" id="al-from" value="2026-11-01"></label>
+            <label class="al-field">To<input type="date" id="al-to" value="2026-11-05"></label>
+            <button class="al-btn" type="button" id="al-clear">Clear filters</button>
+        </div>
+    </form>
+
+    <section class="al-card" aria-live="polite">
+        <div class="al-wrap">
+            <table class="al-table">
+                <thead>
+                    <tr><th>When</th><th>Person</th><th>Action</th><th>What changed</th><th></th></tr>
+                </thead>
+                <tbody id="al-body"></tbody>
+            </table>
+        </div>
+        <p class="al-empty" id="al-empty" hidden>No entries match these filters.</p>
+        <p class="al-foot" id="al-count"></p>
+    </section>
+
+</div>
+
+<script>
+    (function () {
+        var AT = '\u0040';
+        var E = [
+            ['2026-11-05 14:31', 'Rahim Uddin', 'Owner', 'Update', 'Product', 'Soybean oil 5L (OL-0004)', { 'Selling price': '৳900' }, { 'Selling price': '৳915' }],
+            ['2026-11-05 13:05', 'Rahim Uddin', 'Owner', 'Update', 'Supplier', 'Dhaka Dairy Supply', { 'Payment terms': 'Net 7 days' }, { 'Payment terms': 'Cash on delivery' }],
+            ['2026-11-05 11:48', 'Farhana Rahman', 'Manager', 'Approve', 'Purchase order', 'PO-2026-0148', { 'Status': 'Draft', 'Total': '৳19,680' }, { 'Status': 'Approved', 'Total': '৳19,680' }],
+            ['2026-11-05 10:40', 'Farhana Rahman', 'Manager', 'Create', 'Sales return', 'Return for INV-2026-1054', null, { 'Product': 'Red lentils 1kg', 'Quantity': '2', 'Refund': '৳290', 'Reason': 'Customer returned two packs' }],
+            ['2026-11-05 09:15', 'Rahim Uddin', 'Owner', 'Update', 'Customer', 'Nasrin Akter', { 'Credit limit': '৳10,000' }, { 'Credit limit': '৳15,000' }],
+            ['2026-11-04 16:22', 'Farhana Rahman', 'Manager', 'Update', 'Sale', 'INV-2026-1047', { 'Status': 'Completed' }, { 'Status': 'Voided', 'Reason': 'Wrong items rung up' }],
+            ['2026-11-04 15:40', 'Farhana Rahman', 'Manager', 'Update', 'Purchase order', 'PO-2026-0145', { 'Status': 'Approved' }, { 'Status': 'Received' }],
+            ['2026-11-04 11:10', 'Farhana Rahman', 'Manager', 'Approve', 'Stock adjustment', 'ADJ-0031', { 'Status': 'Pending', 'Quantity': '−6', 'Reason': 'Damaged packs' }, { 'Status': 'Approved', 'Quantity': '−6', 'Reason': 'Damaged packs' }],
+            ['2026-11-03 17:30', 'Rahim Uddin', 'Owner', 'Create', 'User', 'Mita Akter', null, { 'Full name': 'Mita Akter', 'Email': 'mita' + AT + 'smartstock.example', 'Role': 'Sales Staff', 'Active': 'Yes' }],
+            ['2026-11-02 14:00', 'Rahim Uddin', 'Owner', 'Delete', 'Category', 'Clearance items', { 'Name': 'Clearance items', 'Parent': 'None', 'Products': '0' }, null],
+            ['2026-11-01 16:10', 'Sumon Das', 'Sales Staff', 'Create', 'Stock adjustment', 'ADJ-0029', null, { 'Product': 'Soybean oil 5L', 'Type': 'Loss', 'Quantity': '−1', 'Status': 'Pending' }]
+        ];
+
+        var el = function (id) { return document.getElementById(id); };
+        var body = el('al-body'), q = el('al-q'), user = el('al-user'), ent = el('al-ent'), act = el('al-act'), from = el('al-from'), to = el('al-to');
+
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function val(o, k) { return o && o[k] !== undefined ? o[k] : '—'; }
+        function keys(a, b) {
+            var ks = Object.keys(a || {});
+            Object.keys(b || {}).forEach(function (k) { if (ks.indexOf(k) < 0) ks.push(k); });
+            return ks;
+        }
+        function changed(r) { return keys(r[6], r[7]).filter(function (k) { return val(r[6], k) !== val(r[7], k); }); }
+
+        function summary(r) {
+            if (r[3] === 'Create') return 'Created';
+            if (r[3] === 'Delete') return 'Deleted';
+            return changed(r).map(function (k) { return k + ': ' + val(r[6], k) + ' → ' + val(r[7], k); }).join(' · ');
+        }
+        function when(r) {
+            var p = r[0].split(/[- :]/), d = new Date(+p[0], +p[1] - 1, +p[2], +p[3], +p[4]);
+            return [d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+            d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toLowerCase()];
+        }
+        function box(title, o, other) {
+            if (!o) return '<div class="al-box"><h4>' + title + '</h4><p class="al-none">Nothing. This record did not exist.</p></div>';
+            var h = '<div class="al-box"><h4>' + title + '</h4><dl>';
+            Object.keys(o).forEach(function (k) {
+                var diff = other && val(other, k) !== o[k];
+                h += '<dt>' + esc(k) + '</dt><dd>' + (diff ? '<span class="al-chg">' + esc(o[k]) + '</span>' : esc(o[k])) + '</dd>';
+            });
+            return h + '</dl></div>';
+        }
+
+        function match(r) {
+            var d = r[0].slice(0, 10), text = (r.slice(1, 6).join(' ') + ' ' + summary(r)).toLowerCase();
+            return (!q.value || text.indexOf(q.value.toLowerCase()) > -1) &&
+                (!user.value || r[1] === user.value) && (!ent.value || r[4] === ent.value) && (!act.value || r[3] === act.value) &&
+                (!from.value || d >= from.value) && (!to.value || d <= to.value);
+        }
+
+        function render() {
+            var rows = E.filter(match), h = '';
+            rows.forEach(function (r, i) {
+                var w = when(r);
+                h += '<tr class="al-row" data-i="' + i + '"><td class="al-when">' + w[0] + '<small>' + w[1] + '</small></td>' +
+                    '<td class="al-user"><b>' + esc(r[1]) + '</b><small>' + esc(r[2]) + '</small></td>' +
+                    '<td><span class="al-pill al-' + r[3].toLowerCase() + '">' + r[3] + '</span></td>' +
+                    '<td class="al-what"><b><span class="al-ent">' + esc(r[4]) + '</span>' + esc(r[5]) + '</b><small>' + esc(summary(r)) + '</small></td>' +
+                    '<td><button type="button" class="al-more" aria-expanded="false">Details</button></td></tr>' +
+                    '<tr class="al-detail" hidden><td colspan="5"><div class="al-cmp">' + box('Before', r[6], r[7]) + box('After', r[7], r[6]) + '</div></td></tr>';
+            });
+            body.innerHTML = h;
+            el('al-empty').hidden = rows.length > 0;
+            el('al-count').textContent = 'Showing ' + rows.length + ' of ' + E.length + ' entries, newest first.';
+        }
+
+        function fill(select, idx) {
+            var seen = [];
+            E.forEach(function (r) { if (seen.indexOf(r[idx]) < 0) seen.push(r[idx]); });
+            seen.sort().forEach(function (v) { var o = document.createElement('option'); o.textContent = v; select.appendChild(o); });
+        }
+        fill(user, 1); fill(ent, 4);
+
+        body.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('al-more')) return;
+            var row = e.target.closest('tr'), detail = row.nextElementSibling;
+            detail.hidden = !detail.hidden;
+            row.classList.toggle('al-open', !detail.hidden);
+            e.target.setAttribute('aria-expanded', detail.hidden ? 'false' : 'true');
+            e.target.textContent = detail.hidden ? 'Details' : 'Hide';
+        });
+
+        [q, user, ent, act, from, to].forEach(function (i) { i.addEventListener('input', render); });
+        el('al-clear').addEventListener('click', function () {
+            q.value = ''; user.value = ''; ent.value = ''; act.value = ''; from.value = ''; to.value = ''; render();
+        });
+
+        render();
+    })();
+</script>

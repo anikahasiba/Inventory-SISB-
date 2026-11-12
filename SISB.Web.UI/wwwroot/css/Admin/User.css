@@ -1,0 +1,454 @@
+﻿/* User Management page – self-contained. All classes start with "um-" so they never clash with Bootstrap or _PrivateLayout. */
+.um {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .um * {
+        box-sizing: border-box
+    }
+
+    .um :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .um [hidden] {
+        display: none !important
+    }
+
+.um-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .um-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .um-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.um-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .um-btn:hover {
+        background: var(--g-dark)
+    }
+
+.um-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .um-btn-ghost:hover {
+        background: var(--soft)
+    }
+
+.um-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+    .um-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.um-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 12px
+}
+
+.um-toast {
+    background: #e2f7ed;
+    color: #0f7650;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+.um-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .um-stats .um-card {
+        margin: 0
+    }
+
+.um-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.um-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.um-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.um-stat.um-lock {
+    border-left: 4px solid var(--warn)
+}
+
+.um-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    align-items: end
+}
+
+.um-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .um-field input, .um-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+.um-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    color: #253047
+}
+
+    .um-check input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--g)
+    }
+
+.um-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.um-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .um-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .um-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .um-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.um-off td {
+    color: var(--muted)
+}
+
+.um-off .um-ava {
+    background: #eef1f5;
+    color: var(--muted)
+}
+
+.um-who {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+.um-ava {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--soft);
+    color: var(--g)
+}
+
+.um-who b {
+    font-weight: 600;
+    display: block
+}
+
+.um-who small {
+    color: var(--muted);
+    font-size: 12px
+}
+
+.um-you {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    border: 1px solid #dfe4ec;
+    border-radius: 5px;
+    padding: 0 6px;
+    margin-left: 6px
+}
+
+.um-when small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.um-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+.um-owner {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.um-manager {
+    background: #dcefef;
+    color: #0b6870
+}
+
+.um-staff {
+    background: #eef1f5;
+    color: #556178
+}
+
+.um-ok {
+    background: #e2f7ed;
+    color: #0f7650
+}
+
+.um-lockd {
+    background: #fff2d9;
+    color: #8a5d06
+}
+
+.um-inactive {
+    background: #eef1f5;
+    color: #556178
+}
+
+.um-note {
+    display: block;
+    font-size: 12px;
+    color: #8a5d06;
+    margin-top: 2px
+}
+
+.um-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.um-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .um-link:hover {
+        text-decoration: underline
+    }
+
+    .um-link.um-danger {
+        color: var(--bad)
+    }
+
+    .um-link:disabled {
+        color: #b3bcc9;
+        cursor: not-allowed;
+        text-decoration: none
+    }
+
+.um-foot {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* permissions table */
+.um-perm {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .um-perm th {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line)
+    }
+
+        .um-perm th:first-child, .um-perm td:first-child {
+            text-align: left
+        }
+
+    .um-perm td {
+        padding: 9px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: center
+    }
+
+    .um-perm tr:last-child td {
+        border-bottom: 0
+    }
+
+.um-yes {
+    color: var(--g);
+    font-weight: 700
+}
+
+.um-no {
+    color: #b3bcc9
+}
+
+.um-cond {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8a5d06;
+    background: #fff2d9;
+    border-radius: 20px;
+    padding: 1px 8px
+}
+
+/* dialog */
+.um-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(500px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .um-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .um-dialog form {
+        padding: 22px 24px
+    }
+
+    .um-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.um-fgrid {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0
+}
+
+.um-hint {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.um-roledesc {
+    background: #f7f9fb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #46526a;
+    margin: 0
+}
+
+.um-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px
+}
+
+@media (max-width:900px) {
+    .um-stats {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:700px) {
+    .um-filters {
+        grid-template-columns: 1fr
+    }
+}

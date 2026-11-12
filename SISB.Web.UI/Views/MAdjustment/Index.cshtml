@@ -1,0 +1,271 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Adjustments & Counts";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Madjustment.css" asp-append-version="true" />
+
+<div class="ac">
+
+    <header class="ac-top">
+        <div>
+            <h2>Adjustments &amp; counts</h2>
+            <p>Approve changes to stock, or record one yourself. Every approved change is added to the stock ledger.</p>
+        </div>
+        <button class="ac-btn" type="button" id="ac-open">Record adjustment</button>
+    </header>
+
+    <div class="ac-toast" id="ac-toast" role="status" hidden></div>
+
+    <section class="ac-stats" aria-label="Summary">
+        <div class="ac-card ac-stat ac-wait"><span>Waiting for approval</span><strong id="ac-n">0</strong><em>Adjustments and stock counts</em></div>
+        <div class="ac-card ac-stat"><span>Value waiting</span><strong id="ac-v">৳0</strong><em>At average cost</em></div>
+        <div class="ac-card ac-stat"><span>Approval limit</span><strong>৳5,000</strong><em>Above this, adjustments always need approval</em></div>
+    </section>
+
+    <div class="ac-tabs" role="tablist" aria-label="Views">
+        <button class="ac-tab" role="tab" id="tab-wait" aria-controls="panel-wait" aria-selected="true" type="button">Waiting for approval<b id="ac-tab-n">0</b></button>
+        <button class="ac-tab" role="tab" id="tab-hist" aria-controls="panel-hist" aria-selected="false" type="button" tabindex="-1">History</button>
+    </div>
+
+    <!-- WAITING -->
+    <section class="ac-card" role="tabpanel" id="panel-wait" aria-labelledby="tab-wait">
+        <div class="ac-wrap">
+            <table class="ac-table" id="ac-wait-table">
+                <thead>
+                    <tr><th>Request</th><th>Product</th><th>Reason</th><th class="ac-num">Change</th><th class="ac-num">Value</th><th>From</th><th></th></tr>
+                </thead>
+                <tbody id="ac-wait-body"></tbody>
+            </table>
+        </div>
+        <p class="ac-empty" id="ac-wait-empty" hidden>You're all caught up. Nothing is waiting for approval.</p>
+        <p class="ac-foot">Approving adds an entry to the stock ledger. All adjustments from Sales Staff need your approval, and so does any adjustment above the approval limit. Stock counts from the shelf are posted as an adjustment once you approve the difference.</p>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="ac-card" role="tabpanel" id="panel-hist" aria-labelledby="tab-hist" hidden>
+        <div class="ac-wrap">
+            <table class="ac-table">
+                <thead>
+                    <tr><th>Request</th><th>Product</th><th>Reason</th><th class="ac-num">Change</th><th class="ac-num">Value</th><th>From</th><th>Decision</th><th>Ledger</th><th></th></tr>
+                </thead>
+                <tbody id="ac-hist-body"></tbody>
+            </table>
+        </div>
+        <p class="ac-foot">Approved entries can't be edited or deleted. To undo one, use Reverse, which adds a new entry that cancels it out.</p>
+    </section>
+
+    <!-- RECORD -->
+    <dialog id="ac-dialog" class="ac-dialog" aria-labelledby="ac-title">
+        <form method="dialog" id="ac-form">
+            <h3 id="ac-title">Record adjustment</h3>
+            <p class="ac-sub" style="margin:0">A reason is required for every adjustment.</p>
+            <div class="ac-fgrid">
+                <label class="ac-field ac-wide">Product<select id="r-product"></select></label>
+                <label class="ac-field">
+                    Type
+                    <select id="r-type"><option>Damage</option><option>Loss</option><option>Expiry write-off</option><option>Found stock</option></select>
+                </label>
+                <label class="ac-field">Quantity<input type="number" id="r-qty" min="1" step="1"></label>
+                <label class="ac-field ac-wide" id="r-batch-wrap" hidden>Batch<select id="r-batch"></select></label>
+                <label class="ac-field ac-wide">Reason<textarea id="r-reason" placeholder="What happened?"></textarea></label>
+            </div>
+            <div class="ac-preview" aria-live="polite">
+                <div><span>Stock now</span><span id="p-now"></span></div>
+                <div><span>Stock after</span><span id="p-after"></span></div>
+                <div><span>Value</span><span id="p-val"></span></div>
+            </div>
+            <p class="ac-note" id="r-note" hidden></p>
+            <div class="ac-dfoot">
+                <button class="ac-btn ac-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="ac-btn" type="button" id="r-save" disabled>Save</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- REJECT -->
+    <dialog id="ac-reject" class="ac-dialog ac-narrow" aria-labelledby="ac-rej-title">
+        <form method="dialog">
+            <h3 id="ac-rej-title">Reject request</h3>
+            <p class="ac-sub" id="ac-rej-for" style="margin:0"></p>
+            <div class="ac-fgrid"><label class="ac-field ac-wide">Why are you rejecting it?<textarea id="ac-rej-reason"></textarea></label></div>
+            <div class="ac-dfoot">
+                <button class="ac-btn ac-btn-ghost" value="cancel" formnovalidate>Go back</button>
+                <button class="ac-btn ac-btn-bad" type="button" id="ac-rej-yes" disabled>Reject</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var LIMIT = 5000, ledger = 10490, nextRef = 35, rejecting = null;
+
+        var P = {
+            'Basmati rice 5kg': { stock: 25, wac: 640, exp: false },
+            'Soybean oil 5L': { stock: 18, wac: 840, exp: false },
+            'Sugar 1kg': { stock: 240, wac: 118, exp: false },
+            'Red lentils 1kg': { stock: 12, wac: 125, exp: false },
+            'Powdered milk 500g': { stock: 0, wac: 410, exp: true, batches: [] },
+            'Cream biscuits 200g': { stock: 180, wac: 32, exp: true, batches: [['B-2209', '17 Nov 2026', 36], ['B-2214', '14 Jan 2027', 144]] },
+            'Notebook A4 200 pages': { stock: 48, wac: 70, exp: false }
+        };
+
+        var pending = [
+            { ref: 'ADJ-0033', kind: 'Adjustment', product: 'Cream biscuits 200g', reason: 'Expiry write-off', detail: 'Batch B-2209', qty: -12, by: 'Sumon', role: 'Sales Staff', date: '5 Nov' },
+            { ref: 'ADJ-0032', kind: 'Stock count', product: 'Red lentils 1kg', reason: 'Count difference', detail: 'Counted 10, system says 12', qty: -2, by: 'Sumon', role: 'Sales Staff', date: '5 Nov' }
+        ];
+        var history = [
+            { ref: 'ADJ-0031', date: '4 Nov', product: 'Cream biscuits 200g', reason: 'Damaged packs', qty: -6, value: 192, by: 'Farhana', decision: 'Approved', who: 'Farhana Rahman', ledger: 'LED-10482', rev: true },
+            { ref: 'ADJ-0030', date: '3 Nov', product: 'Notebook A4 200 pages', reason: 'Found stock after count', qty: 3, value: 210, by: 'Farhana', decision: 'Approved', who: 'Farhana Rahman', ledger: 'LED-10455', rev: true },
+            { ref: 'ADJ-0029', date: '1 Nov', product: 'Soybean oil 5L', reason: 'Loss', qty: -1, value: 840, by: 'Sumon', decision: 'Rejected', who: 'Farhana Rahman', note: 'Counted again. The bottle was found.', ledger: '', rev: false }
+        ];
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN'); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function chg(q) { return '<span class="' + (q > 0 ? 'ac-in' : 'ac-out') + '">' + (q > 0 ? '+' : '−') + Math.abs(q) + '</span>'; }
+        function say(t) { $('ac-toast').textContent = t; $('ac-toast').hidden = false; }
+
+        /* ---------- tables ---------- */
+        function render() {
+            var wb = $('ac-wait-body'), total = 0;
+            wb.innerHTML = '';
+            pending.forEach(function (r, i) {
+                var p = P[r.product], val = Math.abs(r.qty) * p.wac, short = r.qty < 0 && p.stock + r.qty < 0;
+                total += val;
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td class="ac-strong">' + r.ref + '<span class="ac-small">' + r.kind + '</span></td>' +
+                    '<td>' + esc(r.product) + '</td>' +
+                    '<td>' + esc(r.reason) + '<span class="ac-small">' + esc(r.detail || '') + '</span></td>' +
+                    '<td class="ac-num">' + chg(r.qty) + (short ? '<span class="ac-flag">Only ' + p.stock + ' in stock</span>' : '') + '</td>' +
+                    '<td class="ac-num">' + money(val) + '</td>' +
+                    '<td>' + esc(r.by) + '<span class="ac-small">' + esc(r.role) + '</span></td>' +
+                    '<td><div class="ac-actions"><button class="ac-link" type="button" data-a="yes" data-i="' + i + '"' + (short ? ' disabled title="There isn\'t enough stock to take this off"' : '') + '>Approve</button>' +
+                    '<button class="ac-link ac-danger" type="button" data-a="no" data-i="' + i + '">Reject</button></div></td>';
+                wb.appendChild(tr);
+            });
+            $('ac-wait-table').hidden = !pending.length;
+            $('ac-wait-empty').hidden = pending.length > 0;
+            $('ac-n').textContent = pending.length; $('ac-tab-n').textContent = pending.length; $('ac-v').textContent = money(total);
+
+            var hb = $('ac-hist-body'); hb.innerHTML = '';
+            history.forEach(function (r, i) {
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td class="ac-strong">' + r.ref + '<span class="ac-small">' + r.date + '</span></td>' +
+                    '<td>' + esc(r.product) + '</td><td>' + esc(r.reason) + '</td>' +
+                    '<td class="ac-num">' + chg(r.qty) + '</td><td class="ac-num">' + money(r.value) + '</td>' +
+                    '<td>' + esc(r.by) + '</td>' +
+                    '<td><span class="ac-pill ' + (r.decision === 'Approved' ? 'ac-ok' : 'ac-bad') + '">' + r.decision + '</span><span class="ac-small">' + esc(r.who) + (r.note ? ': ' + esc(r.note) : '') + '</span></td>' +
+                    '<td>' + (r.ledger || '<span class="ac-small">Nothing posted</span>') + '</td>' +
+                    '<td><div class="ac-actions">' + (r.rev ? '<button class="ac-link" type="button" data-a="rev" data-i="' + i + '">Reverse</button>' : '') + '</div></td>';
+                hb.appendChild(tr);
+            });
+        }
+
+        function post(r, who) {
+            var p = P[r.product]; p.stock += r.qty;
+            return 'LED-' + (ledger++);
+        }
+
+        $('ac-wait-body').addEventListener('click', function (e) {
+            var a = e.target.dataset.a; if (!a) return;
+            var i = +e.target.dataset.i, r = pending[i];
+            if (a === 'yes') {
+                var val = Math.abs(r.qty) * P[r.product].wac, led = post(r);
+                pending.splice(i, 1);
+                history.unshift({ ref: r.ref, date: '5 Nov', product: r.product, reason: r.reason, qty: r.qty, value: val, by: r.by, decision: 'Approved', who: 'You', ledger: led, rev: true });
+                say(r.ref + ' was approved. ' + led + ' was added to the stock ledger and ' + r.product + ' is now at ' + P[r.product].stock + '.');
+                render();
+            } else {
+                rejecting = i;
+                $('ac-rej-for').textContent = r.ref + ' · ' + r.product + ' · ' + (r.qty > 0 ? '+' : '−') + Math.abs(r.qty);
+                $('ac-rej-reason').value = ''; $('ac-rej-yes').disabled = true;
+                $('ac-reject').showModal();
+            }
+        });
+        $('ac-rej-reason').addEventListener('input', function () { $('ac-rej-yes').disabled = !this.value.trim(); });
+        $('ac-rej-yes').addEventListener('click', function () {
+            var r = pending.splice(rejecting, 1)[0];
+            history.unshift({ ref: r.ref, date: '5 Nov', product: r.product, reason: r.reason, qty: r.qty, value: Math.abs(r.qty) * P[r.product].wac, by: r.by, decision: 'Rejected', who: 'You', note: $('ac-rej-reason').value.trim(), ledger: '', rev: false });
+            $('ac-reject').close(); say(r.ref + ' was rejected. Stock was not changed.'); render();
+        });
+
+        $('ac-hist-body').addEventListener('click', function (e) {
+            if (e.target.dataset.a !== 'rev') return;
+            var r = history[+e.target.dataset.i];
+            openRecord({ product: r.product, type: r.qty < 0 ? 'Found stock' : 'Loss', qty: Math.abs(r.qty), reason: 'Reversal of ' + r.ref });
+        });
+
+        /* ---------- tabs ---------- */
+        var tabs = [$('tab-wait'), $('tab-hist')];
+        tabs.forEach(function (t, i) {
+            t.addEventListener('click', function () {
+                tabs.forEach(function (x, j) { x.setAttribute('aria-selected', i === j ? 'true' : 'false'); x.tabIndex = i === j ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = i !== j; });
+            });
+            t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { tabs[1 - i].focus(); tabs[1 - i].click(); } });
+        });
+
+        /* ---------- record an adjustment ---------- */
+        var f = { product: $('r-product'), type: $('r-type'), qty: $('r-qty'), reason: $('r-reason'), batch: $('r-batch') };
+        Object.keys(P).forEach(function (n) { var o = document.createElement('option'); o.textContent = n; f.product.appendChild(o); });
+
+        function fillBatches() {
+            var p = P[f.product.value], dec = f.type.value !== 'Found stock', show = p.exp && dec && p.batches.length > 0;
+            $('r-batch-wrap').hidden = !show;
+            f.batch.innerHTML = '';
+            if (show) p.batches.forEach(function (b) { var o = document.createElement('option'); o.value = b[0]; o.textContent = b[0] + ' · expires ' + b[1] + ' · ' + b[2] + ' left'; f.batch.appendChild(o); });
+        }
+
+        function checkRecord() {
+            var p = P[f.product.value], q = parseInt(f.qty.value, 10) || 0, t = f.type.value, d = t === 'Found stock' ? 1 : -1, bad = [];
+            if (t === 'Expiry write-off' && !p.exp) bad.push('Only products with expiry dates can be written off for expiry.');
+            if (d < 0 && q > p.stock) bad.push('Only ' + p.stock + ' in stock.');
+            if (!$('r-batch-wrap').hidden && d < 0) {
+                var b = p.batches.filter(function (x) { return x[0] === f.batch.value; })[0];
+                if (b && q > b[2]) bad.push('Batch ' + b[0] + ' only has ' + b[2] + '.');
+            }
+            var val = q * p.wac;
+            $('p-now').textContent = p.stock; $('p-after').textContent = p.stock + d * q; $('p-val').textContent = money(val);
+            var n = $('r-note'); n.hidden = false;
+            if (bad.length) { n.className = 'ac-note ac-n-bad'; n.textContent = bad[0]; }
+            else if (val > LIMIT) { n.className = 'ac-note ac-n-wait'; n.textContent = 'This is above the approval limit of ' + money(LIMIT) + '. It will wait for approval before stock changes.'; }
+            else { n.className = 'ac-note ac-n-ok'; n.textContent = 'This is within the limit. It will be posted straight away.'; }
+            $('r-save').disabled = q < 1 || bad.length > 0 || !f.reason.value.trim();
+            return { p: p, q: q, d: d, val: val };
+        }
+
+        function openRecord(pre) {
+            f.product.value = pre ? pre.product : 'Basmati rice 5kg';
+            f.type.value = pre ? pre.type : 'Damage';
+            f.qty.value = pre ? pre.qty : '';
+            f.reason.value = pre ? pre.reason : '';
+            fillBatches(); checkRecord();
+            $('ac-dialog').showModal();
+        }
+        $('ac-open').addEventListener('click', function () { openRecord(null); });
+        f.product.addEventListener('change', function () { fillBatches(); checkRecord(); });
+        f.type.addEventListener('change', function () { fillBatches(); checkRecord(); });
+        [f.qty, f.reason, f.batch].forEach(function (el) { el.addEventListener('input', checkRecord); });
+
+        $('r-save').addEventListener('click', function () {
+            var c = checkRecord(); if ($('r-save').disabled) return;
+            var name = f.product.value, ref = 'ADJ-00' + (nextRef++), signed = c.d * c.q;
+            var why = f.type.value + (f.reason.value.trim() ? ': ' + f.reason.value.trim() : '');
+            if (c.val > LIMIT) {
+                pending.push({ ref: ref, kind: 'Adjustment', product: name, reason: why, detail: $('r-batch-wrap').hidden ? '' : 'Batch ' + f.batch.value, qty: signed, by: 'You', role: 'Manager', date: '5 Nov' });
+                say(ref + ' is above the approval limit, so it was added to the list waiting for approval.');
+            } else {
+                var led = post({ product: name, qty: signed });
+                history.unshift({ ref: ref, date: '5 Nov', product: name, reason: why, qty: signed, value: c.val, by: 'You', decision: 'Approved', who: 'Within the limit', ledger: led, rev: true });
+                say(ref + ' was posted as ' + led + '. ' + name + ' is now at ' + P[name].stock + '.');
+            }
+            $('ac-dialog').close(); render();
+        });
+
+        render();
+    })();
+</script>

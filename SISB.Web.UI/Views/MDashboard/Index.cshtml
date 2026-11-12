@@ -1,0 +1,193 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Mdashboard.css" asp-append-version="true" />
+
+<div class="md">
+
+    <header class="md-top">
+        <div>
+            <h2>Good afternoon, Anika</h2>
+            
+        </div>
+        <div class="md-quick">
+            <a class="md-btn" href="/Purchase/Receive">Receive goods</a>
+            <a class="md-btn md-btn-ghost" href="/Purchase/Index">New purchase order</a>
+            <a class="md-btn md-btn-ghost" href="/Stock/Index#adjustments">Record adjustment</a>
+        </div>
+    </header>
+
+    <div class="md-banner" id="md-banner" role="status">
+        <span><b id="md-wait">4</b> requests are waiting for your approval.</span>
+        <a href="#md-approvals">Review them</a>
+    </div>
+    <div class="md-toast" id="md-toast" role="status" hidden></div>
+
+    <!-- FR-RPT-01: today's sales, today's profit, low-stock count, stock value -->
+    <section class="md-kpis" aria-label="Today at a glance">
+        <div class="md-card md-kpi"><span>Today's sales</span><strong>৳66,240</strong><em>41 invoices so far</em></div>
+        <div class="md-card md-kpi"><span>Today's profit</span><strong>৳11,870</strong><em>17.9% margin</em></div>
+        <div class="md-card md-kpi md-k-low"><span>Low-stock products</span><strong>14</strong><em>3 are out of stock</em></div>
+        <div class="md-card md-kpi"><span>Stock value</span><strong>৳12,84,500</strong><em>120 active products</em></div>
+    </section>
+
+    <!-- FR-RPT-01: 30-day sales trend, top 5 selling products -->
+    <section class="md-row md-r1">
+        <div class="md-card">
+            <h3>Sales in the last 30 days</h3>
+            <p class="md-sub">Total ৳16,48,300 · best day ৳67,000 on 26 October</p>
+            <svg class="md-chart" viewBox="0 0 600 210" role="img" aria-label="Line chart of daily sales for the last 30 days, rising from about 42 thousand to 66 thousand taka">
+                <line class="grid" x1="0" x2="590" y1="60" y2="60" />
+                <line class="grid" x1="0" x2="590" y1="110" y2="110" />
+                <line class="grid" x1="0" x2="590" y1="160" y2="160" />
+                <text x="0" y="55">৳70k</text>
+                <text x="0" y="105">৳55k</text>
+                <text x="0" y="155">৳40k</text>
+                <polygon class="area" points="0,200 0,166 20,158 40,169 60,150 80,138 100,122 120,144 140,155 160,147 180,136 200,124 220,113 240,130 260,141 280,152 300,144 320,133 340,116 360,105 380,119 400,138 420,147 440,136 460,122 480,108 500,96 520,113 540,127 560,116 580,99 580,200" />
+                <polyline class="line" points="0,166 20,158 40,169 60,150 80,138 100,122 120,144 140,155 160,147 180,136 200,124 220,113 240,130 260,141 280,152 300,144 320,133 340,116 360,105 380,119 400,138 420,147 440,136 460,122 480,108 500,96 520,113 540,127 560,116 580,99" />
+                <circle class="dot" cx="580" cy="99" r="5" />
+                <text x="0" y="208">6 Oct</text>
+                <text x="290" y="208">20 Oct</text>
+                <text x="545" y="208">5 Nov</text>
+            </svg>
+        </div>
+
+        <div class="md-card">
+            <h3>Top 5 selling products</h3>
+            <p class="md-sub">Units sold in the last 30 days</p>
+            <ul class="md-top5">
+                <li><b>Sugar 1kg</b><span>412</span><div class="md-bar"><i style="width:100%"></i></div></li>
+                <li><b>Basmati rice 5kg</b><span>355</span><div class="md-bar"><i style="width:86%"></i></div></li>
+                <li><b>Soybean oil 5L</b><span>296</span><div class="md-bar"><i style="width:72%"></i></div></li>
+                <li><b>Red lentils 1kg</b><span>261</span><div class="md-bar"><i style="width:63%"></i></div></li>
+                <li><b>Powdered milk 500g</b><span>198</span><div class="md-bar"><i style="width:48%"></i></div></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Manager approvals: FR-STK-03, FR-STK-04, FR-SAL-07, BR-08, UC-03 -->
+    <section class="md-row md-r2">
+        <div class="md-card" id="md-approvals">
+            <h3>Waiting for your approval</h3>
+            <p class="md-sub">Nothing is posted to stock, sales or orders until you approve it.</p>
+            <div class="md-wrap">
+                <table class="md-table">
+                    <thead><tr><th>Request</th><th>Details</th><th class="md-num">Value</th><th>From</th><th></th></tr></thead>
+                    <tbody id="md-appr-body">
+                        <tr class="md-appr" data-ref="Adjustment ADJ-0033">
+                            <td class="md-strong">ADJ-0033<span class="md-small">Stock adjustment</span></td>
+                            <td>Cream biscuits 200g<span class="md-small">Expiry write-off, −12 packs</span></td>
+                            <td class="md-num">৳384</td>
+                            <td>Sumon<span class="md-small">Sales Staff</span></td>
+                            <td><div class="md-actions"><button class="md-link md-yes" type="button">Approve</button><button class="md-link md-danger md-no" type="button">Reject</button></div></td>
+                        </tr>
+                        <tr class="md-appr" data-ref="Stock count ADJ-0032">
+                            <td class="md-strong">ADJ-0032<span class="md-small">Stock count</span></td>
+                            <td>Red lentils 1kg<span class="md-small">Counted 10, system says 12 (−2)</span></td>
+                            <td class="md-num">৳250</td>
+                            <td>Sumon<span class="md-small">Sales Staff</span></td>
+                            <td><div class="md-actions"><button class="md-link md-yes" type="button">Approve</button><button class="md-link md-danger md-no" type="button">Reject</button></div></td>
+                        </tr>
+                        <tr class="md-appr" data-ref="Discount for Hasan Mia">
+                            <td class="md-strong">Discount<span class="md-small">Sale approval</span></td>
+                            <td>Hasan Mia<span class="md-small">15% discount, the limit is 10%</span></td>
+                            <td class="md-num">৳4,200</td>
+                            <td>Sumon<span class="md-small">Sales Staff</span></td>
+                            <td><div class="md-actions"><button class="md-link md-yes" type="button">Approve</button><button class="md-link md-danger md-no" type="button">Reject</button></div></td>
+                        </tr>
+                        <tr class="md-appr" data-ref="Purchase order PO-2026-0147">
+                            <td class="md-strong">PO-2026-0147<span class="md-small">Purchase order</span></td>
+                            <td>Meghna Traders<span class="md-small">Draft from Smart Reorder, 2 products</span></td>
+                            <td class="md-num">৳67,980</td>
+                            <td>You<span class="md-small">Draft</span></td>
+                            <td><div class="md-actions"><button class="md-link md-yes" type="button">Approve</button><button class="md-link md-danger md-no" type="button">Reject</button></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="md-empty" id="md-appr-empty" hidden>You're all caught up. Nothing is waiting for approval.</p>
+        </div>
+
+        <!-- FR-ALT-01 to FR-ALT-05 -->
+        <div class="md-card">
+            <div class="md-head"><div><h3>Alerts</h3><p class="md-sub">Checked every night at 2:00 am</p></div><a class="md-all" href="/Stock/Index">View stock</a></div>
+            <ul class="md-alerts">
+                <li><span class="md-pill md-bad">Out of stock</span><div>Powdered milk 500g<span class="md-small">Last sold today, 11:42 am</span></div></li>
+                <li><span class="md-pill md-warn">Low stock</span><div>Red lentils 1kg, 12 left<span class="md-small">Reorder level is 40</span></div></li>
+                <li><span class="md-pill md-warn">Expiring</span><div>Cream biscuits, batch B-2209<span class="md-small">Expires in 12 days · 36 packs</span></div></li>
+                <li><span class="md-pill md-grey">Dead stock</span><div>Notebook A4 200 pages<span class="md-small">No sales in 104 days · 48 in stock</span></div></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="md-row md-r3">
+        <!-- FR-PUR-03, FR-PUR-04: receiving goods -->
+        <div class="md-card">
+            <div class="md-head"><div><h3>Goods to receive</h3><p class="md-sub">Approved orders that haven't been fully received.</p></div><a class="md-all" href="/Purchase/Index">All orders</a></div>
+            <div class="md-wrap">
+                <table class="md-table">
+                    <thead><tr><th>Order</th><th>Supplier</th><th>Delivery</th><th></th></tr></thead>
+                    <tbody>
+                        <tr><td class="md-strong">PO-2026-0143</td><td>Rupali Snacks Distribution</td><td><span class="md-pill md-bad">5 days late</span><span class="md-small">Partly received</span></td><td><div class="md-actions"><a class="md-link" href="/Purchase/Receive">Receive remaining</a></div></td></tr>
+                        <tr><td class="md-strong">PO-2026-0148</td><td>Dhaka Dairy Supply</td><td><span class="md-pill md-warn">Tomorrow</span><span class="md-small">6 Nov</span></td><td><div class="md-actions"><a class="md-link" href="/Purchase/Receive">Receive goods</a></div></td></tr>
+                        <tr><td class="md-strong">PO-2026-0146</td><td>Karim Wholesale</td><td><span class="md-pill md-ok">In 2 days</span><span class="md-small">7 Nov</span></td><td><div class="md-actions"><a class="md-link" href="/Purchase/Receive">Receive goods</a></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="md-note">Receiving more than was ordered needs your override.</p>
+        </div>
+
+        <!-- FR-AI1-04, FR-AI1-07, FR-AI1-08, FR-AI1-09 -->
+        <div class="md-card">
+            <div class="md-head"><div><h3>Smart reorder</h3><p class="md-sub">The most urgent of 5 suggestions.</p></div><a class="md-all" href="/Forecast/Index">Review all</a></div>
+            <div class="md-wrap">
+                <table class="md-table">
+                    <thead><tr><th>Product</th><th class="md-num">Days left</th><th class="md-num">Order</th><th>Confidence</th></tr></thead>
+                    <tbody>
+                        <tr><td class="md-strong">Powdered milk 500g<span class="md-small">Dhaka Dairy Supply</span></td><td class="md-num"><span class="md-pill md-bad">0</span></td><td class="md-num">48</td><td><span class="md-pill md-warn">Low</span></td></tr>
+                        <tr><td class="md-strong">Red lentils 1kg<span class="md-small">Meghna Traders</span></td><td class="md-num"><span class="md-pill md-bad">1.5</span></td><td class="md-num">60</td><td><span class="md-pill md-ok">Medium</span></td></tr>
+                        <tr><td class="md-strong">Basmati rice 5kg<span class="md-small">Karim Wholesale</span></td><td class="md-num"><span class="md-pill md-warn">2.5</span></td><td class="md-num">95</td><td><span class="md-pill md-ok">High</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="md-head" style="margin-top:12px;align-items:center">
+                <p class="md-note" style="margin:0" id="md-trained">Forecasts are updated every week. Last update: Sunday, 1 Nov.</p>
+                <button class="md-btn md-btn-ghost" type="button" id="md-retrain">Update forecasts now</button>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    (function () {
+        var body = document.getElementById('md-appr-body');
+        var toast = document.getElementById('md-toast');
+
+        function update() {
+            var n = body.querySelectorAll('.md-appr').length;
+            document.getElementById('md-wait').textContent = n;
+            document.getElementById('md-banner').hidden = n === 0;
+            document.getElementById('md-appr-empty').hidden = n > 0;
+            body.closest('.md-wrap').hidden = n === 0;
+        }
+
+        body.addEventListener('click', function (e) {
+            var yes = e.target.classList.contains('md-yes'), no = e.target.classList.contains('md-no');
+            if (!yes && !no) return;
+            var row = e.target.closest('.md-appr');
+            toast.textContent = row.dataset.ref + (yes ? ' was approved.' : ' was rejected.');
+            toast.hidden = false;
+            row.remove();
+            update();
+        });
+
+        document.getElementById('md-retrain').addEventListener('click', function () {
+            document.getElementById('md-trained').textContent = 'Forecasts updated just now.';
+            toast.textContent = 'Forecasts are being updated with your latest sales.';
+            toast.hidden = false;
+        });
+    })();
+</script>

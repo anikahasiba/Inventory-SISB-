@@ -1,0 +1,489 @@
+﻿/* Manager Purchase Orders page – self-contained. All classes start with "mo-" so they never clash with Bootstrap or _PrivateLayout. */
+.mo {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .mo * {
+        box-sizing: border-box
+    }
+
+    .mo :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+.mo-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .mo-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .mo-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.mo-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer
+}
+
+    .mo-btn:hover {
+        background: var(--g-dark)
+    }
+
+.mo-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .mo-btn-ghost:hover {
+        background: var(--soft)
+    }
+
+.mo-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.mo-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0
+}
+
+.mo-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .mo-stats .mo-card {
+        margin: 0
+    }
+
+.mo-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.mo-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.mo-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.mo-stat.mo-late {
+    border-left: 4px solid var(--bad)
+}
+
+.mo-stat.mo-owed {
+    border-left: 4px solid var(--warn)
+}
+
+.mo-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    align-items: end
+}
+
+.mo-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .mo-field input, .mo-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%
+    }
+
+.mo-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.mo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .mo-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .mo-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .mo-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.mo-num {
+    text-align: right !important
+}
+
+.mo-po {
+    font-weight: 600
+}
+
+.mo-late-note {
+    display: block;
+    font-size: 12px;
+    color: #b53030;
+    font-weight: 600
+}
+
+.mo-date small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.mo-owed-amt {
+    font-weight: 600;
+    color: #8a5d06
+}
+
+.mo-clear {
+    color: var(--muted)
+}
+
+.mo-cancelled td {
+    color: var(--muted)
+}
+
+.mo-cancelled .mo-po {
+    text-decoration: line-through
+}
+
+.mo-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+    .mo-pill.mo-draft {
+        background: #eef1f5;
+        color: #556178
+    }
+
+    .mo-pill.mo-approved {
+        background: #e3ecfa;
+        color: #25508f
+    }
+
+    .mo-pill.mo-partial {
+        background: #fff2d9;
+        color: #8a5d06
+    }
+
+    .mo-pill.mo-received {
+        background: #e2f7ed;
+        color: #0f7650
+    }
+
+    .mo-pill.mo-cancelled {
+        background: #ffe5e5;
+        color: #b53030
+    }
+
+.mo-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.mo-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .mo-link:hover {
+        text-decoration: underline
+    }
+
+    .mo-link.mo-danger {
+        color: var(--bad)
+    }
+
+.mo-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+/* new order dialog */
+.mo-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(720px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .mo-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+    .mo-dialog form {
+        padding: 22px 24px
+    }
+
+    .mo-dialog h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px
+    }
+
+.mo-fgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    margin: 16px 0 8px
+}
+
+.mo-items-head, .mo-item {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1.2fr 1.2fr auto;
+    gap: 10px;
+    align-items: center
+}
+
+.mo-items-head {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    padding: 0 2px 4px
+}
+
+.mo-item {
+    margin-bottom: 8px
+}
+
+    .mo-item input, .mo-item select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+.mo-line {
+    text-align: right;
+    font-weight: 600
+}
+
+.mo-remove {
+    font: inherit;
+    font-size: 18px;
+    line-height: 1;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px
+}
+
+    .mo-remove:hover {
+        color: var(--bad);
+        background: #ffe5e5
+    }
+
+.mo-total {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    font-size: 16px;
+    margin: 12px 0 4px
+}
+
+    .mo-total strong {
+        font-size: 18px
+    }
+
+.mo-dfoot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px
+}
+
+    .mo-dfoot div {
+        display: flex;
+        gap: 10px
+    }
+
+@media (max-width:900px) {
+    .mo-stats {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:700px) {
+    .mo-filters, .mo-fgrid {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width:640px) {
+    .mo-items-head {
+        display: none
+    }
+
+    .mo-item {
+        grid-template-columns: 1fr 1fr;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px
+    }
+
+        .mo-item select {
+            grid-column: 1/-1
+        }
+}
+
+.mo [hidden] {
+    display: none !important
+}
+
+.mo-toast {
+    background: #e2f7ed;
+    color: #0f7650;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+.mo-btn:disabled {
+    background: #c9d3dd;
+    border-color: #c9d3dd;
+    cursor: not-allowed
+}
+
+.mo-btn-ghost:disabled {
+    background: #fff;
+    color: #aab4c3;
+    border-color: #dfe4ec
+}
+
+.mo-late-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #b53030;
+    background: #ffe5e5;
+    border-radius: 20px;
+    padding: 1px 9px;
+    margin-left: 6px
+}
+
+.mo-narrow {
+    width: min(460px,calc(100% - 28px)) !important
+}
+
+.mo-preview {
+    background: #f7f9fb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    display: grid;
+    gap: 4px;
+    margin-top: 4px
+}
+
+    .mo-preview div {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px
+    }
+
+.mo-err {
+    font-size: 13px;
+    color: #b53030;
+    margin: 4px 0 0
+}
+
+.mo-dfoot .mo-btn-bad {
+    background: #fff;
+    color: #b53030;
+    border-color: #e9b5b0
+}
+
+    .mo-dfoot .mo-btn-bad:hover {
+        background: #ffe5e5
+    }

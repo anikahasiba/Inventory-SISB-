@@ -1,0 +1,236 @@
+﻿@{
+    Layout = "_ManagerLayout";
+    ViewData["Title"] = "AI Assistant";
+}
+
+<link rel="stylesheet" href="~/css/Manager/Massistant.css" asp-append-version="true" />
+
+<div class="ma">
+
+    <header class="ma-top">
+        <div>
+            <h2>AI assistant</h2>
+            <p>Ask about stock, sales, forecasts and supplier balances in English or Bangla.</p>
+        </div>
+        <span class="ma-badge">Read-only · it can't change your data</span>
+    </header>
+
+    <div class="ma-grid">
+
+        <section class="ma-card ma-chat" aria-label="Chat with the assistant">
+            <div class="ma-offline" id="ma-offline" role="status" hidden>
+                The assistant isn't available right now. The rest of SmartStock keeps working, so please try again in a few minutes.
+            </div>
+
+            <div class="ma-msgs" id="ma-msgs" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+            <form class="ma-comp" id="ma-form" autocomplete="off">
+                <div class="ma-chips" aria-label="Suggested questions">
+                    <button type="button" class="ma-chip" data-q="Which products will run out this week?">Which products will run out this week?</button>
+                    <button type="button" class="ma-chip" data-q="Which products are low on stock?">Low-stock products</button>
+                    <button type="button" class="ma-chip" data-q="How much Basmati rice do I have?">Basmati rice stock</button>
+                    <button type="button" class="ma-chip" data-q="What were my top 5 items last month?">Top 5 items last month</button>
+                    <button type="button" class="ma-chip" data-q="How much profit did I make yesterday?">Profit yesterday</button>
+                    <button type="button" class="ma-chip" data-q="Which products have not sold for 90 days?">Dead stock</button>
+                    <button type="button" class="ma-chip" data-q="How much do I owe my suppliers?">Supplier balances</button>
+                    <button type="button" class="ma-chip" data-q="আজকের বিক্রি কত?" lang="bn">আজকের বিক্রি কত?</button>
+                </div>
+                <div class="ma-row">
+                    <textarea id="ma-input" rows="1" placeholder="Ask a question about your business" aria-label="Your question" maxlength="500"></textarea>
+                    <button class="ma-btn" id="ma-send" type="submit">Send</button>
+                </div>
+                <p class="ma-fine">Answers come from your live SmartStock data. If the data isn't there, the assistant will say so instead of guessing.</p>
+            </form>
+        </section>
+
+        <aside aria-label="Assistant details">
+            <section class="ma-card">
+                <h3>Your usage this month</h3>
+                <div class="ma-use"><span>38 of 500 questions</span><span>Resets 1 Dec</span></div>
+                <div class="ma-meter" role="img" aria-label="38 of 500 questions used"><i></i></div>
+                <p class="ma-sub">There is a limit on how fast and how often questions can be asked.</p>
+            </section>
+
+            <section class="ma-card">
+                <h3>What it can look up</h3>
+                <ul class="ma-list">
+                    <li>Stock, price and reorder level of a product</li>
+                    <li>Products that are low on stock</li>
+                    <li>Sales and profit for any dates</li>
+                    <li>Best-selling products</li>
+                    <li>Dead stock</li>
+                    <li>Sales forecast for a product</li>
+                    <li>Reorder suggestions</li>
+                    <li>Money owed to suppliers</li>
+                </ul>
+            </section>
+
+            <section class="ma-card">
+                <h3>Recent questions</h3>
+                <p class="ma-sub">Tap one to ask it again. Every question and answer is logged.</p>
+                <ul class="ma-hist">
+                    <li><button type="button" data-q="How much profit did I make yesterday?">How much profit did I make yesterday?<small>Today, 9:12 am</small></button></li>
+                    <li><button type="button" data-q="What were my top 5 items last month?">What were my top 5 items last month?<small>Yesterday, 6:40 pm</small></button></li>
+                    <li><button type="button" data-q="Which products will run out this week?">Which products will run out this week?<small>Yesterday, 10:05 am</small></button></li>
+                    <li><button type="button" data-q="আজকের বিক্রি কত?" lang="bn">আজকের বিক্রি কত?<small>3 Nov, 4:30 pm</small></button></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var msgs = document.getElementById('ma-msgs');
+        var form = document.getElementById('ma-form');
+        var input = document.getElementById('ma-input');
+        var send = document.getElementById('ma-send');
+        var busy = false;
+
+        function table(heads, rows, rightCols) {
+            rightCols = rightCols || [];
+            var h = '<div class="ma-tbl-wrap"><table class="ma-tbl"><thead><tr>';
+            heads.forEach(function (t, i) { h += '<th' + (rightCols.indexOf(i) > -1 ? ' class="ma-r"' : '') + '>' + t + '</th>'; });
+            h += '</tr></thead><tbody>';
+            rows.forEach(function (r) {
+                h += '<tr>';
+                r.forEach(function (c, i) { h += '<td' + (rightCols.indexOf(i) > -1 ? ' class="ma-r"' : '') + '>' + c + '</td>'; });
+                h += '</tr>';
+            });
+            return h + '</tbody></table></div>';
+        }
+
+        var answers = {
+            reorder: {
+                text: '5 products are likely to run out within the next 7 days. Powdered milk is already out of stock, and red lentils have about 1.5 days left.',
+                tool: 'Reorder suggestions',
+                html: table(['Product', 'Days left', 'Suggested order', 'Supplier'], [
+                    ['Powdered milk 500g', '<span class="ma-pill ma-bad">0</span>', '48', 'Dhaka Dairy Supply'],
+                    ['Red lentils 1kg', '<span class="ma-pill ma-bad">1.5</span>', '100', 'Meghna Traders'],
+                    ['Soybean oil 5L', '<span class="ma-pill ma-warn">2.4</span>', '84', 'Meghna Traders'],
+                    ['Basmati rice 5kg', '<span class="ma-pill ma-warn">2.5</span>', '95', 'Karim Wholesale'],
+                    ['Miniket rice 5kg', '<span class="ma-pill ma-warn">3.1</span>', '110', 'Karim Wholesale']
+                ], [1, 2]),
+                action: '<div class="ma-action"><span>I can\'t place orders myself. Review these on Smart Reorder to create draft purchase orders.</span><a class="ma-link" href="/Forecast/Index">Open Smart Reorder</a></div>'
+            },
+            top: {
+                text: 'Here are your 5 best sellers for October 2026, by units sold. Sugar 1kg was the clear leader.',
+                tool: 'Top-selling products',
+                html: '<div class="ma-bars">' + [['Sugar 1kg', 412, 100], ['Basmati rice 5kg', 355, 86], ['Soybean oil 5L', 296, 72], ['Red lentils 1kg', 261, 63], ['Powdered milk 500g', 198, 48]].map(function (b) {
+                    return '<div class="ma-bar"><span>' + b[0] + '</span><span><i style="width:' + b[2] + '%"></i></span><span>' + b[1] + '</span></div>';
+                }).join('') + '</div>'
+            },
+            profit: {
+                text: 'Yesterday (4 November) you made ৳10,250 profit on sales of ৳61,380. That is a margin of 16.7% across 38 invoices.',
+                tool: 'Sales summary',
+                html: '<div class="ma-tiles"><div class="ma-tile"><span>Sales</span><strong>৳61,380</strong></div><div class="ma-tile"><span>Profit</span><strong>৳10,250</strong></div><div class="ma-tile"><span>Invoices</span><strong>38</strong></div></div>',
+                fine: 'Profit figures are shown to the Owner and Manager only.'
+            },
+            low: {
+                text: '14 products are at or below their reorder level, and 3 of them are out of stock. These are the most urgent.',
+                tool: 'Low-stock products',
+                html: table(['Product', 'In stock', 'Reorder at', 'Status'], [
+                    ['Powdered milk 500g', '0', '30', '<span class="ma-pill ma-bad">Out of stock</span>'],
+                    ['Red lentils 1kg', '12', '40', '<span class="ma-pill ma-warn">Low</span>'],
+                    ['Soybean oil 5L', '18', '40', '<span class="ma-pill ma-warn">Low</span>'],
+                    ['Basmati rice 5kg', '25', '50', '<span class="ma-pill ma-warn">Low</span>']
+                ], [1, 2]),
+                action: '<div class="ma-action"><span>Review the suggested amounts and create draft purchase orders on Smart Reorder.</span><a class="ma-link" href="/Forecast/Index">Open Smart Reorder</a></div>'
+            },
+            stock: {
+                text: 'You have 25 bags of Basmati rice 5kg. The selling price is ৳720 and the reorder level is 50, so it is below the level where you should order more.',
+                tool: 'Product stock',
+                html: '<div class="ma-tiles"><div class="ma-tile"><span>In stock</span><strong>25 bags</strong></div><div class="ma-tile"><span>Selling price</span><strong>৳720</strong></div><div class="ma-tile"><span>Reorder at</span><strong>50</strong></div></div>'
+            },
+            dead: {
+                text: '2 products have not sold in the last 90 days. Together they tie up ৳3,690 of stock.',
+                tool: 'Dead stock',
+                html: table(['Product', 'In stock', 'Last sale', 'Value'], [
+                    ['Gel pen blue (box of 12)', '3 box', '2 Jun 2026', '৳330'],
+                    ['Notebook A4 200 pages', '48 pcs', '24 Jul 2026', '৳3,360']
+                ], [3])
+            },
+            payables: {
+                text: 'You owe your suppliers ৳3,50,600 in total. Karim Wholesale is the largest balance, and Meghna Traders has been overdue since 4 November.',
+                tool: 'Supplier payables',
+                html: table(['Supplier', 'Balance', 'Payment due'], [
+                    ['Karim Wholesale', '৳1,84,000', '14 Nov'],
+                    ['Meghna Traders', '৳96,500', '<span class="ma-pill ma-bad">Overdue</span>'],
+                    ['Dhaka Dairy Supply', '৳42,300', '<span class="ma-pill ma-bad">Due now</span>'],
+                    ['Rupali Snacks Distribution', '৳27,800', '12 Nov']
+                ], [1])
+            },
+            bangla: {
+                lang: 'bn',
+                text: 'আজ এ পর্যন্ত মোট বিক্রি ৳৬৬,২৪০, ইনভয়েস ৪১টি।',
+                tool: 'Sales summary'
+            },
+            none: {
+                text: 'I couldn\'t find that in your SmartStock data, so I won\'t guess. I can answer questions about stock levels, sales and profit, top sellers, dead stock, forecasts, reorder suggestions and supplier payables.'
+            }
+        };
+
+        function pick(q) {
+            var s = q.toLowerCase();
+            if (/বিক্রি|বিক্রয়/.test(q)) return answers.bangla;
+            if (/profit/.test(s)) return answers.profit;
+            if (/owe|payable|supplier/.test(s)) return answers.payables;
+            if (/dead|not sold|not selling|no sales/.test(s)) return answers.dead;
+            if (/basmati|how much .* (do i have|stock)|in stock/.test(s)) return answers.stock;
+            if (/low on stock|low.?stock|below reorder/.test(s)) return answers.low;
+            if (/top|best.?sell/.test(s)) return answers.top;
+            if (/run out|running out|reorder|low stock/.test(s)) return answers.reorder;
+            return answers.none;
+        }
+
+        function bubble(a) {
+            return '<p' + (a.lang ? ' lang="' + a.lang + '"' : '') + '>' + a.text + '</p>' + (a.html || '') +
+                (a.fine ? '<p class="ma-fine">' + a.fine + '</p>' : '') + (a.action || '') +
+                (a.tool ? '<p><span class="ma-tool">Looked up: ' + a.tool + '</span></p>' : '');
+        }
+
+        function scrollDown() { msgs.scrollTop = msgs.scrollHeight; }
+
+        function addMsg(me) {
+            var m = document.createElement('div');
+            m.className = 'ma-msg' + (me ? ' ma-me' : '');
+            m.innerHTML = '<div class="ma-ava" aria-hidden="true">' + (me ? 'You' : 'AI') + '</div><div class="ma-bub"></div>';
+            msgs.appendChild(m);
+            return m.querySelector('.ma-bub');
+        }
+
+        function ask(q, instant) {
+            q = q.trim();
+            if (!q || busy) return;
+            busy = true; send.disabled = true;
+            addMsg(true).textContent = q;
+            var b = addMsg(false);
+            b.innerHTML = '<span class="ma-dots" aria-label="The assistant is thinking"><i></i><i></i><i></i></span>';
+            scrollDown();
+            setTimeout(function () {
+                b.innerHTML = bubble(pick(q));
+                busy = false; send.disabled = false;
+                scrollDown();
+            }, instant ? 0 : 800);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var q = input.value;
+            input.value = ''; input.style.height = '';
+            ask(q);
+        });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+        });
+        input.addEventListener('input', function () {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        });
+        document.querySelectorAll('[data-q]').forEach(function (b) {
+            b.addEventListener('click', function () { ask(b.dataset.q); });
+        });
+
+        ask('Which products will run out this week?', true);
+    })();
+</script>

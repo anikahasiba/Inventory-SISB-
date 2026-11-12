@@ -1,0 +1,337 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Sales";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Sales.css" asp-append-version="true" />
+
+<div class="sa">
+
+    <header class="sa-top">
+        <div>
+            <h2>Sales</h2>
+            <p>Thursday, 5 November 2026</p>
+        </div>
+        <button class="sa-btn" type="button" id="sa-new">New sale</button>
+    </header>
+
+    <section class="sa-stats" aria-label="Today's sales summary">
+        <div class="sa-card sa-stat"><span>Today's sales</span><strong>৳66,240</strong><em>+8.2% vs yesterday</em></div>
+        <div class="sa-card sa-stat"><span>Today's profit</span><strong>৳11,870</strong><em>17.9% margin</em></div>
+        <div class="sa-card sa-stat"><span>Invoices today</span><strong>41</strong><em>Average ৳1,616 per sale</em></div>
+    </section>
+
+    <form class="sa-card sa-filters" role="search" aria-label="Filter sales" onsubmit="return false">
+        <label class="sa-field">
+            Search
+            <input type="search" placeholder="Invoice number or customer">
+        </label>
+        <label class="sa-field">
+            Payment method
+            <select><option>All methods</option><option>Cash</option><option>Card</option><option>Mobile banking</option><option>Credit (due)</option></select>
+        </label>
+        <label class="sa-field">
+            Status
+            <select><option>All</option><option>Paid</option><option>Due</option><option>Returned</option><option>Voided</option></select>
+        </label>
+        <label class="sa-field">Date<input type="date" value="2026-11-05"></label>
+    </form>
+
+    <section class="sa-card">
+        <div class="sa-wrap">
+            <table class="sa-table">
+                <thead>
+                    <tr>
+                        <th>Invoice</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th class="sa-num">Items</th>
+                        <th class="sa-num">Total</th>
+                        <th>Payment</th>
+                        <th class="sa-num">Balance due</th>
+                        <th class="sa-num">Profit</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1058</td>
+                        <td class="sa-when">5 Nov<small>2:14 pm</small></td>
+                        <td class="sa-walk">Walk-in</td>
+                        <td class="sa-num">3</td>
+                        <td class="sa-num">৳1,240</td>
+                        <td>Cash</td>
+                        <td class="sa-num sa-walk">৳0</td>
+                        <td class="sa-num"><span class="sa-profit">৳210</span></td>
+                        <td><span class="sa-pill sa-paid">Paid</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1057</td>
+                        <td class="sa-when">5 Nov<small>1:52 pm</small></td>
+                        <td>Salma Begum</td>
+                        <td class="sa-num">5</td>
+                        <td class="sa-num">৳2,860</td>
+                        <td>Mobile banking</td>
+                        <td class="sa-num sa-walk">৳0</td>
+                        <td class="sa-num"><span class="sa-profit">৳498</span></td>
+                        <td><span class="sa-pill sa-paid">Paid</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1056</td>
+                        <td class="sa-when">5 Nov<small>12:30 pm</small></td>
+                        <td>Hasan Mia</td>
+                        <td class="sa-num">8</td>
+                        <td class="sa-num">৳4,950</td>
+                        <td>Credit (due)</td>
+                        <td class="sa-num"><span class="sa-due">৳3,950</span></td>
+                        <td class="sa-num"><span class="sa-profit">৳860</span></td>
+                        <td><span class="sa-pill sa-owing">Due</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1055</td>
+                        <td class="sa-when">5 Nov<small>11:42 am</small></td>
+                        <td class="sa-walk">Walk-in</td>
+                        <td class="sa-num">2</td>
+                        <td class="sa-num">৳920</td>
+                        <td>Card</td>
+                        <td class="sa-num sa-walk">৳0</td>
+                        <td class="sa-num"><span class="sa-profit">৳150</span></td>
+                        <td><span class="sa-pill sa-paid">Paid</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1054</td>
+                        <td class="sa-when">5 Nov<small>10:15 am</small></td>
+                        <td>Tanvir Ahmed</td>
+                        <td class="sa-num">4</td>
+                        <td class="sa-num">৳3,180</td>
+                        <td>Cash</td>
+                        <td class="sa-num sa-walk">৳0</td>
+                        <td class="sa-num"><span class="sa-profit">৳560</span></td>
+                        <td><span class="sa-pill sa-ret">Part returned</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1053</td>
+                        <td class="sa-when">5 Nov<small>9:48 am</small></td>
+                        <td>Nasrin Akter</td>
+                        <td class="sa-num">6</td>
+                        <td class="sa-num">৳5,430</td>
+                        <td>Credit (due)</td>
+                        <td class="sa-num"><span class="sa-due">৳5,430</span></td>
+                        <td class="sa-num"><span class="sa-profit">৳940</span></td>
+                        <td><span class="sa-pill sa-owing">Due</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="sa-inv">INV-2026-1049</td>
+                        <td class="sa-when">4 Nov<small>6:05 pm</small></td>
+                        <td class="sa-walk">Walk-in</td>
+                        <td class="sa-num">1</td>
+                        <td class="sa-num">৳720</td>
+                        <td>Cash</td>
+                        <td class="sa-num sa-walk">৳0</td>
+                        <td class="sa-num"><span class="sa-profit">৳80</span></td>
+                        <td><span class="sa-pill sa-paid">Paid</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button><button class="sa-link" type="button">Print</button><button class="sa-link" type="button">Return</button></div></td>
+                    </tr>
+                    <tr class="sa-void">
+                        <td class="sa-inv">INV-2026-1047</td>
+                        <td class="sa-when">4 Nov<small>4:20 pm</small></td>
+                        <td>Walk-in</td>
+                        <td class="sa-num">2</td>
+                        <td class="sa-num"><span class="sa-amt">৳1,090</span></td>
+                        <td>Cash</td>
+                        <td class="sa-num">৳0</td>
+                        <td class="sa-num">৳0</td>
+                        <td><span class="sa-pill sa-voided">Voided</span></td>
+                        <td><div class="sa-actions"><button class="sa-link" type="button">View</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="sa-foot">Confirmed sales can't be edited. To correct a mistake, record a return, or void the sale with a reason (Manager or Owner only).</p>
+    </section>
+
+    <dialog id="sa-dialog" class="sa-dialog" aria-labelledby="sa-title">
+        <form method="dialog">
+            <h3 id="sa-title">New sale</h3>
+            <p class="sa-sub">Tap a product to add it. Stock is checked as you go.</p>
+
+            <div class="sa-pos">
+                <div>
+                    <label class="sa-field">
+                        Find a product
+                        <input type="search" id="sa-find" placeholder="Name, SKU or barcode">
+                    </label>
+                    <div class="sa-catalog" id="sa-catalog">
+                        <button type="button" class="sa-prod" data-name="Basmati rice 5kg" data-price="720" data-cost="640" data-stock="25"><div><b>Basmati rice 5kg</b><small class="sa-low">25 in stock</small></div><span>৳720</span></button>
+                        <button type="button" class="sa-prod" data-name="Soybean oil 5L" data-price="915" data-cost="840" data-stock="18"><div><b>Soybean oil 5L</b><small class="sa-low">18 in stock</small></div><span>৳915</span></button>
+                        <button type="button" class="sa-prod" data-name="Sugar 1kg" data-price="130" data-cost="118" data-stock="240"><div><b>Sugar 1kg</b><small>240 in stock</small></div><span>৳130</span></button>
+                        <button type="button" class="sa-prod" data-name="Red lentils 1kg" data-price="145" data-cost="125" data-stock="12"><div><b>Red lentils 1kg</b><small class="sa-low">12 in stock</small></div><span>৳145</span></button>
+                        <button type="button" class="sa-prod" data-name="Powdered milk 500g" data-price="460" data-cost="410" data-stock="0" disabled><div><b>Powdered milk 500g</b><small class="sa-none">Out of stock</small></div><span>৳460</span></button>
+                        <button type="button" class="sa-prod" data-name="Cream biscuits 200g" data-price="40" data-cost="32" data-stock="180"><div><b>Cream biscuits 200g</b><small>180 in stock</small></div><span>৳40</span></button>
+                        <button type="button" class="sa-prod" data-name="Notebook A4 200 pages" data-price="95" data-cost="70" data-stock="48"><div><b>Notebook A4 200 pages</b><small>48 in stock</small></div><span>৳95</span></button>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Current sale</h4>
+                    <div class="sa-cart" id="sa-cart"><p class="sa-empty" id="sa-empty">No products yet.</p></div>
+
+                    <div class="sa-opts">
+                        <label class="sa-field">
+                            Customer
+                            <select id="sa-customer">
+                                <option value="" data-limit="0" data-due="0">Walk-in customer</option>
+                                <option data-limit="20000" data-due="8400">Hasan Mia</option>
+                                <option data-limit="15000" data-due="13200">Nasrin Akter</option>
+                                <option data-limit="50000" data-due="50000">Rafiq Store</option>
+                                <option data-limit="10000" data-due="0">Salma Begum</option>
+                                <option data-limit="25000" data-due="6750">Tanvir Ahmed</option>
+                            </select>
+                        </label>
+                        <label class="sa-field">
+                            Payment method
+                            <select id="sa-method"><option value="cash">Cash</option><option value="card">Card</option><option value="mobile">Mobile banking</option><option value="credit">Credit (due)</option></select>
+                        </label>
+                        <label class="sa-field sa-wide">
+                            Discount (%)
+                            <input type="number" id="sa-disc" min="0" max="100" step="0.5" value="0">
+                        </label>
+                    </div>
+
+                    <div class="sa-sums">
+                        <div><span>Subtotal</span><span id="sa-sub">৳0</span></div>
+                        <div><span>Discount</span><span id="sa-disc-amt">৳0</span></div>
+                        <div class="sa-grand"><span>Total</span><span id="sa-total">৳0</span></div>
+                    </div>
+                    <ul class="sa-msgs" id="sa-msgs" aria-live="polite"></ul>
+                </div>
+            </div>
+
+            <div class="sa-dfoot">
+                <button class="sa-btn sa-btn-ghost" value="cancel" formnovalidate>Cancel</button>
+                <button class="sa-btn" value="confirm" id="sa-confirm" disabled>Confirm sale and print invoice</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var dlg = document.getElementById('sa-dialog');
+        var cartEl = document.getElementById('sa-cart');
+        var emptyEl = document.getElementById('sa-empty');
+        var customer = document.getElementById('sa-customer');
+        var method = document.getElementById('sa-method');
+        var disc = document.getElementById('sa-disc');
+        var msgs = document.getElementById('sa-msgs');
+        var confirmBtn = document.getElementById('sa-confirm');
+        var items = [];
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+
+        function recalc() {
+            var notes = [], blocked = false, subtotal = 0;
+
+            items.forEach(function (it) {
+                var qty = parseInt(it.qtyInput.value, 10) || 1;
+                if (qty > it.stock) {
+                    qty = it.stock;
+                    it.qtyInput.value = qty;
+                    notes.push({ t: 'Only ' + it.stock + ' of ' + it.name + ' in stock.' });
+                }
+                if (qty < 1) { qty = 1; it.qtyInput.value = 1; }
+                var price = parseFloat(it.priceInput.value) || 0;
+                it.qty = qty; it.price = price;
+                subtotal += qty * price;
+                if (price < it.cost) {
+                    notes.push({ t: it.name + ' is priced below cost (' + money(it.cost) + '). Manager approval is needed.' });
+                }
+            });
+
+            var d = Math.min(Math.max(parseFloat(disc.value) || 0, 0), 100);
+            var discAmt = Math.round(subtotal * d) / 100;
+            var total = subtotal - discAmt;
+            if (d > 10) { notes.push({ t: 'Discounts over 10% need Manager approval.' }); }
+
+            if (method.value === 'credit' && items.length) {
+                var opt = customer.options[customer.selectedIndex];
+                var limit = parseFloat(opt.dataset.limit), due = parseFloat(opt.dataset.due);
+                if (!customer.value && customer.selectedIndex === 0) {
+                    notes.push({ t: 'Choose a customer for a credit sale.', b: true }); blocked = true;
+                } else if (due + total > limit) {
+                    notes.push({ t: 'This sale would take ' + opt.text + ' over their credit limit of ' + money(limit) + ' (they already owe ' + money(due) + ').', b: true });
+                    blocked = true;
+                } else {
+                    notes.push({ t: 'The full amount will be added to ' + opt.text + "'s due balance." });
+                }
+            }
+
+            document.getElementById('sa-sub').textContent = money(subtotal);
+            document.getElementById('sa-disc-amt').textContent = discAmt ? '−' + money(discAmt) : money(0);
+            document.getElementById('sa-total').textContent = money(total);
+            emptyEl.style.display = items.length ? 'none' : '';
+
+            msgs.innerHTML = '';
+            notes.forEach(function (n) {
+                var li = document.createElement('li');
+                li.textContent = n.t;
+                if (n.b) { li.className = 'sa-blocked'; }
+                msgs.appendChild(li);
+            });
+            confirmBtn.disabled = blocked || !items.length;
+        }
+
+        function addItem(btn) {
+            var name = btn.dataset.name;
+            var found = items.filter(function (i) { return i.name === name; })[0];
+            if (found) { found.qtyInput.value = (parseInt(found.qtyInput.value, 10) || 0) + 1; recalc(); return; }
+
+            var row = document.createElement('div');
+            row.className = 'sa-line';
+            row.innerHTML = '<b></b><input type="number" min="1" value="1" aria-label="Quantity"><input type="number" min="0" step="0.01" aria-label="Unit price"><button type="button" class="sa-remove" aria-label="Remove">×</button>';
+            row.firstChild.textContent = name;
+            var inputs = row.querySelectorAll('input');
+            inputs[1].value = btn.dataset.price;
+
+            var it = { name: name, cost: parseFloat(btn.dataset.cost), stock: parseInt(btn.dataset.stock, 10), qtyInput: inputs[0], priceInput: inputs[1], row: row };
+            items.push(it);
+            row.addEventListener('input', recalc);
+            row.querySelector('.sa-remove').addEventListener('click', function () {
+                items.splice(items.indexOf(it), 1); row.remove(); recalc();
+            });
+            cartEl.appendChild(row);
+            recalc();
+        }
+
+        document.querySelectorAll('.sa-prod').forEach(function (b) {
+            b.addEventListener('click', function () { addItem(b); });
+        });
+
+        document.getElementById('sa-find').addEventListener('input', function (e) {
+            var q = e.target.value.toLowerCase();
+            document.querySelectorAll('.sa-prod').forEach(function (b) {
+                b.style.display = b.dataset.name.toLowerCase().indexOf(q) > -1 ? '' : 'none';
+            });
+        });
+
+        [customer, method, disc].forEach(function (el) { el.addEventListener('input', recalc); });
+
+        document.getElementById('sa-new').addEventListener('click', function () {
+            items.forEach(function (i) { i.row.remove(); });
+            items = [];
+            customer.selectedIndex = 0; method.value = 'cash'; disc.value = 0;
+            document.getElementById('sa-find').value = '';
+            document.querySelectorAll('.sa-prod').forEach(function (b) { b.style.display = ''; });
+            recalc();
+            dlg.showModal();
+        });
+    })();
+</script>

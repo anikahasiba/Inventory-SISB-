@@ -1,0 +1,476 @@
+﻿/* My Sales (Sales Staff) – self-contained. All classes start with "ms-" so they never clash with Bootstrap or the layout. */
+.ms {
+    --g: #159568;
+    --g-dark: #117a55;
+    --soft: #edf8f4;
+    --navy: #17243a;
+    --line: #edf0f5;
+    --muted: #778398;
+    --warn: #c68a19;
+    --bad: #dc4545;
+    font-variant-numeric: tabular-nums
+}
+
+    .ms * {
+        box-sizing: border-box
+    }
+
+    .ms :focus-visible {
+        outline: 2px solid var(--g);
+        outline-offset: 2px
+    }
+
+    .ms [hidden] {
+        display: none !important
+    }
+
+.ms-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px
+}
+
+    .ms-top h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0
+    }
+
+    .ms-top p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+.ms-btn {
+    display: inline-block;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g);
+    background: var(--g);
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none
+}
+
+    .ms-btn:hover {
+        background: var(--g-dark);
+        color: #fff
+    }
+
+.ms-btn-ghost {
+    background: #fff;
+    color: var(--g)
+}
+
+    .ms-btn-ghost:hover {
+        background: var(--soft);
+        color: var(--g)
+    }
+
+.ms-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(30,50,80,.035)
+}
+
+.ms-toast {
+    background: #e2f7ed;
+    color: #0f7650;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 16px
+}
+
+.ms-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+    .ms-stats .ms-card {
+        margin: 0
+    }
+
+.ms-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.ms-stat strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0
+}
+
+.ms-stat em {
+    font-style: normal;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.ms-stat.ms-wait {
+    border-left: 4px solid #25508f
+}
+
+.ms-stat.ms-due {
+    border-left: 4px solid var(--warn)
+}
+
+.ms-waitbox {
+    background: #e3ecfa;
+    color: #25508f;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap
+}
+
+    .ms-waitbox b {
+        font-weight: 600
+    }
+
+.ms-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: end
+}
+
+.ms-field {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+    .ms-field input, .ms-field select {
+        font: inherit;
+        font-size: 14px;
+        color: #253047;
+        padding: 8px 10px;
+        border: 1px solid #dfe4ec;
+        border-radius: 8px;
+        background: #fff;
+        width: 100%;
+        min-width: 0
+    }
+
+.ms-wrap {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px
+}
+
+.ms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+    .ms-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap
+    }
+
+    .ms-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap
+    }
+
+    .ms-table tr:last-child td {
+        border-bottom: 0
+    }
+
+.ms-num {
+    text-align: right !important
+}
+
+.ms-inv {
+    font-weight: 600
+}
+
+.ms-when small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.ms-walk {
+    color: var(--muted)
+}
+
+.ms-due-amt {
+    font-weight: 600;
+    color: #8a5d06
+}
+
+.ms-void td {
+    color: var(--muted)
+}
+
+.ms-void .ms-inv, .ms-void .ms-amt {
+    text-decoration: line-through
+}
+
+.ms-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 24px 0 8px;
+    font-size: 14px
+}
+
+.ms-foot {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.ms-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px
+}
+
+.ms-paid {
+    background: #e2f7ed;
+    color: #0f7650
+}
+
+.ms-owing {
+    background: #fff2d9;
+    color: #8a5d06
+}
+
+.ms-ret {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.ms-waiting {
+    background: #e3ecfa;
+    color: #25508f
+}
+
+.ms-voided {
+    background: #eef1f5;
+    color: #556178
+}
+
+.ms-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.ms-link {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    color: var(--g);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px
+}
+
+    .ms-link:hover {
+        text-decoration: underline
+    }
+
+    .ms-link.ms-danger {
+        color: var(--bad)
+    }
+
+/* invoice dialog */
+.ms-dialog {
+    border: 0;
+    border-radius: 14px;
+    padding: 0;
+    width: min(560px,calc(100% - 28px));
+    box-shadow: 0 20px 60px rgba(20,30,45,.3);
+    color: #253047
+}
+
+    .ms-dialog::backdrop {
+        background: rgba(23,36,58,.55)
+    }
+
+.ms-invoice {
+    padding: 24px 26px
+}
+
+.ms-shop {
+    text-align: center;
+    margin-bottom: 14px
+}
+
+    .ms-shop b {
+        display: block;
+        font-size: 18px
+    }
+
+    .ms-shop span {
+        font-size: 13px;
+        color: var(--muted)
+    }
+
+.ms-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    font-size: 13px;
+    margin-bottom: 12px
+}
+
+    .ms-meta span {
+        color: var(--muted)
+    }
+
+    .ms-meta b {
+        font-weight: 600;
+        color: #253047
+    }
+
+.ms-lines {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 10px
+}
+
+    .ms-lines th {
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        border-bottom: 1px solid #cfd7e2;
+        padding: 5px 4px
+    }
+
+    .ms-lines td {
+        padding: 6px 4px;
+        border-bottom: 1px dashed var(--line)
+    }
+
+    .ms-lines .ms-num {
+        text-align: right
+    }
+
+.ms-totals {
+    display: grid;
+    gap: 4px;
+    font-size: 14px;
+    margin-left: auto;
+    max-width: 260px
+}
+
+    .ms-totals div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px
+    }
+
+    .ms-totals .ms-grand {
+        font-size: 17px;
+        font-weight: 700;
+        border-top: 1px solid #cfd7e2;
+        padding-top: 6px;
+        margin-top: 2px
+    }
+
+.ms-note {
+    background: #f7f9fb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #46526a;
+    margin: 12px 0 0
+}
+
+.ms-thanks {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 14px 0 0
+}
+
+.ms-dfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 26px 22px
+}
+
+@media (max-width:900px) {
+    .ms-stats {
+        grid-template-columns: 1fr
+    }
+
+    .ms-filters {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+@media (max-width:560px) {
+    .ms-filters {
+        grid-template-columns: 1fr
+    }
+}
+
+/* print: only the invoice */
+@media print {
+    body * {
+        visibility: hidden !important
+    }
+
+    .ms-invoice, .ms-invoice * {
+        visibility: visible !important
+    }
+
+    .ms-dialog {
+        position: static !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        border-radius: 0 !important
+    }
+
+    .ms-invoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0
+    }
+
+    .ms-dfoot {
+        display: none
+    }
+}

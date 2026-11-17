@@ -19,6 +19,7 @@ namespace SISB.Entities
 
         public int CategoryId { get; set; }
         public int? PreferredSupplierId { get; set; }
+        public int StockCount { get; set; }
 
         [Required, StringLength(30)]
         public string Unit { get; set; } = "pcs";

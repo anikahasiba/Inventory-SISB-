@@ -1,6 +1,5 @@
 ﻿@using SISB.Entities
-@using Microsoft.AspNetCore.Mvc.Rendering
-@model List<Product>
+@model ProductSupplierCategory
 @{
     Layout = "_PrivateLayout";
     ViewData["Title"] = "Products";
@@ -10,75 +9,22 @@
 
 <div class="pr">
 
-    <!-- PAGE HEADER -->
     <header class="pr-top">
         <div>
             <h2>Products</h2>
-            <p>Manage your inventory products.</p>
+            <p>@ViewBag.ActiveProductCount active products · @ViewBag.NeedAttentions need attention</p>
         </div>
-
         <div class="pr-tools">
-            <button class="pr-btn pr-btn-ghost" type="button">
-                Import CSV or Excel
-            </button>
-
-            <button class="pr-btn" type="button" id="open-add">
-                Add product
-            </button>
+            <button class="pr-btn pr-btn-ghost" type="button">Import CSV or Excel</button>
+            <a asp-controller="Product" asp-action="Create"> <button class="pr-btn" type="button" id="open-add">Add product</button></a>
         </div>
     </header>
 
-    <!-- SUCCESS MESSAGE -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["SuccessMessage"]
-        </div>
-    }
+    
 
-    <!-- FILTER SECTION -->
-    <form class="pr-card pr-filters"
-          role="search"
-          onsubmit="return false">
-
-        <label class="pr-field">
-            Search
-            <input type="search" placeholder="Name, SKU or barcode">
-        </label>
-
-        <label class="pr-field">
-            Category
-
-            <select>
-                <option value="">All categories</option>
-                <option value="Rice">Rice</option>
-
-            </select>
-        </label>
-
-        <label class="pr-field">
-            Stock status
-
-            <select>
-                <option value="">All</option>
-                <option value="Healthy">Healthy</option>
-                <option value="Low">Low stock</option>
-                <option value="Out">Out of stock</option>
-            </select>
-        </label>
-
-        <label class="pr-check">
-            <input type="checkbox">
-            Show inactive
-        </label>
-    </form>
-
-    <!-- PRODUCT TABLE -->
     <section class="pr-card">
-
         <div class="pr-table-wrap">
             <table class="pr-table">
-
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -92,255 +38,110 @@
                         <th></th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    <tr>
-                        <td colspan="9" class="text-center">
-                            No products available.
-                        </td>
-                    </tr>
-                </tbody>
+                   
+                    @foreach(var product in Model.product)
+                    {
+                     <tr>
+                       
+                            
+                        <td><div class="pr-prod"><span class="pr-thumb" aria-hidden="true">SO</span><div><b>@product.Name</b><small>@product.SKU</small></div></div></td>
+                            <td>
+                                @{
+                                    var CategoryName = Model.category
+                                        .Where(c => c.CategoryId == product.CategoryId)
+                                        .Select(c => c.Name)
+                                        .FirstOrDefault();
+                                }
 
+                                @CategoryName
+                        </td>
+                            <td>@{
+                                    var SupplierName = Model.supplier.Where(s => s.SupplierId == product.PreferredSupplierId).Select(s => s.Name).FirstOrDefault();
+                            }
+                            @SupplierName
+                        </td>
+                        <td class="pr-num">৳@product.PurchasePrice</td>
+                        <td class="pr-num">৳@product.SellingPrice</td>
+                        <td class="pr-num"><span class="pr-stock pr-warn">@product.StockCount</span></td>
+                        <td class="pr-num">@product.ReorderLevel</td>
+                        <td><span class="pr-pill pr-warn">
+                                            @{
+                                                if (product.StockCount == 0)
+                                                {
+                                                    @:Out of Stock
+                                                }
+                                                else if (product.StockCount <= product.ReorderLevel)
+                                                {
+                                                    @:Low Stock
+                                                }
+                                                else
+                                                {
+                                                    @:In Stock
+                                                }
+                                            }
+                        </span></td>
+                        
+                            <td><div class="pr-actions"><button class="pr-link" type="button">
+                                <a asp-action="Edit" asp-controller="Product" asp-route-id="@product.ProductId">Edit</a>
+                                </button><button class="pr-link pr-danger" type="button">
+                                    Deactivate</button></div>
+                                </td>
+                    </tr>
+                    }
+                   
+                </tbody>
             </table>
         </div>
-
         <div class="pr-foot">
-            <span>Products will appear here after they are added.</span>
+            <span>Showing 1–7 of 120 products. Products with stock history can be deactivated but not deleted.</span>
+            <div class="pr-pager" aria-label="Pages">
+                <button type="button" aria-label="Previous page">‹</button>
+                <button type="button" aria-current="page">1</button>
+                <button type="button">2</button>
+                <button type="button">3</button>
+                <button type="button" aria-label="Next page">›</button>
+            </div>
         </div>
-
     </section>
 
-    <!-- ADD PRODUCT MODAL -->
-    <dialog id="add-dialog" class="pr-dialog">
-
-        <div class="pr">
-
-            <!-- MODAL HEADER -->
-            <header class="pr-top">
-                <div>
-                    <h2>Add Product</h2>
-                    <p>Add a new product to your inventory.</p>
-                </div>
-
-                <button type="button"
-                        class="pr-btn pr-btn-ghost"
-                        id="close-add">
-                    Cancel
-                </button>
-            </header>
-
-            <!-- PRODUCT FORM -->
-            <section class="pr-card">
-
-                <form asp-controller="Product"
-                      asp-action="Create"
-                      method="post">
-
-                    @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="ModelOnly"
-                         class="text-danger mb-3">
-                    </div>
-
-                    <div class="pr-fgrid">
-
-                        <!-- PRODUCT NAME -->
-                        <label class="pr-field pr-wide">
-                            Product name
-
-                            <input asp-for="Name"
-                                   type="text"
-                                   placeholder="Enter product name" />
-
-                            <span asp-validation-for="Name"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- SKU -->
-                        <label class="pr-field">
-                            SKU
-
-                            <input asp-for="SKU"
-                                   type="text"
-                                   placeholder="Enter SKU" />
-
-                            <span asp-validation-for="SKU"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- BARCODE -->
-                        <label class="pr-field">
-                            Barcode
-
-                            <input asp-for="Barcode"
-                                   type="text"
-                                   placeholder="Enter barcode" />
-
-                            <span asp-validation-for="Barcode"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- CATEGORY -->
-                        <label class="pr-field">
-                            <label class="pr-field">
-                                Category
-
-                                <select asp-for="CategoryId">
-                                    <option value="">Select category</option>
-                                    <option value="1">Rice and Grains</option>
-                                    <option value="2">Cooking Oil</option>
-                                    <option value="3">Pulses</option>
-                                    <option value="4">Dairy</option>
-                                    <option value="5">Sugar and Salt</option>
-                                    <option value="6">Snacks</option>
-                                    <option value="7">Stationery</option>
-                                </select>
-
-                                <span asp-validation-for="CategoryId"
-                                      class="text-danger"></span>
-                            </label>
-
-                            <span asp-validation-for="CategoryId"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- UNIT -->
-                        <label class="pr-field">
-                            Unit
-
-                            <select asp-for="Unit">
-                                <option value="">Select unit</option>
-                                <option value="pcs">Pieces</option>
-                                <option value="kg">Kilogram</option>
-                                <option value="box">Box</option>
-                                <option value="liter">Liter</option>
-                                <option value="packet">Packet</option>
-                            </select>
-
-                            <span asp-validation-for="Unit"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- PURCHASE PRICE -->
-                        <label class="pr-field">
-                            Purchase price (৳)
-
-                            <input asp-for="PurchasePrice"
-                                   type="number"
-                                   min="0"
-                                   step="0.01"
-                                   placeholder="0.00" />
-
-                            <span asp-validation-for="PurchasePrice"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- SELLING PRICE -->
-                        <label class="pr-field">
-                            Selling price (৳)
-
-                            <input asp-for="SellingPrice"
-                                   type="number"
-                                   min="0"
-                                   step="0.01"
-                                   placeholder="0.00" />
-
-                            <span asp-validation-for="SellingPrice"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- REORDER LEVEL -->
-                        <label class="pr-field">
-                            Reorder level
-
-                            <input asp-for="ReorderLevel"
-                                   type="number"
-                                   min="0"
-                                   placeholder="Enter minimum stock" />
-
-                            <span class="pr-hint">
-                                Minimum quantity before generating a low-stock alert.
-                            </span>
-
-                            <span asp-validation-for="ReorderLevel"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- PREFERRED SUPPLIER -->
-                        <label class="pr-field">
-                            Preferred Supplier
-
-                            <select asp-for="PreferredSupplierId">
-                                <option value="">Select supplier</option>
-                                <option value="1">Karim Wholesale</option>
-                                <option value="2">Dhaka Dairy Supply</option>
-                                <option value="3">Paper Point</option>
-                            </select>
-
-                            <span asp-validation-for="PreferredSupplierId"
-                                  class="text-danger"></span>
-                        </label>
-
-                        <!-- EXPIRY TRACKING -->
-                        <label class="pr-check pr-wide">
-                            <input asp-for="IsExpiryTracked" type="checkbox" />
-                            Track expiry dates (stock is held in batches)
-                        </label>
-
-                    </div>
-
-                    <!-- FORM FOOTER -->
-                    <div class="pr-dfoot">
-
-                        <button type="button"
-                                class="pr-btn pr-btn-ghost"
-                                id="cancel-add">
-                            Cancel
-                        </button>
-
-                        <button type="submit" class="pr-btn">
-                            Save Product
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </section>
-
-        </div>
-
+    <dialog id="add-dialog" class="pr-dialog" aria-labelledby="add-title">
+        <form method="dialog">
+            <h3 id="add-title">Add product</h3>
+            <p class="pr-sub">Leave SKU empty and SmartStock will generate one.</p>
+            <div class="pr-fgrid">
+                <label class="pr-field pr-wide">Product name<input type="text" required></label>
+                <label class="pr-field">SKU<input type="text" placeholder="Auto-generated"></label>
+                <label class="pr-field">Barcode<input type="text" inputmode="numeric"></label>
+                <label class="pr-field">
+                    Category
+                    <select><option>Rice and grains</option><option>Cooking oil</option><option>Pulses</option><option>Dairy</option><option>Sugar and salt</option><option>Snacks</option><option>Stationery</option></select>
+                </label>
+                <label class="pr-field">
+                    Unit
+                    <select><option>pcs</option><option>kg</option><option>box</option></select>
+                </label>
+                <label class="pr-field">Purchase price (৳)<input type="number" min="0" step="0.01" required></label>
+                <label class="pr-field">Selling price (৳)<input type="number" min="0" step="0.01" required></label>
+                <label class="pr-field">
+                    Reorder level
+                    <input type="number" min="0">
+                    <span class="pr-hint">Leave empty to use the AI-calculated level once there is enough sales data.</span>
+                </label>
+                <label class="pr-field">
+                    Preferred supplier
+                    <select><option>Karim Wholesale</option><option>Meghna Traders</option><option>Dhaka Dairy Supply</option><option>Paper Point</option></select>
+                </label>
+                <label class="pr-field pr-wide">Product image<input type="file" accept="image/*"></label>
+                <label class="pr-check pr-wide"><input type="checkbox"> Track expiry dates (stock is held in batches)</label>
+            </div>
+            <div class="pr-dfoot">
+                <button class="pr-btn pr-btn-ghost" value="cancel">Cancel</button>
+                <button class="pr-btn" value="save">Save product</button>
+            </div>
+        </form>
     </dialog>
 
 </div>
 
-<!-- JAVASCRIPT -->
-<script>
-    const addDialog = document.getElementById('add-dialog');
 
-    // Open modal
-    document.getElementById('open-add').addEventListener('click', function () {
-        addDialog.showModal();
-    });
-
-    // Close modal
-    document.getElementById('close-add').addEventListener('click', function () {
-        addDialog.close();
-    });
-
-    document.getElementById('cancel-add').addEventListener('click', function () {
-        addDialog.close();
-    });
-
-    // Reopen modal after validation errors
-    @if (ViewBag.OpenAddDialog == true)
-        {
-            <text>
-                addDialog.showModal();
-        </text>
-    }
-</script>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

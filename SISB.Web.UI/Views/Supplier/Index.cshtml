@@ -23,7 +23,7 @@
 
     <section class="sp-stats" aria-label="Supplier summary">
         <div class="sp-card sp-stat sp-due"><span>Total payable</span><strong>৳3,50,600</strong><em>Owed to 4 suppliers</em></div>
-        <div class="sp-card sp-stat"><span>Average lead time</span><strong>@Model.Average(x => x.LeadTimeDays) days</strong><em>From order to delivery</em></div>
+        <div class="sp-card sp-stat"><span>Average lead time</span><strong>@Math.Round(Model.Average(x => x.LeadTimeDays),2) days</strong><em>From order to delivery</em></div>
         <div class="sp-card sp-stat"><span>Orders in progress</span><strong>3</strong><em>Approved or partly received</em></div>
     </section>
 

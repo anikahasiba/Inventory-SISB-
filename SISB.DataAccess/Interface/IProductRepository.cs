@@ -12,5 +12,6 @@ namespace SISB.DataAccess.Interface
         Task AddAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(int id);
+        Task<bool> IsSkuExistsAsync(string sku);
     }
 }

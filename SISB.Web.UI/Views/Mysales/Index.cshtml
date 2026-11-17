@@ -1,0 +1,239 @@
+﻿@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "My Sales";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Mysales.css" asp-append-version="true" />
+
+<div class="ms">
+
+    <header class="ms-top">
+        <div>
+            <h2>My sales</h2>
+            <p>The sales you made. You can't see other people's sales here.</p>
+        </div>
+        <a class="ms-btn" href="/SSales/Index">New sale</a>
+    </header>
+
+    <div class="ms-toast" id="ms-toast" role="status" hidden></div>
+
+    <section class="ms-stats" aria-label="My sales today">
+        <div class="ms-card ms-stat"><span>My sales today</span><strong id="st-total">৳0</strong><em id="st-count"></em></div>
+        <div class="ms-card ms-stat ms-wait"><span>Waiting for a Manager</span><strong id="st-wait">0</strong><em>Not posted until approved</em></div>
+        <div class="ms-card ms-stat ms-due"><span>Credit given today</span><strong id="st-due">৳0</strong><em id="st-due-n"></em></div>
+    </section>
+
+    <div class="ms-waitbox" id="ms-waitbox" role="status" hidden>
+        <span id="ms-waittext"></span>
+        <button type="button" class="ms-btn ms-btn-ghost" id="ms-showwait">Show it</button>
+    </div>
+
+    <form class="ms-card ms-filters" role="search" aria-label="Filter my sales" onsubmit="return false">
+        <label class="ms-field">
+            Search
+            <input type="search" id="f-q" placeholder="Invoice number or customer">
+        </label>
+        <label class="ms-field">
+            Period
+            <select id="f-period"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="week">Last 7 days</option></select>
+        </label>
+        <label class="ms-field">
+            Payment
+            <select id="f-method"><option value="">All methods</option><option>Cash</option><option>Card</option><option>Mobile banking</option><option>Credit (due)</option></select>
+        </label>
+        <label class="ms-field">
+            Status
+            <select id="f-status"><option value="">All</option><option>Paid</option><option>Due</option><option>Waiting for approval</option><option>Part returned</option><option>Returned</option><option>Voided</option></select>
+        </label>
+    </form>
+
+    <section class="ms-card">
+        <div class="ms-wrap">
+            <table class="ms-table">
+                <thead>
+                    <tr>
+                        <th>Invoice</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th class="ms-num">Items</th>
+                        <th class="ms-num">Total</th>
+                        <th>Payment</th>
+                        <th class="ms-num">Balance due</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="ms-body"></tbody>
+            </table>
+        </div>
+        <p class="ms-empty" id="ms-none" hidden>No sales match these filters.</p>
+        <p class="ms-foot">Confirmed sales can't be changed. If you made a mistake, ask a Manager to void the sale or record a return.</p>
+    </section>
+
+    <!-- INVOICE -->
+    <dialog id="ms-dialog" class="ms-dialog" aria-labelledby="ms-inv-title">
+        <div class="ms-invoice" id="ms-invoice"></div>
+        <div class="ms-dfoot">
+            <button type="button" class="ms-btn ms-btn-ghost" id="ms-close">Close</button>
+            <button type="button" class="ms-btn" id="ms-print">Print invoice</button>
+        </div>
+    </dialog>
+
+    <!-- CANCEL A SALE THAT IS WAITING -->
+    <dialog id="ms-cancel" class="ms-dialog" style="width:min(420px,calc(100% - 28px))" aria-labelledby="ms-cancel-title">
+        <form method="dialog" style="padding:22px 24px">
+            <h3 id="ms-cancel-title" style="font-size:20px;font-weight:700;margin:0 0 6px">Cancel this sale?</h3>
+            <p class="ms-sub" id="ms-cancel-for" style="color:#778398;font-size:14px;margin:0 0 14px"></p>
+            <div class="ms-dfoot" style="padding:0">
+                <button class="ms-btn ms-btn-ghost" value="no">Keep it</button>
+                <button class="ms-btn" type="button" id="ms-cancel-yes" style="background:#dc4545;border-color:#dc4545">Cancel sale</button>
+            </div>
+        </form>
+    </dialog>
+
+</div>
+
+<script>
+    (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var ME = 'Sumon Das', TODAY = '2026-11-05', YESTERDAY = '2026-11-04', WEEK = '2026-10-30';
+
+        /* Sample data. In the real app these are the Sale rows where CreatedBy is the signed-in user.
+           Never send UnitCost or profit to this page: Sales Staff must not see cost or profit. */
+        var sales = [
+            { inv: null, date: TODAY, time: '2:40 pm', cust: 'Hasan Mia', method: 'Credit (due)', status: 'Waiting', discount: 15, paid: 0,
+              reason: 'A 15% discount is above the 10% limit, so a Manager must approve it.',
+              lines: [['Basmati rice 5kg', 5, 720], ['Red lentils 1kg', 8, 145], ['Cream biscuits 200g', 6, 40]] },
+            { inv: 'INV-2026-1058', date: TODAY, time: '2:14 pm', cust: '', method: 'Cash', status: 'Confirmed',
+              lines: [['Sugar 1kg', 3, 130], ['Red lentils 1kg', 2, 145], ['Cream biscuits 200g', 14, 40]] },
+            { inv: 'INV-2026-1057', date: TODAY, time: '1:52 pm', cust: 'Salma Begum', method: 'Mobile banking', status: 'Confirmed',
+              lines: [['Basmati rice 5kg', 3, 720], ['Red lentils 1kg', 4, 145], ['Cream biscuits 200g', 3, 40]] },
+            { inv: 'INV-2026-1056', date: TODAY, time: '12:30 pm', cust: 'Hasan Mia', method: 'Credit (due)', status: 'Confirmed', paid: 1000,
+              lines: [['Basmati rice 5kg', 5, 720], ['Red lentils 1kg', 8, 145], ['Notebook A4 200 pages', 2, 95]] },
+            { inv: 'INV-2026-1055', date: TODAY, time: '11:42 am', cust: '', method: 'Card', status: 'Confirmed',
+              lines: [['Powdered milk 500g', 2, 460]] },
+            { inv: 'INV-2026-1054', date: TODAY, time: '10:15 am', cust: 'Tanvir Ahmed', method: 'Cash', status: 'PartReturned', returned: 290, returnedNote: 'Red lentils 1kg × 2',
+              lines: [['Basmati rice 5kg', 3, 720], ['Red lentils 1kg', 4, 145], ['Cream biscuits 200g', 11, 40]] },
+            { inv: 'INV-2026-1053', date: TODAY, time: '9:48 am', cust: 'Nasrin Akter', method: 'Credit (due)', status: 'Confirmed', paid: 0,
+              lines: [['Basmati rice 5kg', 5, 720], ['Sugar 1kg', 8, 130], ['Cream biscuits 200g', 15, 40], ['Notebook A4 200 pages', 2, 95]] },
+            { inv: 'INV-2026-1049', date: YESTERDAY, time: '6:05 pm', cust: '', method: 'Cash', status: 'Confirmed',
+              lines: [['Basmati rice 5kg', 1, 720]] },
+            { inv: 'INV-2026-1047', date: YESTERDAY, time: '4:20 pm', cust: '', method: 'Cash', status: 'Voided', voidNote: 'Voided by Farhana Rahman. Reason: wrong items rung up.',
+              lines: [['Red lentils 1kg', 2, 145], ['Cream biscuits 200g', 20, 40]] }
+        ];
+
+        function money(n) { return '৳' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+        function say(t) { $('ms-toast').textContent = t; $('ms-toast').hidden = false; }
+        function dayLabel(d) { return d === TODAY ? '5 Nov' : d === YESTERDAY ? '4 Nov' : d; }
+
+        /* work out the money for each sale */
+        sales.forEach(function (s) {
+            s.subtotal = s.lines.reduce(function (t, l) { return t + l[1] * l[2]; }, 0);
+            s.discAmt = Math.round(s.subtotal * (s.discount || 0)) / 100;
+            s.total = s.subtotal - s.discAmt;
+            if (s.paid === undefined) s.paid = s.total;
+            s.due = (s.status === 'Voided' || s.status === 'Waiting') ? 0 : Math.max(s.total - s.paid, 0);
+            s.label = s.status === 'Waiting' ? 'Waiting for approval' : s.status === 'Voided' ? 'Voided' : s.status === 'Returned' ? 'Returned' :
+                      s.status === 'PartReturned' ? 'Part returned' : (s.due > 0 ? 'Due' : 'Paid');
+        });
+
+        var PILL = { 'Paid': 'ms-paid', 'Due': 'ms-owing', 'Waiting for approval': 'ms-waiting', 'Part returned': 'ms-ret', 'Returned': 'ms-ret', 'Voided': 'ms-voided' };
+
+        /* ---------- summary cards ---------- */
+        function stats() {
+            var mine = sales.filter(function (s) { return s.date === TODAY && s.status !== 'Waiting' && s.status !== 'Voided'; });
+            var total = mine.reduce(function (t, s) { return t + s.total; }, 0);
+            var credit = mine.filter(function (s) { return s.due > 0; });
+            var waiting = sales.filter(function (s) { return s.status === 'Waiting'; });
+            $('st-total').textContent = money(total);
+            $('st-count').textContent = mine.length + (mine.length === 1 ? ' invoice' : ' invoices');
+            $('st-wait').textContent = waiting.length;
+            $('st-due').textContent = money(credit.reduce(function (t, s) { return t + s.due; }, 0));
+            $('st-due-n').textContent = 'Owed by ' + credit.length + (credit.length === 1 ? ' customer' : ' customers');
+            $('ms-waitbox').hidden = !waiting.length;
+            if (waiting.length) {
+                var w = waiting[0];
+                $('ms-waittext').innerHTML = '<b>' + waiting.length + (waiting.length === 1 ? ' sale is' : ' sales are') + ' waiting for a Manager:</b> ' +
+                    esc(w.cust || 'Walk-in') + ', ' + money(w.total) + '. ' + esc(w.reason);
+            }
+        }
+
+        /* ---------- table ---------- */
+        function visible() {
+            var q = $('f-q').value.toLowerCase().trim(), per = $('f-period').value, m = $('f-method').value, st = $('f-status').value;
+            return sales.filter(function (s) {
+                var inPeriod = per === 'today' ? s.date === TODAY : per === 'yesterday' ? s.date === YESTERDAY : s.date >= WEEK;
+                return inPeriod && (!m || s.method === m) && (!st || s.label === st) &&
+                    (!q || ((s.inv || '') + ' ' + (s.cust || 'walk-in')).toLowerCase().indexOf(q) > -1);
+            });
+        }
+
+        function render() {
+            var list = visible(), h = '';
+            list.forEach(function (s) {
+                var i = sales.indexOf(s), cls = s.status === 'Voided' ? ' class="ms-void"' : '';
+                var actions = '<button class="ms-link" type="button" data-a="view" data-i="' + i + '">View</button>' +
+                    (s.status === 'Waiting' ? '<button class="ms-link ms-danger" type="button" data-a="cancel" data-i="' + i + '">Cancel</button>'
+                                            : '<button class="ms-link" type="button" data-a="print" data-i="' + i + '">Print</button>');
+                h += '<tr' + cls + '><td class="ms-inv">' + (s.inv || '<span class="ms-walk">Not issued yet</span>') + '</td>' +
+                    '<td class="ms-when">' + dayLabel(s.date) + '<small>' + s.time + '</small></td>' +
+                    '<td>' + (s.cust ? esc(s.cust) : '<span class="ms-walk">Walk-in</span>') + '</td>' +
+                    '<td class="ms-num">' + s.lines.length + '</td>' +
+                    '<td class="ms-num"><span class="ms-amt">' + money(s.total) + '</span></td>' +
+                    '<td>' + s.method + '</td>' +
+                    '<td class="ms-num">' + (s.due ? '<span class="ms-due-amt">' + money(s.due) + '</span>' : '<span class="ms-walk">৳0</span>') + '</td>' +
+                    '<td><span class="ms-pill ' + PILL[s.label] + '">' + s.label + '</span></td>' +
+                    '<td><div class="ms-actions">' + actions + '</div></td></tr>';
+            });
+            $('ms-body').innerHTML = h;
+            $('ms-none').hidden = list.length > 0;
+            stats();
+        }
+        ['f-q', 'f-period', 'f-method', 'f-status'].forEach(function (id) { $(id).addEventListener('input', render); });
+        $('ms-showwait').addEventListener('click', function () { $('f-status').value = 'Waiting for approval'; $('f-period').value = 'today'; render(); });
+
+        /* ---------- invoice ---------- */
+        function invoice(s) {
+            var h = '<div class="ms-shop"><b>Rahim General Store</b><span>Mirpur 10, Dhaka · 01700-000000</span></div>' +
+                '<div class="ms-meta"><span>Invoice</span><b id="ms-inv-title">' + (s.inv || 'Not issued yet') + '</b>' +
+                '<span>Date</span><b>' + dayLabel(s.date) + ' 2026, ' + s.time + '</b>' +
+                '<span>Customer</span><b>' + (s.cust ? esc(s.cust) : 'Walk-in') + '</b>' +
+                '<span>Served by</span><b>' + ME + '</b></div>' +
+                '<table class="ms-lines"><thead><tr><th>Product</th><th class="ms-num">Qty</th><th class="ms-num">Price</th><th class="ms-num">Amount</th></tr></thead><tbody>' +
+                s.lines.map(function (l) { return '<tr><td>' + esc(l[0]) + '</td><td class="ms-num">' + l[1] + '</td><td class="ms-num">' + money(l[2]) + '</td><td class="ms-num">' + money(l[1] * l[2]) + '</td></tr>'; }).join('') +
+                '</tbody></table><div class="ms-totals"><div><span>Subtotal</span><span>' + money(s.subtotal) + '</span></div>' +
+                (s.discount ? '<div><span>Discount (' + s.discount + '%)</span><span>−' + money(s.discAmt) + '</span></div>' : '') +
+                '<div class="ms-grand"><span>Total</span><span>' + money(s.total) + '</span></div>' +
+                '<div><span>Paid by ' + s.method.replace(' (due)', '').toLowerCase() + '</span><span>' + money(s.status === 'Waiting' ? 0 : s.paid) + '</span></div>' +
+                (s.due ? '<div><span>Balance due</span><span><b>' + money(s.due) + '</b></span></div>' : '') + '</div>';
+            if (s.status === 'Waiting') h += '<p class="ms-note">' + esc(s.reason) + ' Stock has not changed yet.</p>';
+            if (s.status === 'PartReturned') h += '<p class="ms-note">Returned: ' + esc(s.returnedNote) + ' (' + money(s.returned) + ').</p>';
+            if (s.status === 'Voided') h += '<p class="ms-note">' + esc(s.voidNote) + '</p>';
+            if (s.status !== 'Waiting' && s.status !== 'Voided') h += '<p class="ms-thanks">Thank you for shopping with us.</p>';
+            $('ms-invoice').innerHTML = h;
+            $('ms-print').hidden = s.status === 'Waiting';
+            $('ms-dialog').showModal();
+        }
+
+        $('ms-body').addEventListener('click', function (e) {
+            var a = e.target.dataset.a; if (!a) return;
+            var s = sales[+e.target.dataset.i];
+            if (a === 'view') invoice(s);
+            if (a === 'print') { invoice(s); window.print(); }
+            if (a === 'cancel') {
+                $('ms-cancel-for').textContent = (s.cust || 'Walk-in') + ' · ' + money(s.total) + '. Nothing was posted to stock, so nothing changes.';
+                $('ms-cancel-yes').dataset.i = e.target.dataset.i;
+                $('ms-cancel').showModal();
+            }
+        });
+        $('ms-close').addEventListener('click', function () { $('ms-dialog').close(); });
+        $('ms-print').addEventListener('click', function () { window.print(); });
+        $('ms-cancel-yes').addEventListener('click', function () {
+            sales.splice(+this.dataset.i, 1);
+            $('ms-cancel').close(); say('The sale was cancelled. Nothing was posted to stock.'); render();
+        });
+
+        render();
+    })();
+</script>

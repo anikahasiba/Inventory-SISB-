@@ -51,5 +51,10 @@ namespace SISB.DataAccess.Implementation
             _dbContext.Products.Remove(product);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<bool> IsSkuExistsAsync(string sku)
+        {
+            return await _dbContext.Products
+                .AnyAsync(p => p.SKU == sku);
+        }
     }
 }

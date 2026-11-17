@@ -1,14 +1,19 @@
-﻿@model SISB.Entities.Product
+﻿@using SISB.Entities
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model Product
 
 @{
     Layout = "_PrivateLayout";
     ViewData["Title"] = "Add Product";
 }
 
-<link rel="stylesheet" href="~/css/Admin/Product.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/Admin/Product.css"
+      asp-append-version="true" />
 
 <div class="pr">
 
+    <!-- PAGE HEADER -->
     <header class="pr-top">
         <div>
             <h2>Add Product</h2>
@@ -18,11 +23,13 @@
         <a asp-controller="Product"
            asp-action="Index"
            class="pr-btn pr-btn-ghost">
-            Cancel
+            Back to Products
         </a>
     </header>
 
+    <!-- PRODUCT FORM -->
     <section class="pr-card">
+
         <form asp-controller="Product"
               asp-action="Create"
               method="post">
@@ -30,13 +37,15 @@
             @Html.AntiForgeryToken()
 
             <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3"></div>
+                 class="text-danger mb-3">
+            </div>
 
             <div class="pr-fgrid">
 
-                <!-- Product Name -->
+                <!-- PRODUCT NAME -->
                 <label class="pr-field pr-wide">
-                    Product name
+                    Product Name
+
                     <input asp-for="Name"
                            type="text"
                            placeholder="Enter product name" />
@@ -48,17 +57,19 @@
                 <!-- SKU -->
                 <label class="pr-field">
                     SKU
+
                     <input asp-for="SKU"
                            type="text"
-                           placeholder="Auto-generated if empty" />
+                           placeholder="Enter SKU" />
 
                     <span asp-validation-for="SKU"
                           class="text-danger"></span>
                 </label>
 
-                <!-- Barcode -->
+                <!-- BARCODE -->
                 <label class="pr-field">
                     Barcode
+
                     <input asp-for="Barcode"
                            type="text"
                            placeholder="Enter barcode" />
@@ -67,7 +78,7 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Category -->
+                <!-- CATEGORY -->
                 <label class="pr-field">
                     Category
 
@@ -80,7 +91,7 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Unit -->
+                <!-- UNIT -->
                 <label class="pr-field">
                     Unit
 
@@ -97,9 +108,9 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Purchase Price -->
+                <!-- PURCHASE PRICE -->
                 <label class="pr-field">
-                    Purchase price (৳)
+                    Purchase Price (৳)
 
                     <input asp-for="PurchasePrice"
                            type="number"
@@ -111,9 +122,9 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Selling Price -->
+                <!-- SELLING PRICE -->
                 <label class="pr-field">
-                    Selling price (৳)
+                    Selling Price (৳)
 
                     <input asp-for="SellingPrice"
                            type="number"
@@ -125,13 +136,14 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Reorder Level -->
+                <!-- REORDER LEVEL -->
                 <label class="pr-field">
-                    Reorder level
+                    Reorder Level
 
                     <input asp-for="ReorderLevel"
                            type="number"
                            min="0"
+                           step="0.001"
                            placeholder="Enter minimum stock" />
 
                     <span class="pr-hint">
@@ -142,9 +154,9 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Preferred Supplier -->
+                <!-- PREFERRED SUPPLIER -->
                 <label class="pr-field">
-                    Preferred supplier
+                    Preferred Supplier
 
                     <select asp-for="PreferredSupplierId"
                             asp-items="ViewBag.Suppliers">
@@ -155,14 +167,28 @@
                           class="text-danger"></span>
                 </label>
 
-                <!-- Expiry Tracking -->
+                <!-- IMAGE URL -->
+                <label class="pr-field pr-wide">
+                    Product Image URL
+
+                    <input asp-for="ImageUrl"
+                           type="text"
+                           placeholder="Enter image URL (optional)" />
+
+                    <span asp-validation-for="ImageUrl"
+                          class="text-danger"></span>
+                </label>
+
+                <!-- EXPIRY TRACKING -->
                 <label class="pr-check pr-wide">
-                    <input asp-for="IsExpiryTracked" type="checkbox" />
-                    Track expiry dates (stock is held in batches)
+                    <input asp-for="IsExpiryTracked"
+                           type="checkbox" />
+                    Track expiry dates
                 </label>
 
             </div>
 
+            <!-- FORM FOOTER -->
             <div class="pr-dfoot">
 
                 <a asp-controller="Product"
@@ -178,6 +204,7 @@
             </div>
 
         </form>
+
     </section>
 
 </div>

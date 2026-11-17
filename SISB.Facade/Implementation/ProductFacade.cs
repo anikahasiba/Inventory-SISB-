@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SISB.DataAccess.Interface;
 using SISB.Entities;
 using SISB.Facade.Interface;
@@ -33,11 +34,24 @@ namespace SISB.Facade.Implementation
         {
             ArgumentNullException.ThrowIfNull(product);
 
-            var existing = await _productRepository.GetByIdAsync(product.ProductId);
-            if (existing == null)
+            var existingProduct = product;
+
+            if (existingProduct == null)
                 return false;
 
-            await _productRepository.UpdateAsync(product);
+            existingProduct.Name = product.Name;
+            existingProduct.SKU = product.SKU;
+            existingProduct.Barcode = product.Barcode;
+            existingProduct.CategoryId = product.CategoryId;
+            existingProduct.PreferredSupplierId = product.PreferredSupplierId;
+            existingProduct.Unit = product.Unit;
+            existingProduct.PurchasePrice = product.PurchasePrice;
+            existingProduct.SellingPrice = product.SellingPrice;
+            existingProduct.ReorderLevel = product.ReorderLevel;
+            existingProduct.IsExpiryTracked = product.IsExpiryTracked;
+            existingProduct.IsActive = product.IsActive;
+            existingProduct.ImageUrl = product.ImageUrl;
+            await _productRepository.UpdateAsync(existingProduct);
             return true;
         }
 
@@ -49,6 +63,14 @@ namespace SISB.Facade.Implementation
 
             await _productRepository.DeleteAsync(id);
             return true;
+        }
+        public async Task<bool> IsSkuExistsAsync(string sku)
+        {
+            bool flag = await _productRepository.IsSkuExistsAsync(sku);
+            if (!flag)
+                return false;
+
+            return await _productRepository.IsSkuExistsAsync(sku.Trim());
         }
     }
 }

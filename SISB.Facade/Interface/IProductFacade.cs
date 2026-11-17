@@ -9,5 +9,6 @@ namespace SISB.Facade.Interface
         Task AddProductAsync(Product product);
         Task<bool> UpdateProductAsync(Product product);
         Task<bool> DeleteProductAsync(int id);
+        Task<bool> IsSkuExistsAsync(string sku);
     }
 }

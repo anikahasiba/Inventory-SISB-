@@ -1,0 +1,237 @@
+﻿@using SISB.Entities
+@model Category
+
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Add Category";
+}
+
+<style>
+    .category-form-page {
+        padding: 25px;
+        color: #263238;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .form-header h2 {
+        font-size: 25px;
+        font-weight: 700;
+        margin: 0 0 7px;
+    }
+
+    .form-header p {
+        color: #7b8794;
+        margin: 0;
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 11px 18px;
+        background: #edf0f2;
+        color: #344054;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .category-form-card {
+        max-width: 750px;
+        background: white;
+        padding: 30px;
+        border: 1px solid #e8ecef;
+        border-radius: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #dce2e6;
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+        background: white;
+    }
+
+    .form-control:focus {
+        border-color: #176b55;
+        box-shadow: 0 0 0 3px rgba(23,107,85,.1);
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 7px;
+        color: #87929b;
+    }
+
+    .field-error,
+    .validation-error {
+        display: block;
+        color: #d04444;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f2;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        padding: 11px 19px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .cancel-btn {
+        background: #edf0f2;
+        color: #344054;
+    }
+
+    .save-btn {
+        background: #176b55;
+        color: white;
+    }
+
+    .save-btn:hover {
+        background: #105541;
+    }
+
+    @@media (max-width: 600px) {
+        .form-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .category-form-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions a,
+        .form-actions button {
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="category-form-page">
+
+    <div class="form-header">
+        <div>
+            <h2>Add Category</h2>
+            <p>Create a new product category.</p>
+        </div>
+
+        <a asp-controller="Category"
+           asp-action="Index"
+           class="back-btn">
+            Back to Categories
+        </a>
+    </div>
+
+    <div class="category-form-card">
+
+        <form asp-controller="Category"
+              asp-action="Create"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-error">
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Name">Category Name</label>
+
+                <input asp-for="Name"
+                       class="form-control"
+                       placeholder="Enter category name" />
+
+                <span asp-validation-for="Name"
+                      class="field-error">
+                </span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="ParentCategoryId">
+                    Parent Category
+                </label>
+
+                <select asp-for="ParentCategoryId"
+                        asp-items="ViewBag.ParentCategories"
+                        class="form-control">
+
+                    <option value="">
+                        -- Main Category --
+                    </option>
+
+                </select>
+
+                <small>
+                    Leave empty if this is a main category.
+                </small>
+
+                <span asp-validation-for="ParentCategoryId"
+                      class="field-error">
+                </span>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-controller="Category"
+                   asp-action="Index"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+                <button type="submit" class="save-btn">
+                    Save Category
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

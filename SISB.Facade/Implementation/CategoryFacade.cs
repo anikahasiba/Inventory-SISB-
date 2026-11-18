@@ -13,41 +13,94 @@ namespace SISB.Facade.Implementation
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<List<Category>> GetCategoriesAsync()
+        // READ ALL
+        public async Task<List<Category>> GetAllAsync()
         {
             return await _categoryRepository.GetAllAsync();
         }
 
-        public async Task<Category?> GetCategoryByIdAsync(int id)
+        // READ SINGLE
+        public async Task<Category?> GetByIdAsync(int id)
         {
             return await _categoryRepository.GetByIdAsync(id);
         }
 
-        public async Task AddCategoryAsync(Category category)
+        // ADD
+        public async Task<bool> AddAsync(Category category)
         {
-            ArgumentNullException.ThrowIfNull(category);
-            await _categoryRepository.AddAsync(category);
-        }
-
-        public async Task<bool> UpdateCategoryAsync(Category category)
-        {
-            ArgumentNullException.ThrowIfNull(category);
-
-            var existing = await _categoryRepository.GetByIdAsync(category.CategoryId);
-            if (existing == null)
+            if (string.IsNullOrWhiteSpace(category.Name))
                 return false;
 
-            await _categoryRepository.UpdateAsync(category);
+            category.Name = category.Name.Trim();
+
+            // Duplicate check
+            if (await _categoryRepository.ExistsAsync(category.Name))
+                return false;
+
+            // Validate parent category
+            if (category.ParentCategoryId.HasValue)
+            {
+                var parent = await _categoryRepository.GetByIdAsync(
+                    category.ParentCategoryId.Value);
+
+                if (parent == null)
+                    return false;
+
+                // Only one subcategory level allowed
+                if (parent.ParentCategoryId.HasValue)
+                    return false;
+            }
+
+            await _categoryRepository.AddAsync(category);
+
             return true;
         }
 
-        public async Task<bool> DeleteCategoryAsync(int id)
+        // EDIT
+        public async Task<bool> UpdateAsync(Category category)
         {
-            var existing = await _categoryRepository.GetByIdAsync(id);
+            if (category.CategoryId <= 0 ||
+                string.IsNullOrWhiteSpace(category.Name))
+                return false;
+
+            var existing = await _categoryRepository.GetByIdAsync(
+                category.CategoryId);
+
             if (existing == null)
                 return false;
 
-            await _categoryRepository.DeleteAsync(id);
+            category.Name = category.Name.Trim();
+
+            // Duplicate check excluding current category
+            if (await _categoryRepository.ExistsAsync(
+                category.Name,
+                category.CategoryId))
+                return false;
+
+            if (category.ParentCategoryId.HasValue)
+            {
+                // Cannot select itself as parent
+                if (category.ParentCategoryId.Value == category.CategoryId)
+                    return false;
+
+                var parent = await _categoryRepository.GetByIdAsync(
+                    category.ParentCategoryId.Value);
+
+                if (parent == null)
+                    return false;
+
+                // Parent must be a main category
+                if (parent.ParentCategoryId.HasValue)
+                    return false;
+
+                // Category with children cannot become a subcategory
+                if (await _categoryRepository.HasSubCategoriesAsync(
+                    category.CategoryId))
+                    return false;
+            }
+
+            await _categoryRepository.UpdateAsync(category);
+
             return true;
         }
     }

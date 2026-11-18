@@ -4,10 +4,12 @@ namespace SISB.Facade.Interface
 {
     public interface ICategoryFacade
     {
-        Task<List<Category>> GetCategoriesAsync();
-        Task<Category?> GetCategoryByIdAsync(int id);
-        Task AddCategoryAsync(Category category);
-        Task<bool> UpdateCategoryAsync(Category category);
-        Task<bool> DeleteCategoryAsync(int id);
+        Task<List<Category>> GetAllAsync();
+
+        Task<Category?> GetByIdAsync(int id);
+
+        Task<bool> AddAsync(Category category);
+
+        Task<bool> UpdateAsync(Category category);
     }
 }

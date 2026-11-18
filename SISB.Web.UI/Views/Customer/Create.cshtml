@@ -1,0 +1,153 @@
+﻿@using SISB.Entities
+@model Customer
+
+@{
+    Layout = "_PrivateLayout";
+    ViewData["Title"] = "Add Customer";
+}
+
+<link rel="stylesheet"
+      href="~/css/Admin/Customer.css"
+      asp-append-version="true" />
+
+<div class="cu-form-page">
+
+    <div class="cu-form-header">
+        <div>
+            <h2>Add Customer</h2>
+            <p>Create a new customer record.</p>
+        </div>
+
+        <a asp-action="Index" class="cu-reset">
+            ← Back to Customers
+        </a>
+    </div>
+
+    <div class="cu-form-card">
+
+        <form asp-action="Create" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="cu-validation-summary">
+            </div>
+
+            <div class="cu-form-grid">
+
+                <!-- NAME -->
+                <div class="cu-form-group">
+                    <label asp-for="Name">
+                        Customer Name <span>*</span>
+                    </label>
+
+                    <input asp-for="Name"
+                           class="cu-form-control"
+                           placeholder="Enter customer name" />
+
+                    <span asp-validation-for="Name"
+                          class="cu-validation">
+                    </span>
+                </div>
+
+                <!-- PHONE -->
+                <div class="cu-form-group">
+                    <label asp-for="Phone">
+                        Phone
+                    </label>
+
+                    <input asp-for="Phone"
+                           class="cu-form-control"
+                           placeholder="01XXXXXXXXX" />
+
+                    <span asp-validation-for="Phone"
+                          class="cu-validation">
+                    </span>
+                </div>
+
+                <!-- EMAIL -->
+                <div class="cu-form-group">
+                    <label asp-for="Email">
+                        Email
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="cu-form-control"
+                           placeholder="customer@email.com" />
+
+                    <span asp-validation-for="Email"
+                          class="cu-validation">
+                    </span>
+                </div>
+
+                <!-- CREDIT LIMIT -->
+                <div class="cu-form-group">
+                    <label asp-for="CreditLimit">
+                        Credit Limit (৳)
+                    </label>
+
+                    <input asp-for="CreditLimit"
+                           type="number"
+                           min="0"
+                           step="0.01"
+                           class="cu-form-control"
+                           placeholder="0.00" />
+
+                    <span asp-validation-for="CreditLimit"
+                          class="cu-validation">
+                    </span>
+
+                    <small>
+                        Maximum credit allowed for this customer.
+                    </small>
+                </div>
+
+                <!-- ADDRESS -->
+                <div class="cu-form-group cu-full">
+                    <label asp-for="Address">
+                        Address
+                    </label>
+
+                    <textarea asp-for="Address"
+                              class="cu-form-control"
+                              rows="4"
+                              placeholder="Enter customer address"></textarea>
+
+                    <span asp-validation-for="Address"
+                          class="cu-validation">
+                    </span>
+                </div>
+
+                <!-- ACTIVE -->
+                <div class="cu-form-group cu-full">
+                    <label class="cu-active-option">
+                        <input asp-for="IsActive" />
+
+                        <span>Customer is active</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="cu-form-actions">
+
+                <a asp-action="Index" class="cu-cancel">
+                    Cancel
+                </a>
+
+                <button type="submit" class="cu-submit">
+                    Save Customer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

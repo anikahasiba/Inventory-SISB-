@@ -1,97 +1,348 @@
 ﻿@using SISB.Entities
 @model List<Supplier>
+
 @{
     Layout = "_PrivateLayout";
     ViewData["Title"] = "Suppliers";
+
+    var totalSuppliers = ViewBag.TotalSuppliers ?? Model.Count;
+    var activeSuppliers = ViewBag.ActiveSuppliers ?? Model.Count(s => s.IsActive);
+    var totalPayable = ViewBag.TotalPayable ?? Model.Where(s => s.Balance > 0).Sum(s => s.Balance);
+    var suppliersWithDue = ViewBag.SuppliersWithDue ?? Model.Count(s => s.Balance > 0);
+    var averageLeadTime = ViewBag.AverageLeadTime ?? (Model.Any() ? Model.Average(s => s.LeadTimeDays) : 0);
 }
 
-<link rel="stylesheet" href="~/css/Admin/Supplier.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="~/css/Admin/Supplier.css"
+      asp-append-version="true" />
 
 <div class="sp">
 
+    <!-- PAGE HEADER -->
     <header class="sp-top">
-        <div>
-            <h2>Suppliers</h2>
-            <p>@Model.Count active suppliers · 120 products linked</p>
+        <div class="sp-heading">
+            <div class="sp-title-icon">▦</div>
+            <div>
+                <h2>Suppliers</h2>
+                <p>Manage your suppliers, payments and delivery information.</p>
+            </div>
         </div>
+
         <a asp-controller="Supplier"
            asp-action="Create"
-           class="sp-btn">
+           class="sp-btn sp-add-btn">
+            <span>+</span>
             Add Supplier
         </a>
     </header>
 
-    <section class="sp-stats" aria-label="Supplier summary">
-        <div class="sp-card sp-stat sp-due"><span>Total payable</span><strong>৳3,50,600</strong><em>Owed to 4 suppliers</em></div>
-        <div class="sp-card sp-stat"><span>Average lead time</span><strong>@Math.Round(Model.Average(x => x.LeadTimeDays),2) days</strong><em>From order to delivery</em></div>
-        <div class="sp-card sp-stat"><span>Orders in progress</span><strong>3</strong><em>Approved or partly received</em></div>
+    <!-- SUCCESS MESSAGE -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="sp-success">
+            <span class="sp-success-icon">✓</span>
+            @TempData["Success"]
+        </div>
+    }
+
+    <!-- SUMMARY CARDS -->
+    <section class="sp-stats">
+
+        <div class="sp-stat-card sp-stat-payable">
+            <div class="sp-stat-top">
+                <div class="sp-stat-icon sp-icon-amber">৳</div>
+                <span class="sp-stat-label">Total Payable</span>
+            </div>
+
+            <strong class="sp-stat-value">
+                ৳@Convert.ToDecimal(totalPayable).ToString("N0")
+            </strong>
+
+            <div class="sp-stat-footer">
+                <span class="sp-stat-dot sp-dot-amber"></span>
+                Owed to @suppliersWithDue suppliers
+            </div>
+        </div>
+
+        <div class="sp-stat-card">
+            <div class="sp-stat-top">
+                <div class="sp-stat-icon sp-icon-blue">◷</div>
+                <span class="sp-stat-label">Average Lead Time</span>
+            </div>
+
+            <strong class="sp-stat-value">
+                @Convert.ToDecimal(averageLeadTime).ToString("N1")
+                <small>days</small>
+            </strong>
+
+            <div class="sp-stat-footer">
+                Average delivery time
+            </div>
+        </div>
+
+        <div class="sp-stat-card">
+            <div class="sp-stat-top">
+                <div class="sp-stat-icon sp-icon-green">♙</div>
+                <span class="sp-stat-label">Total Suppliers</span>
+            </div>
+
+            <strong class="sp-stat-value">@totalSuppliers</strong>
+
+            <div class="sp-stat-footer">
+                <span class="sp-stat-dot sp-dot-green"></span>
+                @activeSuppliers active suppliers
+            </div>
+        </div>
+
     </section>
 
-    <form class="sp-card sp-filters" role="search" aria-label="Filter suppliers" onsubmit="return false">
-        <label class="sp-field">
-            Search
-            <input type="search" placeholder="Supplier name or phone">
-        </label>
-        <label class="sp-field">
-            Payment terms
-            <select><option>All terms</option><option>Cash on delivery</option><option>Net 7 days</option><option>Net 15 days</option><option>Net 30 days</option></select>
-        </label>
-        <label class="sp-check"><input type="checkbox"> Show inactive</label>
+    <!-- FILTER PANEL -->
+    <form asp-controller="Supplier"
+          asp-action="Index"
+          method="get"
+          class="sp-filter-card"
+          role="search">
+
+        <div class="sp-filter-header">
+            <div>
+                <h3>Supplier Directory</h3>
+                <p>Search and filter your supplier records</p>
+            </div>
+        </div>
+
+        <div class="sp-filter-grid">
+
+            <label class="sp-field sp-search-field">
+                <span>Search suppliers</span>
+
+                <div class="sp-input-wrap">
+                    <span class="sp-search-icon">⌕</span>
+
+                    <input type="search"
+                           name="search"
+                           value="@ViewBag.Search"
+                           placeholder="Search by supplier name or phone..." />
+                </div>
+            </label>
+
+            <label class="sp-field">
+                <span>Payment Terms</span>
+
+                <select name="paymentTerms">
+                    <option value="">All payment terms</option>
+
+                    <option value="Cash on delivery"
+                            selected="@(ViewBag.PaymentTerms == "Cash on delivery")">
+                        Cash on delivery
+                    </option>
+
+                    <option value="Net 7 days"
+                            selected="@(ViewBag.PaymentTerms == "Net 7 days")">
+                        Net 7 days
+                    </option>
+
+                    <option value="Net 15 days"
+                            selected="@(ViewBag.PaymentTerms == "Net 15 days")">
+                        Net 15 days
+                    </option>
+
+                    <option value="Net 30 days"
+                            selected="@(ViewBag.PaymentTerms == "Net 30 days")">
+                        Net 30 days
+                    </option>
+                </select>
+            </label>
+
+            <label class="sp-inactive-check">
+                <input type="checkbox"
+                       name="showInactive"
+                       value="true"
+                       checked="@(ViewBag.ShowInactive == true)" />
+
+                <span>Show inactive</span>
+            </label>
+
+        </div>
+
+        <div class="sp-filter-actions">
+            <button type="submit" class="sp-btn sp-search-btn">
+                Search Suppliers
+            </button>
+
+            <a asp-controller="Supplier"
+               asp-action="Index"
+               class="sp-reset-btn">
+                Reset filters
+            </a>
+        </div>
+
     </form>
 
-    <section class="sp-card">
-        <div class="sp-wrap">
+    <!-- TABLE -->
+    <section class="sp-table-card">
+
+        <div class="sp-table-header">
+            <div>
+                <h3>All Suppliers</h3>
+                <p>Supplier information and account status</p>
+            </div>
+
+            <span class="sp-count">
+                @Model.Count suppliers
+            </span>
+        </div>
+
+        <div class="sp-table-wrap">
+
             <table class="sp-table">
+
                 <thead>
                     <tr>
-                        <th>Supplier</th>
-                        <th>Phone</th>
-                        <th>Payment terms</th>
-                        <th class="sp-num">Lead time</th>
-                        <th class="sp-num">Products</th>
-                        <th>Last order</th>
-                        <th class="sp-num">Balance due</th>
-                        <th>Status</th>
-                        <th></th>
+                        <th>SUPPLIER</th>
+                        <th>PHONE</th>
+                        <th>PAYMENT TERMS</th>
+                        <th class="sp-center">LEAD TIME</th>
+                        <th class="sp-right">BALANCE DUE</th>
+                        <th>STATUS</th>
+                        <th class="sp-right">ACTION</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    
-                    @foreach(var supplier in Model)
-                    {       
-                        <tr>
-                            <td><div class="sp-name"><span class="sp-logo" aria-hidden="true">MT</span><div><b>@supplier.Name</b><small>Chawkbazar, Dhaka</small></div></div></td>
-                            <td>@supplier.Phone</td>
-                            <td>@supplier.PaymentTerms</td>
-                            <td class="sp-num">@supplier.LeadTimeDays days</td>
-                            <td class="sp-num">31</td>
-                            <td>30 Oct 2026</td>
-                            <td class="sp-num"><span class="sp-owed">@supplier.Balance</span></td>
-                            <td><span class="sp-pill sp-ok">@{
-                                        if (supplier.IsActive)
-                                        {
-                                            <span>Active</span>
-                                        }
-                                        else{
-                                            <span>InActive</span>
-                                        }
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var supplier in Model)
+                        {
+                            var initials = string.Join(
+                                "",
+                                supplier.Name
+                                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                    .Take(2)
+                                    .Select(x => x.Substring(0, 1).ToUpper()));
+
+                            <tr class="@(supplier.IsActive ? "" : "sp-inactive-row")">
+
+                                <!-- SUPPLIER -->
+                                <td>
+                                    <div class="sp-supplier-cell">
+                                        <div class="sp-avatar">
+                                            @initials
+                                        </div>
+
+                                        <div class="sp-supplier-info">
+                                            <strong>@supplier.Name</strong>
+                                            <span>
+                                                @(string.IsNullOrWhiteSpace(supplier.Address)
+                                                    ? "No address provided"
+                                                    : supplier.Address)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- PHONE -->
+                                <td>
+                                    <span class="sp-phone">
+                                        @(supplier.Phone ?? "N/A")
+                                    </span>
+                                </td>
+
+                                <!-- TERMS -->
+                                <td>
+                                    <span class="sp-term">
+                                        @(supplier.PaymentTerms ?? "N/A")
+                                    </span>
+                                </td>
+
+                                <!-- LEAD TIME -->
+                                <td class="sp-center">
+                                    <span class="sp-lead-time">
+                                        @supplier.LeadTimeDays days
+                                    </span>
+                                </td>
+
+                                <!-- BALANCE -->
+                                <td class="sp-right">
+                                    @if (supplier.Balance > 0)
+                                    {
+                                        <span class="sp-balance sp-balance-due">
+                                            ৳@supplier.Balance.ToString("N0")
+                                        </span>
                                     }
-                            </span></td>
-                            <td><div class="sp-actions"><button class="sp-link" type="button">History</button><button class="sp-link" type="button" data-open="edit" data-name="Meghna Traders" data-phone="01819-882210" data-address="Chawkbazar, Dhaka" data-terms="Net 7 days" data-lead="5">
+                                    else
+                                    {
+                                        <span class="sp-balance sp-balance-clear">
+                                            ৳@supplier.Balance.ToString("N0")
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- STATUS -->
+                                <td>
+                                    @if (supplier.IsActive)
+                                    {
+                                        <span class="sp-status sp-status-active">
+                                            <span></span>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="sp-status sp-status-inactive">
+                                            <span></span>
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- ACTION -->
+                                <td class="sp-right">
                                     <a asp-controller="Supplier"
                                        asp-action="Edit"
                                        asp-route-id="@supplier.SupplierId"
-                                       class="sp-link">
+                                       class="sp-edit-btn">
                                         Edit
                                     </a>
-                            </button><button class="sp-link sp-danger" type="button">Deactivate</button></div></td>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                <div class="sp-empty">
+                                    <div class="sp-empty-icon">⌕</div>
+                                    <strong>No suppliers found</strong>
+                                    <p>Try changing your search or filter criteria.</p>
+
+                                    <a asp-controller="Supplier"
+                                       asp-action="Index"
+                                       class="sp-reset-btn">
+                                        Clear filters
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                     }
+
                 </tbody>
             </table>
+
         </div>
-        <p class="sp-foot">Lead time is updated automatically from the order date and received date of each purchase order. Suppliers with purchase history can be deactivated but not deleted.</p>
+
+        <div class="sp-table-footer">
+            <span>
+                Showing <strong>@Model.Count</strong> supplier records
+            </span>
+
+            <span>
+                Supplier balances are maintained through purchasing and payments.
+            </span>
+        </div>
+
     </section>
 
-    
 </div>

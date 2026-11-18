@@ -8,7 +8,8 @@ namespace SISB.Entities
         [Key]
         public int CategoryId { get; set; }
 
-        [Required, StringLength(100)]
+        [Required(ErrorMessage = "Category name is required")]
+        [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
         public int? ParentCategoryId { get; set; }
@@ -16,7 +17,10 @@ namespace SISB.Entities
         [ForeignKey(nameof(ParentCategoryId))]
         public virtual Category? ParentCategory { get; set; }
 
-        public virtual ICollection<Category> SubCategories { get; set; } = new List<Category>();
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+        public virtual ICollection<Category> SubCategories { get; set; }
+            = new List<Category>();
+
+        public virtual ICollection<Product> Products { get; set; }
+            = new List<Product>();
     }
 }

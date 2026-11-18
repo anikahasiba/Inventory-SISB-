@@ -28,7 +28,7 @@ namespace SISB.Web.UI.Controllers
         public async Task<IActionResult> Index()
         {
             var products = await _productFacade.GetProductsAsync();
-            var categorys = await _categoryFacade.GetCategoriesAsync();
+            var categorys = await _categoryFacade.GetAllAsync();
             var suppliers = await _supplierFacade.GetSuppliersAsync();
 
             ProductSupplierCategory ProductInfo = new ProductSupplierCategory();
@@ -68,7 +68,7 @@ namespace SISB.Web.UI.Controllers
         }
         private async Task LoadDropdowns()
         {
-            var categories = await _categoryFacade.GetCategoriesAsync();
+            var categories = await _categoryFacade.GetAllAsync();
             var suppliers = await _supplierFacade.GetSuppliersAsync();
 
             ViewBag.Categories = new SelectList(
